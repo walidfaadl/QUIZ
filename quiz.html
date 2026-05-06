@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بين الأقصى وعرفات - مسابقة جماعية</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/[email protected]/dist/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tajawal', system-ui, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8edf4 100%);
+    color: #212121;
+    min-height: 100vh;
+    padding: 1rem;
+    line-height: 1.6;
+  }
+  .container { max-width: 950px; margin: 0 auto; }
+
+  @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 0 0 rgba(255,179,0,0.5); } 50% { box-shadow: 0 0 0 10px rgba(255,179,0,0); } }
+  @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(198,40,40,0.6); } 50% { box-shadow: 0 0 0 12px rgba(198,40,40,0); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  @keyframes pop-in { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes slide-in { 0% { transform: translateX(20px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+  @keyframes confetti-fall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(600px) rotate(720deg); opacity: 0; } }
+  @keyframes group-enter { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes turn-banner { 0% { transform: translateY(-20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+  .ans-btn { animation: slide-in 0.3s ease forwards; opacity: 0; }
+  .ans-btn:hover:not(:disabled) { transform: translateX(-4px); border-color: #00796B !important; background: #E0F2F1 !important; }
+
+  .q-tile {
+    transition: all 0.25s ease;
+    aspect-ratio: 1;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 600;
+    border: 2.5px solid;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+  /* AVAILABLE - clickable, glowing */
+  .q-tile.q-available {
+    background: white;
+    border-color: #FFB300;
+    color: #424242;
+    cursor: pointer;
+    animation: pulse-glow 2.5s infinite;
+  }
+  .q-tile.q-available:hover {
+    transform: translateY(-4px) scale(1.08);
+    border-color: #FF8F00 !important;
+    background: #FFF8E1 !important;
+  }
+  /* USED - greyed out and dimmed, not clickable */
+  .q-tile.q-used {
+    cursor: not-allowed;
+    opacity: 0.45;
+    filter: grayscale(0.4);
+    pointer-events: none;
+  }
+  .q-tile.q-used::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 6px,
+      rgba(0,0,0,0.04) 6px,
+      rgba(0,0,0,0.04) 12px
+    );
+    pointer-events: none;
+  }
+  .q-tile.q-review {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+  .q-tile.q-review:hover { opacity: 0.7; }
+
+  .q-tile .group-stripe {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 5px;
+  }
+  .q-tile.q-correct { background: #E8F5E9; border-color: #2E7D32; color: #1B5E20; }
+  .q-tile.q-wrong { background: #FFEBEE; border-color: #C62828; color: #B71C1C; }
+  .q-tile.q-passed { background: #ECEFF1; border-color: #78909C; color: #455A64; }
+  .q-tile .status-icon {
+    position: absolute; top: 4px; left: 4px; font-size: 13px;
+  }
+  .q-tile .lock-icon {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    color: rgba(0,0,0,0.25);
+    z-index: 1;
+  }
+  .q-tile .num-text {
+    position: relative;
+    z-index: 0;
+  }
+
+  .timer-ring { transition: stroke-dashoffset 1s linear, stroke 0.3s ease; }
+  .confetti { position: absolute; width: 8px; height: 8px; pointer-events: none; }
+
+  .header-banner {
+    background: linear-gradient(135deg, #006233 0%, #00796B 50%, #CE1126 100%);
+    border-radius: 16px; padding: 1.5rem 1.5rem; text-align: center; color: white;
+    margin-bottom: 1rem; position: relative; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,98,51,0.2);
+  }
+  .header-banner::before { content: ''; position: absolute; top: -30px; left: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.08); border-radius: 50%; }
+  .header-banner::after { content: ''; position: absolute; bottom: -40px; right: -40px; width: 160px; height: 160px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+  .header-banner > * { position: relative; }
+
+  .btn {
+    padding: 12px 18px; border: none; border-radius: 10px; cursor: pointer;
+    font-size: 14px; font-weight: 500; display: inline-flex; align-items: center;
+    justify-content: center; gap: 8px; transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .btn-primary { background: #006233; color: white; }
+  .btn-primary:hover { background: #00796B; }
+  .btn-secondary { background: white; color: #424242; border: 1px solid #e0e0e0; }
+  .btn-secondary:hover { background: #f5f5f5; }
+
+  .section {
+    background: white; border-radius: 14px; padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 1rem;
+  }
+
+  .group-card {
+    background: white; border: 2px solid; border-radius: 12px;
+    padding: 0.75rem; transition: all 0.2s ease;
+    text-align: center; animation: group-enter 0.4s ease;
+  }
+  .group-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 6px; color: white;
+  }
+  .group-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .group-stats { font-size: 10px; color: #757575; }
+
+  .turn-banner {
+    border-radius: 14px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+    color: white;
+    animation: turn-banner 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .turn-banner.steal-mode {
+    background: linear-gradient(135deg, #C62828, #FF8F00) !important;
+    animation: pulse-red 1.5s infinite;
+  }
+  .turn-banner::before {
+    content: '';
+    position: absolute;
+    top: -20px; left: -20px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+  }
+
+  .scoreboard-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 8px;
+    margin-bottom: 4px; transition: all 0.2s ease;
+    border: 2px solid transparent;
+    background: #fafafa;
+  }
+  .scoreboard-row.active {
+    border-color: #FFB300;
+    background: #FFF8E1 !important;
+    transform: scale(1.02);
+  }
+  .scoreboard-row.steal-target {
+    border-color: #C62828;
+    background: #FFEBEE !important;
+  }
+  .scoreboard-row.passed-this-q {
+    opacity: 0.4;
+  }
+
+  .steal-badge {
+    background: #C62828;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- ==================== ERROR SCREEN ==================== -->
+  <div id="error-screen" style="display: none;">
+    <div class="header-banner">
+      <h1 style="font-size: 24px; font-weight: 600;">بين الأقصى وعرفات</h1>
+      <p style="font-size: 13px; opacity: 0.92;">مسابقة تنافسية بين المجموعات</p>
+    </div>
+    <div class="section" style="text-align: center; padding: 2rem;">
+      <i class="ti ti-database-off" style="font-size: 56px; color: #C62828; display: block; margin-bottom: 12px;"></i>
+      <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">لم يتم العثور على بيانات المسابقة</h3>
+      <p id="error-text" style="font-size: 13px; color: #616161; margin-bottom: 1rem; line-height: 1.7;"></p>
+      <a href="admin.html" class="btn btn-primary" style="text-decoration: none;">
+        <i class="ti ti-settings"></i>
+        فتح لوحة التحكم
+      </a>
+    </div>
+  </div>
+
+  <!-- ==================== START SCREEN ==================== -->
+  <div id="start-screen" style="display: none;">
+    <div class="header-banner">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 0.5rem;">
+        <i class="ti ti-building-mosque" style="font-size: 30px;"></i>
+        <div style="width: 1px; height: 26px; background: rgba(255,255,255,0.4);"></div>
+        <i class="ti ti-flag" style="font-size: 30px;"></i>
+      </div>
+      <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 4px;">بين الأقصى وعرفات</h1>
+      <p style="font-size: 13px; opacity: 0.92;">مسابقة تنافسية بين المجموعات • نظام السرقة</p>
+    </div>
+
+    <div class="section">
+      <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="ti ti-info-circle" style="color: #1565C0;"></i>
+        قواعد المسابقة
+      </h3>
+      <div style="background: #E3F2FD; border: 1px solid #90CAF9; border-radius: 10px; padding: 12px; font-size: 13px; line-height: 1.8; color: #0D47A1; margin-bottom: 8px;">
+        <div style="margin-bottom: 6px;"><strong>📋 لوحة موحّدة:</strong> <span id="rule-total">30</span> سؤالاً مرقّمة يتشاركها جميع المتنافسين.</div>
+        <div style="margin-bottom: 6px;"><strong>🎯 تختار بالدور:</strong> كل مجموعة تختار رقم سؤال في دورها.</div>
+        <div style="margin-bottom: 6px;"><strong>⏱️ المهلة <span id="rule-time">10</span> ثوان</strong> لكل مجموعة عند طرح السؤال عليها.</div>
+        <div><strong>🔄 السرقة:</strong> إذا انتهى الوقت ولم تُجب المجموعة، ينتقل السؤال للمجموعة التالية مع مهلة جديدة.</div>
+      </div>
+      <div style="background: #FFF8E1; border: 1px solid #FFE082; border-radius: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.7; color: #BF360C;">
+        <strong>💡 ملاحظة:</strong> الأرقام المُستخدمة تُعتّم تلقائياً ولا يمكن اختيارها مرة أخرى. الإجابة الصحيحة تُكسب النقاط للمجموعة المُجيبة.
+      </div>
+    </div>
+
+    <div class="section">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f5f5f5; border-radius: 8px;">
+          <i class="ti ti-users" style="font-size: 18px; color: #006233;"></i>
+          <div>
+            <div style="font-size: 11px; color: #757575;">المجموعات</div>
+            <div style="font-size: 14px; font-weight: 600;" id="info-groups">-</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f5f5f5; border-radius: 8px;">
+          <i class="ti ti-list-numbers" style="font-size: 18px; color: #E65100;"></i>
+          <div>
+            <div style="font-size: 11px; color: #757575;">الأسئلة</div>
+            <div style="font-size: 14px; font-weight: 600;" id="info-total">-</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f5f5f5; border-radius: 8px;">
+          <i class="ti ti-clock" style="font-size: 18px; color: #6A1B9A;"></i>
+          <div>
+            <div style="font-size: 11px; color: #757575;">المهلة</div>
+            <div style="font-size: 14px; font-weight: 600;" id="info-time">-</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f5f5f5; border-radius: 8px;">
+          <i class="ti ti-database" style="font-size: 18px; color: #1565C0;"></i>
+          <div>
+            <div style="font-size: 11px; color: #757575;">الخزّان</div>
+            <div style="font-size: 14px; font-weight: 600;" id="info-bank">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="ti ti-users" style="color: #006233;"></i>
+        المجموعات المتنافسة
+      </h3>
+      <div id="groups-preview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px;"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 12px;">
+      <button id="start-btn" class="btn btn-primary" style="padding: 16px; font-size: 16px;">
+        <i class="ti ti-player-play" style="font-size: 20px;"></i>
+        بدء المسابقة
+      </button>
+      <a href="admin.html" class="btn btn-secondary" style="text-decoration: none; padding: 16px; font-size: 13px;">
+        <i class="ti ti-settings"></i>
+        لوحة التحكم
+      </a>
+    </div>
+
+    <div style="text-align: center; padding: 8px;">
+      <button id="sound-toggle" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">
+        <i class="ti ti-volume"></i>
+        <span>الصوت: مفعّل</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== BOARD SCREEN ==================== -->
+  <div id="board-screen" style="display: none;">
+    <div class="turn-banner" id="turn-banner">
+      <div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div id="turn-icon" style="background: rgba(255,255,255,0.25); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ti ti-user-star" style="font-size: 22px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 11px; opacity: 0.85;">دور المجموعة</div>
+            <div id="turn-group-name" style="font-size: 18px; font-weight: 700;">-</div>
+          </div>
+        </div>
+        <div style="text-align: center; background: rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 10px;">
+          <div style="font-size: 11px; opacity: 0.85;">الاختيارات المتبقية</div>
+          <div id="turn-remaining" style="font-size: 18px; font-weight: 700;">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="padding: 0.75rem 1rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 12px; font-weight: 600; color: #424242; display: flex; align-items: center; gap: 6px;">
+          <i class="ti ti-trophy" style="color: #FFB300;"></i>
+          لوحة النتائج
+        </span>
+        <span style="font-size: 11px; color: #757575;" id="board-progress">0/0</span>
+      </div>
+      <div id="scoreboard"></div>
+    </div>
+
+    <div class="section">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 6px;">
+        <span style="font-size: 13px; font-weight: 600;">لوحة الأسئلة</span>
+        <span style="font-size: 11px; color: #FFB300;">
+          <i class="ti ti-cursor-text" style="font-size: 12px; vertical-align: -2px;"></i>
+          الأرقام النابضة متاحة
+        </span>
+      </div>
+      <div id="question-board" style="display: grid; gap: 10px;"></div>
+
+      <div style="margin-top: 1rem; padding-top: 12px; border-top: 1px solid #f0f0f0;">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; font-size: 11px; color: #757575;">
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: white; border: 2px solid #FFB300; border-radius: 3px;"></span>متاح</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #E8F5E9; border: 2px solid #2E7D32; border-radius: 3px;"></span>صحيح</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #FFEBEE; border: 2px solid #C62828; border-radius: 3px;"></span>خاطئ</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #ECEFF1; border: 2px solid #78909C; border-radius: 3px;"></span>لم يُجب أحد</div>
+        </div>
+      </div>
+    </div>
+
+    <button id="quit-btn" class="btn btn-secondary" style="width: 100%; padding: 12px;">
+      <i class="ti ti-x"></i>
+      إنهاء المسابقة وعرض النتائج
+    </button>
+  </div>
+
+  <!-- ==================== QUESTION SCREEN ==================== -->
+  <div id="question-screen" style="display: none;">
+    <!-- Steal banner appears at top during steal mode -->
+    <div id="steal-banner" style="display: none; background: linear-gradient(135deg, #C62828, #FF8F00); color: white; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; animation: turn-banner 0.4s ease;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="ti ti-arrow-back-up-double" style="font-size: 22px;"></i>
+        <div style="flex: 1;">
+          <div style="font-size: 11px; opacity: 0.9;">انتقل السؤال إلى</div>
+          <div id="steal-group-name" style="font-size: 16px; font-weight: 700;">-</div>
+        </div>
+        <div id="steal-counter" style="background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600;">
+          المحاولة 2
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <button id="back-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">
+        <i class="ti ti-arrow-right"></i>
+        اللوحة
+      </button>
+      <div id="q-num-badge" style="background: #FFB300; color: white; border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 500;">السؤال 1</div>
+      <div style="position: relative; width: 50px; height: 50px;">
+        <svg width="50" height="50" viewBox="0 0 50 50" style="transform: rotate(-90deg);">
+          <circle cx="25" cy="25" r="20" fill="none" stroke="#E0E0E0" stroke-width="3.5"/>
+          <circle id="timer-ring" class="timer-ring" cx="25" cy="25" r="20" fill="none" stroke="#00796B" stroke-width="3.5" stroke-dasharray="125.66" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+        <div id="timer-text" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700;">10</div>
+      </div>
+    </div>
+
+    <div style="background: white; border: 1px solid #E0E0E0; border-radius: 16px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; overflow: hidden;">
+      <div id="question-stripe" style="position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: linear-gradient(180deg, #006233, #CE1126);"></div>
+
+      <div style="padding-right: 8px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <div id="category-tag" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 20px;">
+          <i class="ti ti-category" style="font-size: 14px;"></i>
+          <span>عام</span>
+        </div>
+        <div id="active-group-mini" style="font-size: 12px; font-weight: 600;"></div>
+      </div>
+
+      <h2 id="question-text" style="font-size: 17px; font-weight: 500; line-height: 1.7; padding-right: 8px; margin-bottom: 1.25rem;">نص السؤال</h2>
+
+      <div id="answers" style="display: grid; gap: 10px; padding-right: 8px;"></div>
+
+      <div id="feedback" style="display: none; margin-top: 1rem; padding: 12px 14px; border-radius: 10px; font-size: 13px; line-height: 1.7; animation: pop-in 0.4s ease;"></div>
+
+      <button id="back-to-grid-btn" class="btn btn-primary" style="display: none; width: 100%; margin-top: 1rem; padding: 12px;">
+        المتابعة ←
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== RESULTS SCREEN ==================== -->
+  <div id="results-screen" style="display: none; position: relative;">
+    <div id="confetti-container" style="position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9998;"></div>
+
+    <div class="header-banner" id="result-banner">
+      <div id="result-emoji" style="font-size: 56px; margin-bottom: 0.5rem; animation: pop-in 0.6s ease;">🏆</div>
+      <h1 style="font-size: 24px; font-weight: 600; margin-bottom: 4px;">انتهت المسابقة!</h1>
+      <p id="winner-text" style="font-size: 14px; opacity: 0.92;"></p>
+    </div>
+
+    <div class="section">
+      <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="ti ti-trophy" style="color: #FFB300;"></i>
+        لوحة الترتيب النهائية
+      </h3>
+      <div id="final-leaderboard"></div>
+    </div>
+
+    <div class="section">
+      <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">إحصائيات المسابقة</h3>
+      <div id="overall-stats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <button id="restart-btn" class="btn btn-primary" style="padding: 12px;">
+        <i class="ti ti-refresh"></i>
+        مسابقة جديدة
+      </button>
+      <a href="admin.html" class="btn btn-secondary" style="text-decoration: none; padding: 12px;">
+        <i class="ti ti-settings"></i>
+        لوحة التحكم
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script src="questions-data.js"></script>
+<script>
+'use strict';
+
+// ==================== STATE ====================
+let bank = [];
+let config = null;
+// Board: [{ question, status: 'available'|'correct'|'wrong'|'passed', answeredBy: groupIdx|null, finalAnswer: {picked, isRight}|null, attempts: [{groupIdx, picked, isRight}] }]
+let board = [];
+// Group states: [{ name, color, groupIdx, score, picksRemaining, picksUsed }]
+let groupStates = [];
+let currentGroupIdx = 0;
+let currentBoardIdx = -1;
+// Steal mode state
+let isStealMode = false;
+let stealOriginalGroupIdx = -1;  // who first picked this question
+let stealAttemptedGroups = []; // groupIdxs that have already attempted this question
+let stealCurrentGroupIdx = -1; // who's currently trying
+
+let timeLeft = 10;
+let timerInterval = null;
+let answered = false;
+let soundOn = true;
+
+// ==================== AUDIO ====================
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return null; } }
+  return audioCtx;
+}
+function playTone(freqs, duration, type, volume) {
+  if (!soundOn) return;
+  const ctx = getAudio();
+  if (!ctx) return;
+  type = type || 'sine'; volume = volume || 0.15;
+  freqs.forEach((f, i) => {
+    setTimeout(() => {
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = type; osc.frequency.value = f;
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + duration);
+    }, i * 80);
+  });
+}
+function sndCorrect() { playTone([523.25, 659.25, 783.99], 0.25, 'sine', 0.15); }
+function sndWrong() { playTone([220, 185], 0.3, 'sawtooth', 0.1); }
+function sndTick() { playTone([800], 0.05, 'square', 0.05); }
+function sndClick() { playTone([600], 0.05, 'sine', 0.08); }
+function sndStart() { playTone([523, 659, 783, 1046], 0.15, 'triangle', 0.12); }
+function sndWin() { playTone([523, 659, 783, 1046, 1318, 1568], 0.18, 'triangle', 0.14); }
+function sndTurnChange() { playTone([659, 880, 1046], 0.15, 'triangle', 0.12); }
+function sndSteal() { playTone([880, 1175, 1568], 0.18, 'sawtooth', 0.13); }
+function sndTimeOut() { playTone([440, 330, 220], 0.2, 'sawtooth', 0.12); }
+
+// ==================== HELPERS ====================
+function getCategoryColor(cat) {
+  const map = {
+    "الأسرى": { bg: "#FFEBEE", color: "#B71C1C", icon: "lock" },
+    "الأقصى": { bg: "#E0F2F1", color: "#00695C", icon: "building-mosque" },
+    "قانون الإعدام": { bg: "#F3E5F5", color: "#4A148C", icon: "gavel" },
+    "عام": { bg: "#E3F2FD", color: "#0D47A1", icon: "world" }
+  };
+  return map[cat] || { bg: "#F5F5F5", color: "#424242", icon: "help" };
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shadeColor(color, percent) {
+  const f = parseInt(color.slice(1), 16);
+  const t = percent < 0 ? 0 : 255;
+  const p = Math.abs(percent) / 100;
+  const R = f >> 16, G = (f >> 8) & 0x00FF, B = f & 0x0000FF;
+  return '#' + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
+}
+
+function showScreen(id) {
+  ['error-screen', 'start-screen', 'board-screen', 'question-screen', 'results-screen'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'block';
+}
+
+function showConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#006233', '#CE1126', '#FFFFFF', '#000000', '#00796B', '#FFB300'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 0.6 + 's';
+    c.style.animationDuration = (2 + Math.random()) + 's';
+    c.style.animationName = 'confetti-fall';
+    c.style.animationTimingFunction = 'ease-in';
+    c.style.animationFillMode = 'forwards';
+    if (Math.random() > 0.5) c.style.borderRadius = '50%';
+    container.appendChild(c);
+  }
+  setTimeout(() => container.innerHTML = '', 3000);
+}
+
+// ==================== INIT ====================
+function init() {
+  bank = loadBank();
+  config = loadConfig();
+
+  const totalQuestions = config.groups.length * config.questionsPerGroup;
+  if (bank.length < totalQuestions) {
+    document.getElementById('error-text').innerHTML = `يحتاج الخزّان إلى <strong>${totalQuestions}</strong> سؤالاً على الأقل (${config.groups.length} مجموعات × ${config.questionsPerGroup} أسئلة)، لكنه يحتوي على <strong>${bank.length}</strong> فقط.<br>أضف المزيد من الأسئلة من لوحة التحكم.`;
+    showScreen('error-screen');
+    return;
+  }
+
+  document.getElementById('rule-total').textContent = totalQuestions;
+  document.getElementById('rule-time').textContent = config.timePerQuestion;
+  document.getElementById('info-groups').textContent = config.groups.length + ' مجموعات';
+  document.getElementById('info-total').textContent = totalQuestions + ' سؤالاً';
+  document.getElementById('info-time').textContent = config.timePerQuestion + ' ثانية';
+  document.getElementById('info-bank').textContent = bank.length + ' سؤالاً';
+
+  const preview = document.getElementById('groups-preview');
+  preview.innerHTML = '';
+  config.groups.forEach((g) => {
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    card.style.borderColor = g.color;
+    card.innerHTML = `
+      <div class="group-icon" style="background: ${g.color};"><i class="ti ti-users" style="font-size: 18px;"></i></div>
+      <div class="group-name" style="color: ${g.color};">${g.name}</div>
+      <div class="group-stats">${config.questionsPerGroup} اختيارات</div>
+    `;
+    preview.appendChild(card);
+  });
+
+  showScreen('start-screen');
+}
+
+// ==================== START ====================
+document.getElementById('start-btn').addEventListener('click', () => {
+  sndStart();
+  const totalQuestions = config.groups.length * config.questionsPerGroup;
+  const shuffled = shuffle(bank);
+  board = shuffled.slice(0, totalQuestions).map(q => ({
+    question: q,
+    status: 'available',
+    answeredBy: null,
+    finalAnswer: null,
+    attempts: []
+  }));
+
+  groupStates = config.groups.map((g, i) => ({
+    name: g.name,
+    color: g.color,
+    groupIdx: i,
+    score: 0,
+    picksRemaining: config.questionsPerGroup,
+    picksUsed: []
+  }));
+
+  currentGroupIdx = 0;
+  isStealMode = false;
+  renderBoard();
+  showScreen('board-screen');
+});
+
+document.getElementById('sound-toggle').addEventListener('click', function() {
+  soundOn = !soundOn;
+  this.querySelector('span').textContent = soundOn ? 'الصوت: مفعّل' : 'الصوت: متوقف';
+  if (soundOn) sndClick();
+});
+
+// ==================== BOARD ====================
+function renderBoard() {
+  const allDone = groupStates.every(g => g.picksRemaining === 0);
+  const allUsed = board.every(b => b.status !== 'available');
+  if (allDone || allUsed) { showResults(); return; }
+
+  // Skip groups with no remaining picks
+  while (groupStates[currentGroupIdx].picksRemaining === 0) {
+    currentGroupIdx = (currentGroupIdx + 1) % groupStates.length;
+  }
+
+  const currentGroup = groupStates[currentGroupIdx];
+  document.getElementById('turn-banner').classList.remove('steal-mode');
+  document.getElementById('turn-banner').style.background = `linear-gradient(135deg, ${currentGroup.color}, ${shadeColor(currentGroup.color, -20)})`;
+  document.getElementById('turn-group-name').textContent = currentGroup.name;
+  document.getElementById('turn-remaining').textContent = currentGroup.picksRemaining;
+
+  renderScoreboard();
+
+  const boardEl = document.getElementById('question-board');
+  boardEl.innerHTML = '';
+
+  const total = board.length;
+  let cols = 5;
+  if (total <= 9) cols = 3;
+  else if (total <= 16) cols = 4;
+  else if (total <= 25) cols = 5;
+  else if (total <= 36) cols = 6;
+  else cols = 7;
+  boardEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  board.forEach((item, i) => {
+    const tile = document.createElement('button');
+    tile.className = 'q-tile';
+
+    if (item.status === 'available') {
+      tile.classList.add('q-available');
+      tile.innerHTML = `<span class="num-text">${i + 1}</span>`;
+      tile.addEventListener('click', () => pickQuestion(i));
+    } else {
+      // Used (correct/wrong/passed) - dimmed and locked
+      tile.classList.add('q-used');
+      if (item.status === 'correct') tile.classList.add('q-correct');
+      else if (item.status === 'wrong') tile.classList.add('q-wrong');
+      else tile.classList.add('q-passed');
+
+      // Allow review click despite "used"
+      tile.classList.add('q-review');
+
+      let statusIcon = '';
+      if (item.status === 'correct') statusIcon = '<i class="ti ti-check status-icon" style="color: #2E7D32;"></i>';
+      else if (item.status === 'wrong') statusIcon = '<i class="ti ti-x status-icon" style="color: #C62828;"></i>';
+      else statusIcon = '<i class="ti ti-clock-x status-icon" style="color: #455A64;"></i>';
+
+      let stripeColor = '#9E9E9E';
+      if (item.answeredBy !== null) stripeColor = groupStates[item.answeredBy].color;
+
+      const lockIcon = '<i class="ti ti-lock-filled lock-icon" aria-hidden="true"></i>';
+
+      tile.innerHTML = `${statusIcon}${lockIcon}<span class="num-text">${i + 1}</span><div class="group-stripe" style="background: ${stripeColor};"></div>`;
+
+      const reviewerName = item.answeredBy !== null ? groupStates[item.answeredBy].name : 'لم يجب أحد';
+      tile.title = 'مُستخدَم — ' + reviewerName + ' (انقر للمراجعة)';
+      tile.addEventListener('click', () => showQuestionReview(i));
+    }
+
+    boardEl.appendChild(tile);
+  });
+
+  const usedCount = board.filter(b => b.status !== 'available').length;
+  document.getElementById('board-progress').textContent = `${usedCount}/${board.length}`;
+}
+
+function renderScoreboard() {
+  const sb = document.getElementById('scoreboard');
+  sb.innerHTML = '';
+  groupStates.forEach((g, i) => {
+    const isActive = i === currentGroupIdx && g.picksRemaining > 0 && !isStealMode;
+    const isStealTarget = isStealMode && i === stealCurrentGroupIdx;
+    const isPassedThisQ = isStealMode && stealAttemptedGroups.includes(i);
+    const row = document.createElement('div');
+    row.className = 'scoreboard-row';
+    if (isActive) row.classList.add('active');
+    if (isStealTarget) row.classList.add('steal-target');
+    if (isPassedThisQ && !isStealTarget) row.classList.add('passed-this-q');
+
+    let badge = '';
+    if (isStealTarget) badge = '<i class="ti ti-arrow-back-up-double" style="font-size: 16px; color: #C62828;"></i>';
+    else if (isActive) badge = '<i class="ti ti-arrow-bar-to-left" style="font-size: 16px; color: #FFB300;"></i>';
+
+    row.innerHTML = `
+      <div style="width: 6px; height: 24px; background: ${g.color}; border-radius: 2px; flex-shrink: 0;"></div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 12px; font-weight: 600; color: ${g.color};">${g.name}</div>
+        <div style="font-size: 9px; color: #757575;">المتبقي: ${g.picksRemaining}</div>
+      </div>
+      <div style="text-align: left;">
+        <div style="font-size: 14px; font-weight: 700; color: ${g.color};">${g.score}</div>
+      </div>
+      ${badge}
+    `;
+    sb.appendChild(row);
+  });
+}
+
+// ==================== PICK ====================
+function pickQuestion(boardIdx) {
+  const item = board[boardIdx];
+  if (item.status !== 'available') return;
+  const currentGroup = groupStates[currentGroupIdx];
+  if (currentGroup.picksRemaining === 0) return;
+
+  sndClick();
+  currentBoardIdx = boardIdx;
+  isStealMode = false;
+  stealOriginalGroupIdx = currentGroupIdx;
+  stealAttemptedGroups = [];
+  stealCurrentGroupIdx = currentGroupIdx;
+
+  showQuestionToGroup(currentGroupIdx);
+}
+
+function showQuestionToGroup(groupIdx) {
+  answered = false;
+  const item = board[currentBoardIdx];
+  const q = item.question;
+  const group = groupStates[groupIdx];
+
+  // Show or hide steal banner
+  const stealBanner = document.getElementById('steal-banner');
+  if (isStealMode) {
+    stealBanner.style.display = 'block';
+    document.getElementById('steal-group-name').textContent = group.name;
+    document.getElementById('steal-counter').textContent = 'المحاولة ' + (stealAttemptedGroups.length + 1);
+  } else {
+    stealBanner.style.display = 'none';
+  }
+
+  document.getElementById('q-num-badge').textContent = 'السؤال ' + (currentBoardIdx + 1);
+  document.getElementById('q-num-badge').style.background = group.color;
+  document.getElementById('active-group-mini').innerHTML = `<i class="ti ti-users" style="font-size: 13px; color: ${group.color}; vertical-align: -2px;"></i> <span style="color: ${group.color};">${group.name}</span>`;
+  document.getElementById('question-stripe').style.background = `linear-gradient(180deg, ${group.color}, ${shadeColor(group.color, -20)})`;
+
+  const colors = getCategoryColor(q.cat);
+  const tag = document.getElementById('category-tag');
+  tag.style.background = colors.bg;
+  tag.style.color = colors.color;
+  tag.querySelector('i').className = 'ti ti-' + colors.icon;
+  tag.querySelector('span').textContent = q.cat;
+  document.getElementById('question-text').textContent = q.q;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('back-to-grid-btn').style.display = 'none';
+
+  const answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = '';
+  const letters = ['أ', 'ب', 'ج', 'د'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ans-btn';
+    btn.style.cssText = 'width: 100%; padding: 14px; text-align: right; font-size: 14px; font-weight: 400; border: 1.5px solid #E0E0E0; border-radius: 12px; background: white; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; line-height: 1.5; font-family: inherit;';
+    btn.style.animationDelay = (i * 0.08) + 's';
+    btn.innerHTML = `<span class="letter" style="display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; background: #F5F5F5; border-radius: 8px; font-size: 13px; font-weight: 600; color: #616161; flex-shrink: 0;">${letters[i]}</span><span style="flex: 1;">${opt}</span>`;
+    btn.addEventListener('click', () => selectAnswer(i, btn));
+    answersDiv.appendChild(btn);
+  });
+
+  timeLeft = config.timePerQuestion;
+  updateTimerUI();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    if (timeLeft <= 3 && timeLeft > 0) sndTick();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (!answered) handleTimeout();
+    }
+  }, 1000);
+
+  showScreen('question-screen');
+}
+
+function updateTimerUI() {
+  const ring = document.getElementById('timer-ring');
+  const circumference = 2 * Math.PI * 20;
+  const offset = circumference * (1 - timeLeft / config.timePerQuestion);
+  ring.style.strokeDashoffset = offset;
+  document.getElementById('timer-text').textContent = timeLeft;
+  if (timeLeft <= 3) { ring.style.stroke = '#C62828'; document.getElementById('timer-text').style.color = '#C62828'; }
+  else if (timeLeft <= 6) { ring.style.stroke = '#E65100'; document.getElementById('timer-text').style.color = '#E65100'; }
+  else { ring.style.stroke = '#00796B'; document.getElementById('timer-text').style.color = ''; }
+}
+
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  const item = board[currentBoardIdx];
+  const q = item.question;
+  const buttons = document.querySelectorAll('#answers button');
+  const isCorrect = idx === q.correct;
+  const respondingGroupIdx = isStealMode ? stealCurrentGroupIdx : currentGroupIdx;
+  const respondingGroup = groupStates[respondingGroupIdx];
+
+  buttons.forEach((b, i) => {
+    b.disabled = true; b.style.cursor = 'default';
+    if (i === q.correct) {
+      b.style.background = '#E8F5E9'; b.style.borderColor = '#2E7D32'; b.style.color = '#1B5E20';
+      b.querySelector('.letter').style.background = '#2E7D32'; b.querySelector('.letter').style.color = 'white';
+    } else if (i === idx) {
+      b.style.background = '#FFEBEE'; b.style.borderColor = '#C62828'; b.style.color = '#B71C1C';
+      b.style.animation = 'shake 0.4s ease';
+      b.querySelector('.letter').style.background = '#C62828'; b.querySelector('.letter').style.color = 'white';
+    } else { b.style.opacity = '0.4'; }
+  });
+
+  // Track attempt
+  item.attempts.push({ groupIdx: respondingGroupIdx, picked: idx, isRight: isCorrect });
+
+  const feedback = document.getElementById('feedback');
+  feedback.style.display = 'block';
+
+  if (isCorrect) {
+    sndCorrect();
+    const pts = 10 + Math.floor(timeLeft / 2);
+    respondingGroup.score += pts;
+
+    // Lock the question, mark as correct
+    item.status = 'correct';
+    item.answeredBy = respondingGroupIdx;
+    item.finalAnswer = { picked: idx, isRight: true };
+
+    // Only deduct picksRemaining from the group that ANSWERED (whether original or stealer)
+    respondingGroup.picksUsed.push(currentBoardIdx);
+    respondingGroup.picksRemaining = Math.max(0, respondingGroup.picksRemaining - 1);
+
+    feedback.style.background = '#E8F5E9'; feedback.style.color = '#1B5E20'; feedback.style.border = '1px solid #A5D6A7';
+    let stealNote = '';
+    if (isStealMode) stealNote = ' <span style="background: #FF8F00; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">سرقة!</span>';
+    feedback.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="ti ti-circle-check" style="font-size: 18px; color: #2E7D32;"></i><strong>إجابة صحيحة لـ ${respondingGroup.name}</strong>${stealNote}<span style="margin-right: auto; font-size: 12px; background: #2E7D32; color: white; padding: 2px 8px; border-radius: 10px;">+${pts}</span></div>${q.explain}`;
+
+    document.getElementById('back-to-grid-btn').style.display = 'block';
+    document.getElementById('back-to-grid-btn').textContent = 'الدور التالي ←';
+    document.getElementById('back-to-grid-btn').dataset.action = 'next-turn';
+  } else {
+    // Wrong answer - move to next group via steal mechanic
+    sndWrong();
+    stealAttemptedGroups.push(respondingGroupIdx);
+
+    feedback.style.background = '#FFEBEE'; feedback.style.color = '#B71C1C'; feedback.style.border = '1px solid #EF9A9A';
+    feedback.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="ti ti-circle-x" style="font-size: 18px; color: #C62828;"></i><strong>إجابة غير صحيحة من ${respondingGroup.name}</strong></div>الإجابة الصحيحة: <strong>${q.options[q.correct]}</strong><br>${q.explain}`;
+
+    // Determine next steal target
+    const nextGroupIdx = findNextStealGroup();
+    if (nextGroupIdx === -1) {
+      // No more groups, lock as wrong
+      item.status = 'wrong';
+      item.answeredBy = respondingGroupIdx;
+      item.finalAnswer = { picked: idx, isRight: false };
+
+      // Only original group loses a pick
+      const original = groupStates[stealOriginalGroupIdx];
+      original.picksUsed.push(currentBoardIdx);
+      original.picksRemaining = Math.max(0, original.picksRemaining - 1);
+
+      feedback.innerHTML += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #EF9A9A; font-size: 12px;"><i class="ti ti-info-circle"></i> فشلت كل المجموعات. السؤال يُغلق.</div>`;
+      document.getElementById('back-to-grid-btn').style.display = 'block';
+      document.getElementById('back-to-grid-btn').textContent = 'الدور التالي ←';
+      document.getElementById('back-to-grid-btn').dataset.action = 'next-turn';
+    } else {
+      // Pass to next group
+      feedback.innerHTML += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #EF9A9A; font-size: 13px; display: flex; align-items: center; gap: 6px;"><i class="ti ti-arrow-back-up-double" style="font-size: 16px; color: #C62828;"></i> ينتقل السؤال إلى: <strong>${groupStates[nextGroupIdx].name}</strong></div>`;
+      document.getElementById('back-to-grid-btn').style.display = 'block';
+      document.getElementById('back-to-grid-btn').textContent = 'انتقل للمجموعة التالية ←';
+      document.getElementById('back-to-grid-btn').dataset.action = 'steal';
+      document.getElementById('back-to-grid-btn').dataset.nextGroup = nextGroupIdx;
+    }
+  }
+}
+
+function handleTimeout() {
+  sndTimeOut();
+  answered = true;
+  const item = board[currentBoardIdx];
+  const q = item.question;
+  const buttons = document.querySelectorAll('#answers button');
+  const respondingGroupIdx = isStealMode ? stealCurrentGroupIdx : currentGroupIdx;
+  const respondingGroup = groupStates[respondingGroupIdx];
+
+  buttons.forEach((b, i) => {
+    b.disabled = true; b.style.cursor = 'default';
+    if (i === q.correct) {
+      b.style.background = '#E8F5E9'; b.style.borderColor = '#2E7D32'; b.style.color = '#1B5E20';
+      b.querySelector('.letter').style.background = '#2E7D32'; b.querySelector('.letter').style.color = 'white';
+    } else { b.style.opacity = '0.4'; }
+  });
+
+  item.attempts.push({ groupIdx: respondingGroupIdx, picked: -1, isRight: false, timeout: true });
+  stealAttemptedGroups.push(respondingGroupIdx);
+
+  const feedback = document.getElementById('feedback');
+  feedback.style.display = 'block';
+  feedback.style.background = '#FFEBEE'; feedback.style.color = '#B71C1C'; feedback.style.border = '1px solid #EF9A9A';
+  feedback.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="ti ti-clock-x" style="font-size: 18px; color: #C62828;"></i><strong>انتهى الوقت لـ ${respondingGroup.name}</strong></div>الإجابة الصحيحة: <strong>${q.options[q.correct]}</strong>`;
+
+  const nextGroupIdx = findNextStealGroup();
+  if (nextGroupIdx === -1) {
+    // Lock as passed (no one answered)
+    item.status = 'passed';
+    item.answeredBy = null;
+    item.finalAnswer = null;
+
+    const original = groupStates[stealOriginalGroupIdx];
+    original.picksUsed.push(currentBoardIdx);
+    original.picksRemaining = Math.max(0, original.picksRemaining - 1);
+
+    feedback.innerHTML += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #EF9A9A; font-size: 12px; line-height: 1.6;">${q.explain}<br><i class="ti ti-info-circle"></i> فشلت كل المجموعات. السؤال يُغلق.</div>`;
+    document.getElementById('back-to-grid-btn').style.display = 'block';
+    document.getElementById('back-to-grid-btn').textContent = 'الدور التالي ←';
+    document.getElementById('back-to-grid-btn').dataset.action = 'next-turn';
+  } else {
+    feedback.innerHTML += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #EF9A9A; font-size: 13px; display: flex; align-items: center; gap: 6px;"><i class="ti ti-arrow-back-up-double" style="font-size: 16px; color: #C62828;"></i> ينتقل السؤال إلى: <strong>${groupStates[nextGroupIdx].name}</strong></div>`;
+    document.getElementById('back-to-grid-btn').style.display = 'block';
+    document.getElementById('back-to-grid-btn').textContent = 'انتقل للمجموعة التالية ←';
+    document.getElementById('back-to-grid-btn').dataset.action = 'steal';
+    document.getElementById('back-to-grid-btn').dataset.nextGroup = nextGroupIdx;
+  }
+}
+
+function findNextStealGroup() {
+  // Find the next group that hasn't attempted this question yet AND has picks remaining (or just hasn't tried — give everyone a chance regardless of picks)
+  // Rule: All groups except those who already attempted should get a chance, regardless of their picksRemaining
+  for (let i = 0; i < groupStates.length; i++) {
+    if (!stealAttemptedGroups.includes(i)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function showQuestionReview(boardIdx) {
+  sndClick();
+  const item = board[boardIdx];
+  if (item.status === 'available') return;
+  answered = true;
+  const q = item.question;
+
+  document.getElementById('steal-banner').style.display = 'none';
+
+  let badgeColor = '#9E9E9E';
+  let badgeName = 'لم يجب أحد';
+  if (item.answeredBy !== null) {
+    badgeColor = groupStates[item.answeredBy].color;
+    badgeName = groupStates[item.answeredBy].name;
+  }
+
+  document.getElementById('q-num-badge').textContent = 'السؤال ' + (boardIdx + 1) + ' (مُغلق)';
+  document.getElementById('q-num-badge').style.background = badgeColor;
+  document.getElementById('active-group-mini').innerHTML = `<i class="ti ti-users" style="font-size: 13px; color: ${badgeColor}; vertical-align: -2px;"></i> ${badgeName}`;
+  document.getElementById('question-stripe').style.background = `linear-gradient(180deg, ${badgeColor}, ${shadeColor(badgeColor, -20)})`;
+
+  const colors = getCategoryColor(q.cat);
+  const tag = document.getElementById('category-tag');
+  tag.style.background = colors.bg;
+  tag.style.color = colors.color;
+  tag.querySelector('i').className = 'ti ti-' + colors.icon;
+  tag.querySelector('span').textContent = q.cat;
+  document.getElementById('question-text').textContent = q.q;
+
+  const answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = '';
+  const letters = ['أ', 'ب', 'ج', 'د'];
+  const finalPick = item.finalAnswer ? item.finalAnswer.picked : -1;
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ans-btn';
+    btn.disabled = true;
+    btn.style.cssText = 'width: 100%; padding: 14px; text-align: right; font-size: 14px; font-weight: 400; border: 1.5px solid #E0E0E0; border-radius: 12px; background: white; display: flex; align-items: center; gap: 12px; line-height: 1.5; cursor: default; font-family: inherit;';
+    btn.style.animationDelay = (i * 0.05) + 's';
+    btn.innerHTML = `<span class="letter" style="display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; background: #F5F5F5; border-radius: 8px; font-size: 13px; font-weight: 600; color: #616161; flex-shrink: 0;">${letters[i]}</span><span style="flex: 1;">${opt}</span>`;
+    if (i === q.correct) {
+      btn.style.background = '#E8F5E9'; btn.style.borderColor = '#2E7D32'; btn.style.color = '#1B5E20';
+      btn.querySelector('.letter').style.background = '#2E7D32'; btn.querySelector('.letter').style.color = 'white';
+    } else if (i === finalPick) {
+      btn.style.background = '#FFEBEE'; btn.style.borderColor = '#C62828'; btn.style.color = '#B71C1C';
+      btn.querySelector('.letter').style.background = '#C62828'; btn.querySelector('.letter').style.color = 'white';
+    } else { btn.style.opacity = '0.5'; }
+    answersDiv.appendChild(btn);
+  });
+
+  // Build attempts history if there were multiple
+  let attemptsHTML = '';
+  if (item.attempts.length > 1) {
+    attemptsHTML = '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #ddd; font-size: 11px;"><strong>المحاولات:</strong><br>';
+    item.attempts.forEach((a, idx) => {
+      const g = groupStates[a.groupIdx];
+      const result = a.isRight ? '✓ صحيح' : (a.timeout ? '⏱ انتهى الوقت' : '✗ خاطئ');
+      attemptsHTML += `<span style="display: inline-block; margin: 2px 4px; padding: 2px 6px; border-radius: 6px; background: ${g.color}; color: white;">${idx + 1}. ${g.name}: ${result}</span>`;
+    });
+    attemptsHTML += '</div>';
+  }
+
+  const feedback = document.getElementById('feedback');
+  feedback.style.display = 'block';
+  if (item.status === 'correct') {
+    feedback.style.background = '#E8F5E9'; feedback.style.color = '#1B5E20'; feedback.style.border = '1px solid #A5D6A7';
+    feedback.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="ti ti-circle-check" style="font-size: 18px; color: #2E7D32;"></i><strong>أُجيب بشكل صحيح من ${badgeName}</strong></div>${q.explain}${attemptsHTML}`;
+  } else if (item.status === 'wrong') {
+    feedback.style.background = '#FFEBEE'; feedback.style.color = '#B71C1C'; feedback.style.border = '1px solid #EF9A9A';
+    feedback.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="ti ti-circle-x" style="font-size: 18px; color: #C62828;"></i><strong>فشلت كل المجموعات</strong></div>${q.explain}${attemptsHTML}`;
+  } else {
+    feedback.style.background = '#ECEFF1'; feedback.style.color = '#37474F'; feedback.style.border = '1px solid #B0BEC5';
+    feedback.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><i class="ti ti-clock-x" style="font-size: 18px; color: #455A64;"></i><strong>انتهى الوقت لكل المجموعات</strong></div>${q.explain}${attemptsHTML}`;
+  }
+
+  document.getElementById('back-to-grid-btn').style.display = 'block';
+  document.getElementById('back-to-grid-btn').textContent = 'العودة للوحة ←';
+  document.getElementById('back-to-grid-btn').dataset.action = 'review-back';
+  document.getElementById('timer-text').textContent = '✓';
+  document.getElementById('timer-ring').style.strokeDashoffset = '0';
+  document.getElementById('timer-ring').style.stroke = '#9E9E9E';
+
+  showScreen('question-screen');
+}
+
+document.getElementById('back-btn').addEventListener('click', () => {
+  sndClick();
+  if (timerInterval) clearInterval(timerInterval);
+  // If we were in the middle of an unanswered question, abandon it (the question stays available)
+  // Only allow this if the question hasn't been locked yet
+  if (!answered && board[currentBoardIdx] && board[currentBoardIdx].status === 'available') {
+    // Reset steal state
+    isStealMode = false;
+    stealAttemptedGroups = [];
+  }
+  renderBoard();
+  showScreen('board-screen');
+});
+
+document.getElementById('back-to-grid-btn').addEventListener('click', () => {
+  sndClick();
+  const action = document.getElementById('back-to-grid-btn').dataset.action;
+
+  if (action === 'review-back') {
+    renderBoard();
+    showScreen('board-screen');
+  } else if (action === 'steal') {
+    // Pass to next group
+    const nextGroup = parseInt(document.getElementById('back-to-grid-btn').dataset.nextGroup);
+    isStealMode = true;
+    stealCurrentGroupIdx = nextGroup;
+    sndSteal();
+    showQuestionToGroup(nextGroup);
+  } else {
+    // next-turn: advance to next group
+    advanceTurn();
+  }
+});
+
+function advanceTurn() {
+  isStealMode = false;
+  stealAttemptedGroups = [];
+
+  // Move to next group with remaining picks
+  let attempts = 0;
+  do {
+    currentGroupIdx = (currentGroupIdx + 1) % groupStates.length;
+    attempts++;
+  } while (groupStates[currentGroupIdx].picksRemaining === 0 && attempts < groupStates.length);
+
+  const allDone = groupStates.every(g => g.picksRemaining === 0);
+  const allUsed = board.every(b => b.status !== 'available');
+  if (allDone || allUsed) { showResults(); return; }
+
+  sndTurnChange();
+  renderBoard();
+  showScreen('board-screen');
+}
+
+document.getElementById('quit-btn').addEventListener('click', () => {
+  if (confirm('هل تريد إنهاء المسابقة وعرض النتائج؟')) {
+    sndClick();
+    showResults();
+  }
+});
+
+// ==================== RESULTS ====================
+function showResults() {
+  const sorted = [...groupStates].sort((a, b) => b.score - a.score);
+  const winner = sorted[0];
+
+  document.getElementById('result-banner').style.background = `linear-gradient(135deg, ${winner.color}, ${shadeColor(winner.color, -20)})`;
+  document.getElementById('result-emoji').textContent = '🏆';
+  document.getElementById('winner-text').innerHTML = `الفائزة: <strong>${winner.name}</strong> برصيد <strong>${winner.score}</strong> نقطة`;
+
+  const lb = document.getElementById('final-leaderboard');
+  lb.innerHTML = '';
+  sorted.forEach((g, rank) => {
+    // Count correct answers (where this group was the answerer)
+    const correctCount = board.filter(b => b.answeredBy === g.groupIdx && b.status === 'correct').length;
+    // Count steals (correct answers on questions originally picked by another group)
+    const steals = board.filter(b => {
+      if (b.answeredBy !== g.groupIdx || b.status !== 'correct') return false;
+      // Check if the first attempt was by another group
+      return b.attempts.length > 0 && b.attempts[0].groupIdx !== g.groupIdx;
+    }).length;
+
+    const medal = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : (rank + 1);
+    const row = document.createElement('div');
+    row.style.cssText = `display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; background: ${rank === 0 ? '#FFF8E1' : '#fafafa'}; margin-bottom: 8px; border: ${rank === 0 ? '2px solid #FFB300' : '1px solid #e0e0e0'};`;
+    let stealsBadge = steals > 0 ? `<span style="background: #FF8F00; color: white; padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; margin-right: 4px;">سرق ${steals}</span>` : '';
+    row.innerHTML = `
+      <div style="font-size: 22px; min-width: 32px; text-align: center;">${medal}</div>
+      <div style="width: 6px; height: 36px; background: ${g.color}; border-radius: 3px;"></div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 14px; font-weight: 600; color: ${g.color}; margin-bottom: 2px;">${g.name}</div>
+        <div style="font-size: 11px; color: #757575;">${correctCount} إجابة صحيحة ${stealsBadge}</div>
+      </div>
+      <div style="text-align: left;">
+        <div style="font-size: 22px; font-weight: 700; color: ${g.color};">${g.score}</div>
+        <div style="font-size: 10px; color: #757575;">نقطة</div>
+      </div>
+    `;
+    lb.appendChild(row);
+  });
+
+  const totalUsed = board.filter(b => b.status !== 'available').length;
+  const totalCorrect = board.filter(b => b.status === 'correct').length;
+  const totalWrong = board.filter(b => b.status === 'wrong').length;
+  const totalPassed = board.filter(b => b.status === 'passed').length;
+
+  document.getElementById('overall-stats').innerHTML = `
+    <div style="background: #E8F5E9; border-radius: 10px; padding: 12px; text-align: center;">
+      <i class="ti ti-check" style="font-size: 20px; color: #2E7D32;"></i>
+      <div style="font-size: 22px; font-weight: 600; color: #1B5E20;">${totalCorrect}</div>
+      <div style="font-size: 11px; color: #2E7D32;">أُجيبت بشكل صحيح</div>
+    </div>
+    <div style="background: #FFEBEE; border-radius: 10px; padding: 12px; text-align: center;">
+      <i class="ti ti-x" style="font-size: 20px; color: #C62828;"></i>
+      <div style="font-size: 22px; font-weight: 600; color: #B71C1C;">${totalWrong}</div>
+      <div style="font-size: 11px; color: #C62828;">فشلت بها الجميع</div>
+    </div>
+    <div style="background: #ECEFF1; border-radius: 10px; padding: 12px; text-align: center;">
+      <i class="ti ti-clock-x" style="font-size: 20px; color: #455A64;"></i>
+      <div style="font-size: 22px; font-weight: 600; color: #37474F;">${totalPassed}</div>
+      <div style="font-size: 11px; color: #455A64;">انتهى وقتها</div>
+    </div>
+    <div style="background: #E3F2FD; border-radius: 10px; padding: 12px; text-align: center;">
+      <i class="ti ti-list-numbers" style="font-size: 20px; color: #1565C0;"></i>
+      <div style="font-size: 22px; font-weight: 600; color: #0D47A1;">${totalUsed}/${board.length}</div>
+      <div style="font-size: 11px; color: #1565C0;">من اللوحة</div>
+    </div>
+  `;
+
+  showScreen('results-screen');
+  sndWin();
+  showConfetti();
+}
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  sndClick();
+  init();
+});
+
+init();
+</script>
+
+</body>
+</html>
