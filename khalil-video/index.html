@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شبكة أخبار الخليل — فيديو جرافيك</title>
+<style>
+@font-face{font-family:'Kufi';src:url(fonts/ReemKufi.ttf) format('truetype');font-weight:400 700}
+@font-face{font-family:'Cairo';src:url(fonts/Cairo.ttf) format('truetype');font-weight:200 1000}
+@font-face{font-family:'Montserrat';src:url(fonts/Montserrat.ttf) format('truetype');font-weight:100 900}
+:root{--night:#050b22;--indigo:#0b1640;--glass:#1e5bff;--glass2:#0a3dc2;--turq:#20d3e0;--gold:#f2c14e;--gold2:#c8962e;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;height:100%;overflow:hidden}
+body{font-family:'Cairo',sans-serif;color:#fff}
+#viewport{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+body.render #viewport{inset:0;display:block}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--night);flex:none;transform-origin:center}
+body.render #stage{transform:none!important}
+.layer{position:absolute;inset:0}
+.scene{position:absolute;inset:0;overflow:hidden}
+.en{font-family:'Montserrat',sans-serif}
+.kufi{font-family:'Kufi',sans-serif}
+.gold{background:linear-gradient(100deg,#b8862a 0%,#f2c14e 30%,#fff6d8 50%,#f2c14e 70%,#b8862a 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.glassCard{background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:2px solid rgba(255,255,255,.22);box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3);backdrop-filter:blur(6px)}
+.center{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center}
+
+#bg{position:absolute;inset:0}
+#pattern{position:absolute;inset:-300px;opacity:.1}
+#rays{position:absolute;left:50%;top:0;width:2600px;height:2600px;margin-left:-1300px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(242,193,78,.16) 0deg 4deg,transparent 4deg 12deg);
+  -webkit-mask:radial-gradient(circle,#000 10%,transparent 60%);mask:radial-gradient(circle,#000 10%,transparent 60%)}
+#fx{position:absolute;inset:0}
+#flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#fff6d8 0%,rgba(242,193,78,.6) 40%,transparent 75%);pointer-events:none;z-index:70}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);z-index:65}
+
+/* emblem */
+.emblem{position:absolute;left:50%;filter:drop-shadow(0 0 30px rgba(30,91,255,.6)) drop-shadow(0 0 60px rgba(242,193,78,.25))}
+.emblem svg{width:100%;height:100%;overflow:visible}
+
+/* S1 */
+#s1em{width:560px;height:560px;margin-left:-280px;top:420px}
+#s1title{top:1060px}
+#s1title .a{font-size:62px;font-weight:800;color:var(--turq);letter-spacing:.3em;padding-right:.3em}
+#s1title .b{font-family:'Kufi';font-weight:700;font-size:170px;line-height:1.25;white-space:nowrap}
+#s1title .c{font-family:'Montserrat';font-weight:700;font-size:34px;letter-spacing:.42em;padding-left:.42em;margin-top:16px;color:rgba(255,255,255,.85);white-space:nowrap}
+#s1title .line{width:520px;height:4px;margin:26px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* S2 */
+#sky{position:absolute;inset:0}
+#skyline{position:absolute;left:0;bottom:0;width:1080px;height:760px}
+#skyline svg{width:100%;height:100%}
+.sk{fill:none;stroke:#f2c14e;stroke-width:3;stroke-linejoin:round}
+#w1{top:400px;font-size:130px;font-weight:900}
+#w2{top:600px}
+#w2 span{font-family:'Kufi';font-weight:700;font-size:330px;line-height:1.2}
+#w3{top:1040px;font-size:104px;font-weight:900}
+#w3 small{display:block;text-align:center;font-family:'Montserrat';font-weight:700;font-size:30px;letter-spacing:.4em;color:var(--turq)}
+#tiles{position:absolute;left:90px;right:90px;top:760px;display:grid;grid-template-columns:1fr 1fr;gap:34px;direction:rtl}
+.tile{height:330px;border-radius:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.tile svg{width:120px;height:120px;fill:none;stroke:#fff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.tile .t{font-size:62px;font-weight:900;line-height:1.2}
+.tile .e{font-family:'Montserrat';font-weight:700;font-size:22px;letter-spacing:.3em;opacity:.7}
+#tilesHead{top:330px}
+#tilesHead .a{font-size:92px;font-weight:900;line-height:1.3}
+#tilesHead .b{font-family:'Montserrat';font-weight:700;font-size:28px;letter-spacing:.4em;color:var(--turq)}
+
+/* S3 platforms */
+.plat .head{top:150px}
+.plat .ico{width:230px;height:230px;border-radius:56px;filter:drop-shadow(0 20px 40px rgba(0,0,0,.4))}
+.plat .ico svg{width:100%;height:100%}
+.plat .name{font-size:100px;font-weight:900;line-height:1.3;margin-top:12px}
+.plat .handle{font-family:'Montserrat';font-weight:700;font-size:44px;letter-spacing:.04em;padding:8px 34px;border-radius:40px;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.25);direction:ltr}
+.phone{position:absolute;left:220px;top:760px;width:640px;height:1060px;border-radius:78px;background:#0a0a0c;padding:18px;box-shadow:0 60px 100px rgba(0,0,0,.55),0 0 0 3px rgba(255,255,255,.14)}
+.screen{position:relative;width:100%;height:100%;border-radius:62px;overflow:hidden;background:#fff;color:#111}
+.notch{position:absolute;left:50%;top:16px;width:160px;height:40px;margin-left:-80px;border-radius:24px;background:#0a0a0c;z-index:5}
+.float{position:absolute;width:90px;height:90px}
+.float svg{width:100%;height:100%}
+/* facebook post */
+.fb .bar{height:130px;background:#fff;border-bottom:2px solid #e4e6eb;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 16px;direction:ltr}
+.fb .bar b{font-family:'Montserrat';font-weight:800;font-size:42px;color:#1877F2;letter-spacing:-.02em}
+.fb .bar i{width:48px;height:48px;border-radius:50%;background:#e4e6eb;display:inline-block;margin-left:10px}
+.post{padding:22px 26px;direction:rtl}
+.post .who{display:flex;align-items:center;gap:16px}
+.post .av{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle,#1e5bff,#0a1f66);display:flex;align-items:center;justify-content:center;flex:none}
+.post .av svg{width:62px;height:62px}
+.post .nm{font-weight:900;font-size:30px;line-height:1.3}
+.post .tm{font-size:22px;color:#65676b;font-weight:600}
+.post .txt{margin:18px 0 14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.post .txt i{display:block;height:16px;border-radius:8px;background:#d0d3d9}
+.post .img{height:380px;border-radius:12px;overflow:hidden}
+.post .img svg{width:100%;height:100%;display:block}
+.post .react{display:flex;align-items:center;gap:8px;margin-top:16px;direction:rtl;font-size:22px;color:#65676b;font-weight:700}
+.post .react .r{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #fff;margin-left:-12px}
+.post .react .r svg{width:24px;height:24px}
+.post .acts{display:flex;justify-content:space-around;border-top:2px solid #e4e6eb;margin-top:14px;padding-top:14px;font-weight:800;font-size:24px;color:#65676b}
+/* instagram profile */
+.ig{padding-top:90px;direction:ltr}
+.ig .top{display:flex;align-items:center;gap:40px;padding:10px 34px}
+.ig .ring{width:170px;height:170px;border-radius:50%;padding:7px;background:conic-gradient(#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75);flex:none}
+.ig .ring>div{width:100%;height:100%;border-radius:50%;border:6px solid #fff;background:radial-gradient(circle,#1e5bff,#0a1f66);display:flex;align-items:center;justify-content:center}
+.ig .ring svg{width:120px;height:120px}
+.ig .stats{display:flex;gap:34px;flex:1;justify-content:space-around}
+.ig .stats div{display:flex;flex-direction:column;align-items:center;gap:10px}
+.ig .stats i{display:block;width:70px;height:26px;border-radius:8px;background:#222}
+.ig .stats s{display:block;width:90px;height:16px;border-radius:8px;background:#c7c7c7;text-decoration:none}
+.ig .uname{font-family:'Montserrat';font-weight:800;font-size:34px;padding:14px 34px 4px}
+.ig .bio{padding:0 34px;font-weight:800;font-size:28px;direction:rtl;text-align:left}
+.ig .btn{margin:18px 34px;height:66px;border-radius:14px;background:#0095f6;color:#fff;font-family:'Montserrat';font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center}
+.ig .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.ig .grid div{height:198px}
+/* telegram */
+.tg{background:linear-gradient(160deg,#a7d7a0,#d7e7b2 40%,#8fc9c4);height:100%}
+.tg .bar{height:140px;background:#fff;display:flex;align-items:flex-end;gap:18px;padding:0 26px 18px;direction:rtl;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.tg .bar .av{width:74px;height:74px;border-radius:50%;background:radial-gradient(circle,#1e5bff,#0a1f66);display:flex;align-items:center;justify-content:center}
+.tg .bar .av svg{width:58px;height:58px}
+.tg .bar .nm{font-weight:900;font-size:30px;line-height:1.2}
+.tg .bar .sub{font-size:22px;color:#708499;font-weight:700}
+.tg .msgs{position:absolute;left:0;right:0;bottom:120px;display:flex;flex-direction:column;gap:18px;padding:0 24px;direction:rtl}
+.tg .msg{align-self:flex-start;width:84%;background:#fff;border-radius:28px 28px 28px 8px;padding:18px 22px 12px;box-shadow:0 3px 8px rgba(0,0,0,.08)}
+.tg .msg .nm{font-weight:900;font-size:24px;color:#2481cc}
+.tg .msg .ln{display:flex;flex-direction:column;gap:9px;margin:10px 0 8px;align-items:flex-start}
+.tg .msg .ln i{display:block;height:14px;border-radius:7px;background:#cfd6dd}
+.tg .msg .meta{display:flex;justify-content:flex-start;gap:10px;font-family:'Montserrat';font-size:18px;color:#8a9aa9;direction:ltr}
+.tg .msg .img{height:200px;border-radius:16px;overflow:hidden;margin-top:6px}
+.tg .msg .img svg{width:100%;height:100%;display:block}
+.tg .join{position:absolute;left:0;right:0;bottom:0;height:110px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;color:#2481cc}
+#plane{position:absolute;width:170px;height:170px;z-index:20;filter:drop-shadow(0 12px 20px rgba(0,0,0,.35))}
+#trail{position:absolute;inset:0;z-index:19;pointer-events:none}
+
+/* S4 orbit */
+#s4em{width:380px;height:380px;margin-left:-190px;top:700px}
+#orbit{position:absolute;left:0;top:0;width:1080px;height:1920px}
+.orb{position:absolute;width:190px;height:190px;margin:-95px 0 0 -95px}
+.orb svg{width:100%;height:100%;filter:drop-shadow(0 16px 30px rgba(0,0,0,.45))}
+#s4head{top:230px}
+#s4head .a{font-size:96px;font-weight:900;line-height:1.3}
+#s4head .b{font-family:'Kufi';font-weight:700;font-size:130px;line-height:1.25}
+#handles{position:absolute;left:110px;right:110px;top:1330px;display:flex;flex-direction:column;gap:26px}
+.hrow{height:130px;border-radius:65px;display:flex;align-items:center;gap:26px;padding:0 20px 0 36px;direction:ltr}
+.hrow svg{width:96px;height:96px;flex:none}
+.hrow .h{font-family:'Montserrat';font-weight:800;font-size:44px;flex:1}
+.hrow .p{font-weight:900;font-size:36px;opacity:.75;direction:rtl}
+
+/* S5 notifications */
+#lock{position:absolute;left:150px;top:110px;width:780px;height:1560px;border-radius:96px;background:#0a0a0c;padding:22px;box-shadow:0 60px 120px rgba(0,0,0,.6),0 0 0 3px rgba(255,255,255,.14)}
+#lockScr{position:relative;width:100%;height:100%;border-radius:76px;overflow:hidden}
+#lockScr .wall{position:absolute;inset:0}
+#lockScr .wall svg{position:absolute;left:0;bottom:0;width:100%;height:60%}
+#lockTime{position:absolute;left:0;right:0;top:120px;text-align:center;font-family:'Montserrat';font-weight:600;font-size:170px;letter-spacing:-.02em;line-height:1}
+#lockDate{position:absolute;left:0;right:0;top:92px;text-align:center;font-size:34px;font-weight:700;opacity:.85}
+#notifs{position:absolute;left:26px;right:26px;top:360px;display:flex;flex-direction:column;gap:18px}
+.nt{height:150px;border-radius:40px;background:rgba(255,255,255,.82);color:#111;display:flex;align-items:center;gap:20px;padding:0 24px;direction:rtl;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.nt svg{width:84px;height:84px;flex:none;border-radius:22px}
+.nt .c{flex:1;display:flex;flex-direction:column;gap:8px}
+.nt .r1{display:flex;justify-content:space-between;align-items:center}
+.nt .r1 b{font-size:28px;font-weight:900}
+.nt .r1 span{font-size:22px;color:#666;font-weight:700}
+.nt .r2{display:flex;align-items:center;gap:12px}
+.nt .r2 em{font-style:normal;background:#e0223a;color:#fff;font-weight:900;font-size:20px;padding:1px 12px;border-radius:8px}
+.nt .r2 i{display:block;height:14px;border-radius:7px;background:#9aa0a8;flex:1}
+#miss{top:1700px}
+#miss .a{font-size:110px;font-weight:900;line-height:1.2}
+#miss .b{display:flex;align-items:center;gap:16px;font-size:44px;font-weight:800;color:var(--turq)}
+#miss .b svg{width:52px;height:52px;fill:none;stroke:var(--turq);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* S6 */
+#s6em{width:440px;height:440px;margin-left:-220px;top:250px}
+#s6title{top:740px}
+#s6title .a{font-size:56px;font-weight:800;color:var(--turq);letter-spacing:.3em;padding-right:.3em}
+#s6title .b{font-family:'Kufi';font-weight:700;font-size:150px;line-height:1.25;white-space:nowrap}
+#s6title .c{font-family:'Montserrat';font-weight:700;font-size:30px;letter-spacing:.42em;padding-left:.42em;color:rgba(255,255,255,.85)}
+#follow{top:1180px}
+#follow .t{font-size:76px;font-weight:900;margin-bottom:28px}
+#follow .rows{display:flex;flex-direction:column;gap:24px;width:860px}
+#fadeOut{position:absolute;inset:0;background:#000;pointer-events:none;z-index:80}
+
+/* watermark */
+#bug{position:absolute;left:0;right:0;top:44px;display:flex;justify-content:center;align-items:center;gap:14px;z-index:60;direction:rtl}
+#bug svg{width:64px;height:64px}
+#bug span{font-size:34px;font-weight:900}
+
+#controls{position:fixed;left:0;right:0;bottom:0;height:56px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;direction:ltr;font-family:sans-serif;font-size:14px;color:#fff}
+#controls button{background:var(--gold);color:#111;border:0;border-radius:6px;font-weight:800;padding:8px 14px;cursor:pointer}
+#controls input{flex:1;accent-color:var(--gold)}
+body.render #controls{display:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+  <div id="bg"></div>
+  <svg id="pattern" viewBox="0 0 1680 2520"><defs><pattern id="star8" width="140" height="140" patternUnits="userSpaceOnUse">
+    <g fill="none" stroke="#f2c14e" stroke-width="2" transform="translate(70 70)"><rect x="-34" y="-34" width="68" height="68"/><rect x="-34" y="-34" width="68" height="68" transform="rotate(45)"/><circle r="16"/></g>
+    <path d="M0 0 L22 22 M140 0 L118 22 M0 140 L22 118 M140 140 L118 118" stroke="#f2c14e" stroke-width="2"/></pattern></defs>
+    <rect width="1680" height="2520" fill="url(#star8)"/></svg>
+  <div id="rays"></div>
+  <canvas id="fx" width="1080" height="1920"></canvas>
+
+  <!-- S1: emblem + name -->
+  <div class="scene" id="s1">
+    <div class="emblem" id="s1em"></div>
+    <div class="center" id="s1title">
+      <div class="a">شبكة</div>
+      <div class="b gold" id="s1name">أخبار الخليل</div>
+      <div class="c">HEBRON NEWS NETWORK</div>
+      <div class="line" id="s1line"></div>
+    </div>
+  </div>
+
+  <!-- S2: Hebron -->
+  <div class="scene" id="s2">
+    <div id="sky"></div>
+    <div id="skyline"></div>
+    <div class="center" id="w1">من قلب</div>
+    <div class="center" id="w2"><span class="gold" id="w2t">الخليل</span></div>
+    <div class="center" id="w3">أولاً بأول<small>FROM THE HEART OF HEBRON</small></div>
+    <div class="center" id="tilesHead"><div class="a">كل ما يحدث في الخليل</div><div class="b">NEWS · PHOTOS · VIDEO · LIVE</div></div>
+    <div id="tiles"></div>
+  </div>
+
+  <!-- S3: platforms (built by JS) -->
+  <div class="scene plat" id="sFB"></div>
+  <div class="scene plat" id="sIG"></div>
+  <div class="scene plat" id="sTG"></div>
+
+  <!-- S4: one network, three platforms -->
+  <div class="scene" id="s4">
+    <div class="center" id="s4head"><div class="a">شبكة واحدة</div><div class="b gold" id="s4b">ثلاث منصات</div></div>
+    <div id="orbit"></div>
+    <div class="emblem" id="s4em"></div>
+    <div id="handles"></div>
+  </div>
+
+  <!-- S5: notifications -->
+  <div class="scene" id="s5">
+    <div id="lock"><div id="lockScr">
+      <div class="wall" id="wall"></div>
+      <div id="lockDate">الخليل · فلسطين</div>
+      <div id="lockTime">20:25</div>
+      <div id="notifs"></div>
+    </div></div>
+    <div class="center" id="miss"><div class="a gold" id="missA">لا يفوتك خبر</div></div>
+  </div>
+
+  <!-- S6: outro -->
+  <div class="scene" id="s6">
+    <div class="emblem" id="s6em"></div>
+    <div class="center" id="s6title"><div class="a">شبكة</div><div class="b gold" id="s6name">أخبار الخليل</div><div class="c">HEBRON NEWS NETWORK</div></div>
+    <div class="center" id="follow"><div class="t">تابعونا على</div><div class="rows" id="followRows"></div></div>
+    <div id="fadeOut"></div>
+  </div>
+
+  <div id="bug"></div>
+  <div id="vignette"></div>
+  <div id="flash"></div>
+</div></div>
+
+<div id="controls">
+  <button id="playBtn">▶ Play</button>
+  <input type="range" id="scrub" min="0" max="29.5" step="0.001" value="0">
+  <span id="time">0.00s</span>
+</div>
+<audio id="music" src="music.m4a" preload="auto"></audio>
+
+<script>
+/* ============================================================
+   Timeline in beats at 110 BPM. Keep in sync with music.js
+   ============================================================ */
+const W = 1080, H = 1920, BPM = 110, B = 60 / BPM, FPS = 30;
+const b = n => n * B;
+const T = {
+  hit: b(4),
+  s2: b(8), w2: b(9), w3: b(10.5), tiles: b(12),
+  fb: b(16), ig: b(20), tg: b(24),
+  s4: b(28), handles: b(32),
+  s5: b(36), miss: b(41),
+  s6: b(44), end: b(54)
+};
+const DURATION = T.end;
+const CUTS = [T.s2, T.fb, T.ig, T.tg, T.s4, T.s5, T.s6];
+
+/* ---------------- helpers ---------------- */
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, c = 1) => Math.min(c, Math.max(a, v));
+const P = (t, a, c) => clamp((t - a) / (c - a));
+const lerp = (a, c, k) => a + (c - a) * k;
+const E = {
+  outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  outCubic: x => 1 - Math.pow(1 - x, 3),
+  inCubic: x => x * x * x,
+  inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  outBack: x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+function st(el, o = {}) {
+  const {op = 1, x = 0, y = 0, s = 1, r = 0, blur = 0, extra = ''} = o;
+  el.style.opacity = op;
+  el.style.transform = `${extra} translate(${x}px,${y}px) scale(${s}) rotate(${r}deg)`;
+  el.style.filter = blur > 0.05 ? `blur(${blur}px)` : '';
+}
+const shake = (t, a, amp = 10, len = .18) => (t < a || t > a + len) ? 0 : Math.sin((t - a) * 140) * amp * (1 - (t - a) / len);
+const glint = (el, t, a, dur = .9) => { el.style.backgroundPosition = `${lerp(100, -20, E.inOutCubic(P(t, a, a + dur)))}% 0`; };
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+/* ---------------- graphics ---------------- */
+function emblemSVG() {
+  return `<svg viewBox="-100 -100 200 200">
+    <defs><radialGradient id="glassG" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#8fd8ff"/><stop offset=".35" stop-color="#2f74ff"/><stop offset="1" stop-color="#08268f"/></radialGradient></defs>
+    <g class="emRot">
+      <rect class="emS" x="-68" y="-68" width="136" height="136" fill="none" stroke="#f2c14e" stroke-width="4" pathLength="1"/>
+      <rect class="emS" x="-68" y="-68" width="136" height="136" fill="none" stroke="#f2c14e" stroke-width="4" pathLength="1" transform="rotate(45)"/>
+      ${[...Array(8)].map((_, i) => `<circle class="emDot" cx="${Math.cos(i * Math.PI / 4) * 96}" cy="${Math.sin(i * Math.PI / 4) * 96}" r="4" fill="#f2c14e"/>`).join('')}
+    </g>
+    <circle class="emC" r="60" fill="none" stroke="#20d3e0" stroke-width="2.5" pathLength="1"/>
+    <circle class="emG" r="52" fill="url(#glassG)"/>
+    <ellipse class="emG" cx="-16" cy="-24" rx="20" ry="11" fill="rgba(255,255,255,.35)"/>
+    <g class="emM" fill="#fff">
+      <path d="M-30 26 H30 V6 H-30 Z"/>
+      <path d="M-30 6 V2 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h2 v4z"/>
+      <path d="M-30 6 V-24 H-22 V6 Z"/><path d="M-32 -16 H-20 V-13 H-32 Z"/><path d="M-30 -24 L-26 -34 L-22 -24 Z"/>
+      <path d="M22 6 V-24 H30 V6 Z"/><path d="M20 -16 H32 V-13 H20 Z"/><path d="M22 -24 L26 -34 L30 -24 Z"/>
+      <path d="M-10 6 A10 10 0 0 1 10 6 Z"/><path d="M-1 -5 h2 v-5 h-2z"/>
+      <g fill="#08268f"><path d="M-20 22 v-8 a3 3 0 0 1 6 0 v8z"/><path d="M-6 22 v-8 a3 3 0 0 1 6 0 v8z"/><path d="M8 22 v-8 a3 3 0 0 1 6 0 v8z"/></g>
+    </g></svg>`;
+}
+function emblemParts(root) {
+  return {rot: root.querySelector('.emRot'), sq: [...root.querySelectorAll('.emS')], c: root.querySelector('.emC'),
+          g: [...root.querySelectorAll('.emG')], m: root.querySelector('.emM'), dots: [...root.querySelectorAll('.emDot')]};
+}
+function drawEmblem(Em, t, t0, spd = 1) {
+  const q = x => t0 + x / spd;
+  Em.sq.forEach((s, i) => { s.style.strokeDasharray = 1; s.style.strokeDashoffset = 1 - E.inOutCubic(P(t, q(i * .25), q(1.3 + i * .25))); });
+  Em.c.style.strokeDasharray = 1; Em.c.style.strokeDashoffset = 1 - E.outCubic(P(t, q(.9), q(1.6)));
+  Em.g.forEach(g => { g.style.opacity = P(t, q(1.3), q(1.8)); });
+  Em.m.style.opacity = P(t, q(1.7), q(2.0));
+  Em.m.style.transform = `translateY(${(1 - E.outBack(P(t, q(1.7), q(2.1)))) * 30}px)`;
+  Em.dots.forEach((d, i) => { const k = E.outBack(P(t, q(1.4 + i * .05), q(1.7 + i * .05))); d.setAttribute('r', 4 * k); });
+  Em.rot.style.transform = `rotate(${t * 12}deg)`;
+}
+// Hebron skyline: hills, old-city houses, and the Ibrahimi Mosque with its two minarets
+function skylineSVG(stroke = true) {
+  const houses = [];
+  const R = rng(7);
+  for (let x = -20; x < 1100; x += 70 + R() * 40) {
+    if (x > 250 && x < 820) continue;
+    const w = 60 + R() * 50, h = 60 + R() * 110, y = 560 - h;
+    houses.push(`<rect x="${x}" y="${y}" width="${w}" height="${h + 200}" fill="#0c1640"/>`);
+    if (R() > .45) houses.push(`<path d="M${x + w * .25} ${y} a${w * .25} ${w * .22} 0 0 1 ${w * .5} 0z" fill="#0c1640"/>`);
+    for (let k = 0; k < 2; k++) if (R() > .35) houses.push(`<rect x="${x + 12 + k * 26}" y="${y + 24 + R() * 30}" width="10" height="16" fill="#f2c14e" opacity="${.35 + R() * .5}"/>`);
+  }
+  const cren = [...Array(22)].map((_, i) => `h10 v-12 h8 v12`).join(' ');
+  const sk = stroke ? 'class="sk" pathLength="1"' : '';
+  return `<svg viewBox="0 0 1080 760" preserveAspectRatio="xMidYMax slice">
+    <path d="M0 470 C160 400 330 430 520 400 S880 350 1080 420 V760 H0Z" fill="#13205a"/>
+    <path d="M0 520 C200 480 420 510 600 490 S900 470 1080 500 V760 H0Z" fill="#101b4c"/>
+    ${houses.join('')}
+    <g fill="#08112e">
+      <rect x="300" y="360" width="480" height="400"/>
+      <path d="M300 360 ${cren}"/>
+      <rect x="300" y="130" width="54" height="240"/><rect x="290" y="200" width="74" height="16"/><rect x="306" y="110" width="42" height="24"/><path d="M306 110 L327 60 L348 110Z"/>
+      <rect x="726" y="130" width="54" height="240"/><rect x="716" y="200" width="74" height="16"/><rect x="732" y="110" width="42" height="24"/><path d="M732 110 L753 60 L774 110Z"/>
+      <path d="M470 360 a70 62 0 0 1 140 0z"/><rect x="536" y="270" width="8" height="30"/>
+    </g>
+    <g ${stroke ? '' : 'display="none"'}>
+      <path ${sk} d="M300 760 V360 H780 V760"/>
+      <path ${sk} d="M300 130 V370 M354 130 V370 M290 200 H364 M290 216 H364 M306 134 L327 60 L348 134"/>
+      <path ${sk} d="M726 130 V370 M780 130 V370 M716 200 H790 M716 216 H790 M732 134 L753 60 L774 134"/>
+      <path ${sk} d="M470 360 A70 62 0 0 1 610 360"/>
+      ${[...Array(9)].map((_, i) => `<path ${sk} d="M${345 + i * 48} 560 V470 a14 14 0 0 1 28 0 V560"/>`).join('')}
+    </g>
+    <g fill="#f2c14e">${[...Array(9)].map((_, i) => `<rect class="win" x="${351 + i * 48}" y="480" width="16" height="70" rx="8" opacity="0"/>`).join('')}</g>
+  </svg>`;
+}
+const ICON = {
+  fb: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#1877F2"/><path d="M58 100V63h12.5l2-15H58v-9.5c0-4.3 1.2-7.3 7.4-7.3h7.8V17.8c-1.4-.2-6-.6-11.3-.6-11.2 0-18.9 6.8-18.9 19.4V48H30.4v15h12.6v37z" fill="#fff"/></svg>`,
+  ig: `<svg viewBox="0 0 100 100"><defs><radialGradient id="igG" cx="28%" cy="108%" r="140%"><stop offset="0" stop-color="#fdf497"/><stop offset=".08" stop-color="#fdf497"/><stop offset=".45" stop-color="#fd5949"/><stop offset=".62" stop-color="#d6249f"/><stop offset=".92" stop-color="#285AEB"/></radialGradient></defs><rect width="100" height="100" rx="26" fill="url(#igG)"/><rect x="22" y="22" width="56" height="56" rx="17" fill="none" stroke="#fff" stroke-width="7"/><circle cx="50" cy="50" r="13.5" fill="none" stroke="#fff" stroke-width="7"/><circle cx="67.5" cy="32.5" r="4.4" fill="#fff"/></svg>`,
+  tg: `<svg viewBox="0 0 100 100"><defs><linearGradient id="tgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#37BBFE"/><stop offset="1" stop-color="#007DBB"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#tgG)"/><path d="M22.6 49.5c14.6-6.4 24.3-10.5 29.2-12.5 13.9-5.8 16.8-6.8 18.7-6.8.4 0 1.3.1 1.9.6.5.4.6.9.7 1.3.1.4.1 1.2 0 1.9-.8 7.9-4 27.1-5.6 36-.7 3.7-2.1 5-3.4 5.1-2.9.3-5.1-1.9-7.9-3.7-4.4-2.9-6.9-4.7-11.2-7.5-4.9-3.3-1.7-5.1 1.1-8 .7-.8 13.5-12.4 13.8-13.4 0-.1.1-.6-.2-.9s-.7-.2-1-.1c-.4.1-7.4 4.7-20.9 13.8-2 1.4-3.8 2-5.4 2-1.8 0-5.2-1-7.7-1.8-3.1-1-5.6-1.5-5.4-3.3.1-.9 1.4-1.8 3.7-2.7z" fill="#fff"/></svg>`,
+  like: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#1877F2"/><path d="M11 18h5v12h-5zM17 29V18l5-8c1.5 0 2.5 1 2.2 2.8L23.5 17H29c1.6 0 2.6 1.4 2.2 2.9l-2 7.5c-.3 1-1.2 1.6-2.2 1.6z" fill="#fff"/></svg>`,
+  heart: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#f33e58"/><path d="M20 30s-9-5.6-9-11.6A5 5 0 0 1 20 15a5 5 0 0 1 9 3.4C29 24.4 20 30 20 30z" fill="#fff"/></svg>`,
+  heartIG: `<svg viewBox="0 0 40 40"><path d="M20 35S3 25 3 13.5A8.5 8.5 0 0 1 20 9a8.5 8.5 0 0 1 17 4.5C37 25 20 35 20 35z" fill="#ff3040"/></svg>`,
+  bolt: '<svg viewBox="0 0 100 100"><path d="M56 10 L24 56 H48 L42 90 L76 42 H52 Z"/></svg>',
+  photo: '<svg viewBox="0 0 100 100"><rect x="12" y="20" width="76" height="60" rx="10"/><circle cx="36" cy="40" r="7"/><path d="M14 74 L40 52 L56 64 L70 52 L88 68"/></svg>',
+  video: '<svg viewBox="0 0 100 100"><rect x="10" y="22" width="80" height="56" rx="12"/><path d="M42 38v24l22-12z"/></svg>',
+  live: '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="10" fill="#fff"/><path d="M32 32a26 26 0 0 0 0 36M68 32a26 26 0 0 1 0 36M20 20a42 42 0 0 0 0 60M80 20a42 42 0 0 1 0 60"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>',
+};
+const miniImg = (seed) => `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="mi${seed}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${['#f7a35c', '#6a8dff', '#ffc36b'][seed % 3]}"/><stop offset="1" stop-color="#1b2a6b"/></linearGradient></defs><rect width="400" height="240" fill="url(#mi${seed})"/><g fill="#0b1437"><rect x="110" y="120" width="180" height="120"/><rect x="110" y="60" width="20" height="70"/><rect x="270" y="60" width="20" height="70"/><path d="M110 60l10-22 10 22zM270 60l10-22 10 22zM170 120a30 26 0 0 1 60 0z"/><rect x="0" y="170" width="400" height="70"/></g></svg>`;
+
+/* ---------------- build DOM ---------------- */
+$('s1em').innerHTML = emblemSVG(); $('s4em').innerHTML = emblemSVG(); $('s6em').innerHTML = emblemSVG();
+const Em1 = emblemParts($('s1em')), Em4 = emblemParts($('s4em')), Em6 = emblemParts($('s6em'));
+$('skyline').innerHTML = skylineSVG(true);
+const skStrokes = [...document.querySelectorAll('#skyline .sk')], skWins = [...document.querySelectorAll('#skyline .win')];
+$('bug').innerHTML = emblemSVG() + '<span>شبكة أخبار الخليل</span>';
+drawEmblem(emblemParts($('bug')), 99, 0);
+
+const TILES = [['bolt', 'عاجل', 'BREAKING', 'linear-gradient(145deg,#e0223a,#8a0f22)'], ['photo', 'صور', 'PHOTOS', 'linear-gradient(145deg,#1e5bff,#0a2a8f)'],
+               ['video', 'فيديو', 'VIDEO', 'linear-gradient(145deg,#12a5b4,#0b5a74)'], ['live', 'بث مباشر', 'LIVE', 'linear-gradient(145deg,#f2a93b,#b86a12)']];
+$('tiles').innerHTML = TILES.map(([ic, t, e, bg]) => `<div class="tile" style="background:${bg};box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.3)">${ICON[ic]}<div class="t">${t}</div><div class="e">${e}</div></div>`).join('');
+const tiles = [...$('tiles').children];
+
+const avatar = `<div class="av">${emblemSVG()}</div>`;
+const PLAT = {
+  sFB: {name: 'فيسبوك', handle: 'شبكة أخبار الخليل', icon: 'fb', bg: 'radial-gradient(ellipse at 50% 30%,#2a7bff 0%,#0f3fa8 45%,#061646 100%)', float: ['like', 'heart'],
+    screen: `<div class="fb"><div class="bar"><b>facebook</b><span><i></i><i></i></span></div>
+      <div class="post"><div class="who">${avatar}<div><div class="nm">شبكة أخبار الخليل</div><div class="tm">الآن</div></div></div>
+      <div class="txt"><i style="width:94%"></i><i style="width:70%"></i></div><div class="img">${miniImg(0)}</div>
+      <div class="react"><span class="r">${ICON.like}</span><span class="r">${ICON.heart}</span><span class="cnt"></span></div>
+      <div class="acts"><span>أعجبني</span><span>تعليق</span><span>مشاركة</span></div></div>
+      <div class="post"><div class="who">${avatar}<div><div class="nm">شبكة أخبار الخليل</div><div class="tm">منذ 5 د</div></div></div><div class="txt"><i style="width:88%"></i><i style="width:55%"></i></div></div></div>`},
+  sIG: {name: 'إنستغرام', handle: '@khaleelnews', icon: 'ig', bg: 'radial-gradient(ellipse at 30% 20%,#fcaf45 0%,#e1306c 35%,#833ab4 70%,#2a0d4f 100%)', float: ['heartIG'],
+    screen: `<div class="ig"><div class="top"><div class="ring"><div>${emblemSVG()}</div></div><div class="stats"><div><i></i><s></s></div><div><i></i><s></s></div><div><i></i><s></s></div></div></div>
+      <div class="uname">khaleelnews</div><div class="bio">شبكة أخبار الخليل</div><div class="btn">Follow</div>
+      <div class="grid">${[...Array(9)].map((_, i) => `<div style="background:${['linear-gradient(135deg,#1e5bff,#0b1640)', 'linear-gradient(135deg,#f2c14e,#c8622e)', 'linear-gradient(135deg,#20d3e0,#0b3d74)', 'linear-gradient(135deg,#e0223a,#5a0b1a)'][i % 4]}"></div>`).join('')}</div></div>`},
+  sTG: {name: 'تلغرام', handle: 't.me/khalelnews', icon: 'tg', bg: 'radial-gradient(ellipse at 50% 25%,#37bbfe 0%,#0f7cc4 45%,#06244a 100%)', float: [],
+    screen: `<div class="tg"><div class="bar"><div class="av">${emblemSVG()}</div><div><div class="nm">شبكة أخبار الخليل</div><div class="sub">قناة</div></div></div>
+      <div class="msgs">${[0, 1, 2].map(i => `<div class="msg"><div class="nm">شبكة أخبار الخليل</div>${i === 1 ? `<div class="img">${miniImg(1)}</div>` : ''}<div class="ln"><i style="width:96%"></i><i style="width:${[64, 50, 78][i]}%"></i></div><div class="meta"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#8a9aa9" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>${['20:21', '20:23', '20:25'][i]}</span></div></div>`).join('')}</div>
+      <div class="join">انضمام</div></div>`},
+};
+for (const [id, p] of Object.entries(PLAT)) {
+  $(id).innerHTML = `<div class="center head"><div class="ico">${ICON[p.icon]}</div><div class="name">${p.name}</div><div class="handle">${p.handle}</div></div>
+    <div class="phone"><div class="screen"><div class="notch"></div>${p.screen}</div></div>
+    ${[...Array(12)].map(() => `<div class="float"></div>`).join('')}`;
+  const fl = [...$(id).querySelectorAll('.float')];
+  fl.forEach((f, i) => f.innerHTML = p.float.length ? ICON[p.float[i % p.float.length]] : '');
+  p.el = $(id); p.head = $(id).querySelector('.head'); p.ico = $(id).querySelector('.ico'); p.nameEl = $(id).querySelector('.name');
+  p.handleEl = $(id).querySelector('.handle'); p.phone = $(id).querySelector('.phone'); p.floats = fl;
+}
+PLAT.sTG.msgs = [...$('sTG').querySelectorAll('.msg')];
+PLAT.sIG.cells = [...$('sIG').querySelectorAll('.grid div')];
+$('sTG').insertAdjacentHTML('beforeend', `<svg id="trail" viewBox="0 0 1080 1920"><path id="trailPath" d="" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="6" stroke-dasharray="4 18" stroke-linecap="round"/></svg><div id="plane">${ICON.tg}</div>`);
+
+// orbit icons + handle rows
+$('orbit').innerHTML = ['fb', 'ig', 'tg'].map(k => `<div class="orb">${ICON[k]}</div>`).join('');
+const orbs = [...$('orbit').children];
+const HANDLES = [['ig', '@khaleelnews', 'إنستغرام', 'linear-gradient(90deg,rgba(214,36,159,.55),rgba(253,89,73,.35))'],
+                 ['tg', 't.me/khalelnews', 'تلغرام', 'linear-gradient(90deg,rgba(41,169,235,.55),rgba(41,169,235,.2))'],
+                 ['fb', 'Facebook', 'شبكة أخبار الخليل', 'linear-gradient(90deg,rgba(24,119,242,.6),rgba(24,119,242,.2))']];
+const rowHTML = ([ic, h, p, bg]) => `<div class="hrow glassCard" style="background:${bg}">${ICON[ic]}<span class="h">${h}</span><span class="p">${p}</span></div>`;
+$('handles').innerHTML = HANDLES.map(rowHTML).join('');
+$('followRows').innerHTML = HANDLES.map(rowHTML).join('');
+const hrows = [...$('handles').children], frows = [...$('followRows').children];
+
+// lock screen notifications
+$('wall').innerHTML = `<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0b1a5c 0%,#1b3fa0 45%,#f2a15a 100%)"></div>` + skylineSVG(false);
+const NOTIF = ['tg', 'ig', 'fb', 'tg', 'fb', 'ig', 'tg'];
+$('notifs').innerHTML = NOTIF.map((k, i) => `<div class="nt">${ICON[k]}<div class="c"><div class="r1"><b>شبكة أخبار الخليل</b><span>${i === NOTIF.length - 1 ? 'الآن' : 'الآن'}</span></div><div class="r2">${i % 2 === 0 ? '<em>عاجل</em>' : ''}<i style="max-width:${[80, 95, 70, 88, 76, 92, 84][i]}%"></i></div></div></div>`).join('');
+const nts = [...$('notifs').children];
+$('miss').insertAdjacentHTML('beforeend', `<div class="b">${ICON.bell}<span>فعّل الإشعارات</span></div>`);
+
+/* particles: glowing "Hebron glass" bokeh + gold dust */
+const ctx = $('fx').getContext('2d');
+const PR = rng(2024);
+const parts = [...Array(90)].map(() => ({x: PR() * W, y: PR() * H, r: 3 + Math.pow(PR(), 3) * 38, sp: 20 + PR() * 90, ph: PR() * 6.28,
+  c: PR() < .55 ? [30 + PR() * 40, 110 + PR() * 80, 255] : (PR() < .5 ? [32, 211, 224] : [242, 193, 78])}));
+function drawFx(t, amt) {
+  ctx.clearRect(0, 0, W, H);
+  if (amt <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  for (const p of parts) {
+    const y = ((p.y - t * p.sp) % (H + 200) + H + 200) % (H + 200) - 100;
+    const x = p.x + Math.sin(t * .6 + p.ph) * 30;
+    const tw = .5 + .5 * Math.sin(t * 2.2 + p.ph * 3);
+    const a = amt * (p.r > 20 ? .16 : .55) * (.4 + .6 * tw);
+    const g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 2);
+    g.addColorStop(0, `rgba(${p.c[0]},${p.c[1]},${p.c[2]},${a})`);
+    g.addColorStop(1, `rgba(${p.c[0]},${p.c[1]},${p.c[2]},0)`);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 2, 0, 6.283); ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+/* ---------------- render ---------------- */
+const SCENES = {s1: [0, T.s2], s2: [T.s2, T.fb], sFB: [T.fb, T.ig], sIG: [T.ig, T.tg], sTG: [T.tg, T.s4], s4: [T.s4, T.s5], s5: [T.s5, T.s6], s6: [T.s6, T.end + 1]};
+
+function renderAt(t) {
+  // scene visibility + zoom-through transitions (exit: push in and blur, enter: settle from small)
+  for (const [id, [a, e]] of Object.entries(SCENES)) {
+    const el = $(id), on = t >= a - (a > 0 ? 0 : 0) && t < e;
+    show(el, on); if (!on) continue;
+    const kin = a > 0 ? E.outExpo(P(t, a, a + .4)) : 1, kout = e <= T.end ? E.inCubic(P(t, e - .22, e)) : 0;
+    st(el, {s: lerp(.86, 1, kin) * lerp(1, 1.3, kout), op: (a > 0 ? P(t, a, a + .08) : 1) * (1 - kout * .6), blur: kout * 14 + (1 - kin) * 6});
+  }
+  let fl = 0; for (const c of CUTS) fl = Math.max(fl, c > t ? E.inCubic(P(t, c - .15, c)) : 1 - E.outCubic(P(t, c, c + .35)));
+  fl = Math.max(fl, t >= T.hit ? 1 - E.outCubic(P(t, T.hit, T.hit + .5)) : 0);
+  $('flash').style.opacity = fl * .75;
+
+  // background mood per scene
+  let bg = 'radial-gradient(ellipse at 50% 35%,#13277a 0%,#0b1640 45%,#050b22 100%)', rays = 0, fxAmt = 1, pat = .1;
+  if (t < T.s2) { rays = P(t, T.hit - .5, T.hit + .5) * .9; fxAmt = P(t, 0, 1.5); }
+  else if (t < T.fb) { bg = `linear-gradient(180deg,#050b22 0%,#0f1f63 ${lerp(55, 40, P(t, T.w2, T.w2 + 1))}%,#6a3a8a 75%,#f29a4e 100%)`; fxAmt = .7; pat = .06; }
+  else if (t < T.s4) { bg = t < T.ig ? PLAT.sFB.bg : t < T.tg ? PLAT.sIG.bg : PLAT.sTG.bg; fxAmt = .45; pat = .08; }
+  else if (t < T.s5) { rays = .55; }
+  else if (t < T.s6) { fxAmt = .6; }
+  else { rays = P(t, T.s6, T.s6 + 1); fxAmt = 1; }
+  $('bg').style.background = bg;
+  $('rays').style.opacity = rays; $('rays').style.transform = `translateY(${t < T.s2 ? 0 : t >= T.s6 ? -170 : -350}px) rotate(${t * 8}deg)`;
+  $('pattern').style.opacity = pat; $('pattern').style.transform = `translate(${(t * 14) % 140}px,${(t * 20) % 140}px)`;
+  drawFx(t, fxAmt);
+  show($('bug'), t >= T.s2 && t < T.s6);
+  if (t >= T.s2 && t < T.s6) st($('bug'), {op: P(t, T.s2 + .3, T.s2 + .6)});
+
+  /* ---- S1 ---- */
+  if (t < T.s2 + .05) {
+    drawEmblem(Em1, t, .05, 1.15);
+    const pk = P(t, T.hit, T.hit + .5);
+    st($('s1em'), {s: t < T.hit ? lerp(.9, 1.05, P(t, 0, T.hit)) : lerp(1.25, 1, E.outBack(pk)) * (1 + .015 * Math.sin(t * 4))});
+    const ti = $('s1title');
+    [...ti.children].forEach((c, i) => {
+      const a = T.hit + .05 + i * .1, k = P(t, a, a + .5);
+      st(c, {op: P(t, a, a + .1), y: lerp(80, 0, E.outExpo(k)), blur: lerp(10, 0, E.outExpo(k)), s: i === 1 ? lerp(1.3, 1, E.outExpo(k)) : 1});
+    });
+    $('s1line').style.transform = `scaleX(${E.outExpo(P(t, T.hit + .4, T.hit + 1.2))})`;
+    glint($('s1name'), t, T.hit + .6, 1.1);
+  }
+
+  /* ---- S2 ---- */
+  if (t >= T.s2 && t < T.fb) {
+    const toTop = E.inOutCubic(P(t, T.tiles - .1, T.tiles + .35));
+    const k1 = E.outExpo(P(t, T.s2, T.s2 + .35));
+    st($('w1'), {op: P(t, T.s2, T.s2 + .08) * (1 - toTop), s: lerp(1.6, 1, k1), x: shake(t, T.s2, 14)});
+    const k2 = E.outExpo(P(t, T.w2, T.w2 + .4));
+    st($('w2'), {op: P(t, T.w2, T.w2 + .08) * (1 - toTop), s: lerp(1.8, 1, k2), blur: lerp(20, 0, k2), x: shake(t, T.w2, 20)});
+    glint($('w2t'), t, T.w2 + .3, 1.2);
+    const k3 = E.outExpo(P(t, T.w3, T.w3 + .4));
+    st($('w3'), {op: P(t, T.w3, T.w3 + .1) * (1 - toTop), y: lerp(60, 0, k3)});
+    // skyline rises, outlines draw, windows light up
+    const sk = E.outExpo(P(t, T.w2, T.w2 + .9));
+    $('skyline').style.transform = `translateY(${(1 - sk) * 700 + toTop * 120}px)`;
+    $('skyline').style.opacity = 1 - toTop * .45;
+    skStrokes.forEach((p, i) => { p.style.strokeDasharray = 1; p.style.strokeDashoffset = 1 - E.inOutCubic(P(t, T.w2 + .2 + i * .04, T.w2 + 1.2 + i * .04)); });
+    skWins.forEach((w, i) => w.setAttribute('opacity', .85 * P(t, T.w3 + i * .06, T.w3 + .15 + i * .06)));
+    const hk = P(t, T.tiles, T.tiles + .4);
+    st($('tilesHead'), {op: P(t, T.tiles, T.tiles + .1), y: lerp(-60, 0, E.outExpo(hk))});
+    tiles.forEach((el, i) => {
+      const a = T.tiles + b(.25) + i * B * .75, k = P(t, a, a + .45);
+      st(el, {op: P(t, a, a + .08), s: lerp(.3, 1, E.outBack(k)), r: lerp(i % 2 ? 14 : -14, 0, E.outCubic(k)), extra: `perspective(900px) rotateX(${lerp(60, 0, E.outCubic(k))}deg)`});
+    });
+  }
+
+  /* ---- S3: platforms ---- */
+  for (const [id, a] of [['sFB', T.fb], ['sIG', T.ig], ['sTG', T.tg]]) {
+    if (t < a || t >= a + b(4)) continue;
+    const p = PLAT[id], u = t - a;
+    st(p.ico, {s: E.outBack(P(u, 0, .45)), extra: `perspective(800px) rotateY(${lerp(100, 0, E.outCubic(P(u, 0, .5)))}deg)`});
+    st(p.nameEl, {op: P(u, .12, .22), y: lerp(40, 0, E.outExpo(P(u, .12, .5)))});
+    st(p.handleEl, {op: P(u, .22, .32), s: lerp(.6, 1, E.outBack(P(u, .22, .55)))});
+    st(p.phone, {op: P(u, .05, .15), y: lerp(900, 0, E.outExpo(P(u, .05, .6))), r: lerp(8, 0, E.outCubic(P(u, .05, .7))) + Math.sin(u * 2) * .6,
+                 extra: `perspective(1600px) rotateX(${lerp(25, 0, E.outCubic(P(u, .05, .7)))}deg)`});
+    p.floats.forEach((f, i) => {
+      if (!p.float.length) { show(f, false); return; }
+      const R = rng(i * 97 + id.length), start = .45 + R() * 1.4, life = 1.1 + R() * .5, k = P(u, start, start + life);
+      show(f, k > 0 && k < 1);
+      const x0 = 120 + R() * 840, drift = Math.sin(u * 3 + i) * 40;
+      st(f, {op: Math.sin(k * Math.PI), x: x0 + drift, y: lerp(1750, 900 + R() * 300, E.outCubic(k)), s: .6 + R() * .7});
+    });
+    if (id === 'sIG') p.cells.forEach((c, i) => st(c, {op: P(u, .5 + i * .06, .6 + i * .06), s: lerp(.4, 1, E.outBack(P(u, .5 + i * .06, .8 + i * .06)))}));
+    if (id === 'sTG') {
+      p.msgs.forEach((m, i) => { const ma = .55 + i * B * .9; st(m, {op: P(u, ma, ma + .08), y: lerp(80, 0, E.outBack(P(u, ma, ma + .35))), s: lerp(.8, 1, E.outCubic(P(u, ma, ma + .3)))}); });
+      // paper plane loops across the frame, leaving a dotted trail
+      const pk = E.inOutCubic(P(u, .35, 1.9));
+      const pt = k => ({x: lerp(-150, 1250, k) + Math.sin(k * 6.28) * 60, y: 1500 - Math.sin(k * 3.14) * 900 - k * 200});
+      const pos = pt(pk), nxt = pt(Math.min(1, pk + .01));
+      const ang = Math.atan2(nxt.y - pos.y, nxt.x - pos.x) * 180 / Math.PI;
+      $('plane').style.transform = `translate(${pos.x - 85}px,${pos.y - 85}px) rotate(${ang + 10}deg)`;
+      $('plane').style.opacity = pk > 0 && pk < 1 ? 1 : 0;
+      let d = ''; for (let k = Math.max(0, pk - .45); k <= pk; k += .01) { const q = pt(k); d += (d ? ' L' : 'M') + q.x.toFixed(1) + ' ' + q.y.toFixed(1); }
+      $('trailPath').setAttribute('d', d);
+    }
+  }
+
+  /* ---- S4: orbit ---- */
+  if (t >= T.s4 && t < T.s5) {
+    const u = t - T.s4;
+    drawEmblem(Em4, t, T.s4 - 3, 1);
+    st($('s4em'), {s: lerp(.4, 1, E.outBack(P(u, 0, .5)))});
+    st($('s4head').children[0], {op: P(u, .1, .2), y: lerp(-50, 0, E.outExpo(P(u, .1, .5)))});
+    st($('s4head').children[1], {op: P(u, .35, .45), s: lerp(1.5, 1, E.outExpo(P(u, .35, .75)))});
+    glint($('s4b'), t, T.s4 + .8, 1);
+    const spread = E.outExpo(P(u, .15, .9));
+    orbs.forEach((o, i) => {
+      const ang = u * 1.6 + i * 2.094;
+      const x = 540 + Math.cos(ang) * 400 * spread, y = 890 + Math.sin(ang) * 150 * spread, depth = (Math.sin(ang) + 1) / 2;
+      o.style.left = x + 'px'; o.style.top = y + 'px';
+      o.style.zIndex = depth > .5 ? 5 : 1;
+      st(o, {s: lerp(.62, 1.12, depth) * E.outBack(P(u, .15 + i * .08, .55 + i * .08)), op: lerp(.55, 1, depth)});
+    });
+    $('orbit').style.zIndex = 0; $('s4em').style.zIndex = 3;
+    hrows.forEach((r, i) => { const a = T.handles + i * B * .6, k = P(t, a, a + .45); st(r, {op: P(t, a, a + .08), x: lerp(i % 2 ? -500 : 500, 0, E.outExpo(k))}); });
+  }
+
+  /* ---- S5: notifications ---- */
+  if (t >= T.s5 && t < T.s6) {
+    const u = t - T.s5;
+    st($('lock'), {y: lerp(1200, 0, E.outExpo(P(u, 0, .6))) + shake(t, T.miss, 0) , s: lerp(1, .9, E.inOutCubic(P(t, T.miss - .2, T.miss + .4))), r: 0});
+    $('lock').style.transformOrigin = '50% 0%';
+    nts.forEach((n, i) => {
+      const a = T.s5 + b(1) + i * B * .6, k = P(t, a, a + .4);
+      st(n, {op: P(t, a, a + .06), y: lerp(-160, 0, E.outBack(k)), s: lerp(.85, 1, E.outCubic(k))});
+    });
+    $('lockTime').style.opacity = P(u, .2, .5);
+    const mk = P(t, T.miss, T.miss + .5);
+    st($('miss'), {op: P(t, T.miss, T.miss + .1), y: lerp(120, 0, E.outExpo(mk)), s: lerp(1.3, 1, E.outExpo(mk))});
+    glint($('missA'), t, T.miss + .4, 1);
+    $('miss').querySelector('svg').style.transform = `rotate(${Math.sin(t * 22) * 14 * (1 - P(t, T.miss + .5, T.miss + 1.5))}deg)`;
+  }
+
+  /* ---- S6: outro ---- */
+  if (t >= T.s6) {
+    const u = t - T.s6;
+    drawEmblem(Em6, t, T.s6, 2.2);
+    st($('s6em'), {s: lerp(.6, 1, E.outBack(P(u, 0, .6))) * (1 + .012 * Math.sin(t * 4))});
+    [...$('s6title').children].forEach((c, i) => { const a = T.s6 + .5 + i * .1, k = P(t, a, a + .5); st(c, {op: P(t, a, a + .1), y: lerp(60, 0, E.outExpo(k)), blur: lerp(10, 0, E.outExpo(k))}); });
+    glint($('s6name'), t, T.s6 + 1.1, 1.1);
+    st($('follow').firstElementChild, {op: P(u, 1.1, 1.2), y: lerp(40, 0, E.outExpo(P(u, 1.1, 1.5)))});
+    frows.forEach((r, i) => { const a = T.s6 + 1.35 + i * B * .5, k = P(t, a, a + .45); st(r, {op: P(t, a, a + .08), s: lerp(.6, 1, E.outBack(k))}); });
+    $('fadeOut').style.opacity = E.inOutCubic(P(t, T.end - .8, T.end));
+  }
+}
+
+/* ---------------- boot ---------------- */
+const isRender = new URLSearchParams(location.search).has('render');
+if (isRender) document.body.classList.add('render');
+window.DURATION = DURATION; window.FPS = FPS; window.renderAt = renderAt;
+Promise.all(['700 100px Kufi', '900 100px Cairo', '700 40px Cairo', '700 40px Montserrat', '800 40px Montserrat', '600 40px Montserrat'].map(f => document.fonts.load(f)))
+  .then(() => document.fonts.ready).then(() => { renderAt(0); window.READY = true; if (!isRender) initPlayer(); });
+
+function initPlayer() {
+  const stage = $('stage'), vp = $('viewport'), audio = $('music');
+  const fit = () => { stage.style.transform = `scale(${Math.min(vp.clientWidth / W, vp.clientHeight / H)})`; };
+  addEventListener('resize', fit); fit();
+  let playing = false, t0 = 0, start = 0, cur = 0;
+  const btn = $('playBtn'), scrub = $('scrub'), time = $('time');
+  const hasAudio = () => audio.readyState >= 2 && !audio.error;
+  const draw = t => { cur = t; renderAt(t); scrub.value = t; time.textContent = t.toFixed(2) + 's'; };
+  function tick() {
+    if (!playing) return;
+    let t = hasAudio() && !audio.paused ? audio.currentTime : t0 + (performance.now() - start) / 1000;
+    if (t >= DURATION) { t = DURATION; pause(); }
+    draw(t); requestAnimationFrame(tick);
+  }
+  function play() {
+    if (cur >= DURATION) cur = 0;
+    playing = true; btn.textContent = '❚❚ Pause'; t0 = cur; start = performance.now();
+    try { audio.currentTime = cur; audio.play().catch(() => {}); } catch (e) {}
+    requestAnimationFrame(tick);
+  }
+  function pause() { playing = false; btn.textContent = '▶ Play'; audio.pause(); }
+  btn.onclick = () => playing ? pause() : play();
+  scrub.oninput = () => { pause(); draw(+scrub.value); };
+  addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); btn.click(); } });
+}
+</script>
+</body>
+</html>
