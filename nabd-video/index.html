@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نبض فلسطين 24 — فيديو جرافيك</title>
+<style>
+@font-face{font-family:'Cairo';src:url(fonts/Cairo.ttf) format('truetype');font-weight:200 1000}
+@font-face{font-family:'Montserrat';src:url(fonts/Montserrat.ttf) format('truetype');font-weight:100 900}
+:root{--red:#e0102f;--red2:#9e0a20;--ink:#0a0a0c;--char:#17191f;--green:#0fa958;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;height:100%;overflow:hidden}
+body{font-family:'Cairo',sans-serif;color:#fff}
+#viewport{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+body.render #viewport{inset:0;display:block}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--ink);flex:none;transform-origin:center}
+body.render #stage{transform:none!important}
+.scene{position:absolute;inset:0;overflow:hidden}
+.en{font-family:'Montserrat',sans-serif}
+.monitorGrid{position:absolute;inset:0;background-image:linear-gradient(rgba(224,16,47,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(224,16,47,.09) 1px,transparent 1px);background-size:60px 60px}
+.ecg{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:visible}
+.ecg path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* logo lockup */
+.lockup{display:flex;align-items:center;gap:36px;direction:rtl}
+.lockup .name{font-weight:900;line-height:1.15;white-space:nowrap}
+.badge24{position:relative;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Montserrat';font-weight:900;color:#fff;box-shadow:0 0 0 8px rgba(224,16,47,.25),0 0 60px rgba(224,16,47,.6)}
+.badge24 svg{position:absolute;inset:-18px;width:calc(100% + 36px);height:calc(100% + 36px)}
+.lockEn{font-family:'Montserrat';font-weight:800;text-transform:uppercase;white-space:nowrap;text-align:center}
+.live{display:inline-flex;align-items:center;gap:12px;font-family:'Montserrat';font-weight:800;letter-spacing:.2em;border:3px solid rgba(255,255,255,.3);border-radius:40px}
+.live i{border-radius:50%;background:var(--red);display:inline-block}
+
+/* S1 */
+#s1{background:radial-gradient(ellipse at 50% 50%,#1c0a10 0%,#0a0a0c 70%)}
+#s1 .lockWrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+#s1 .name{font-size:200px}
+#s1 .badge24{width:220px;height:220px;font-size:120px}
+#s1 .lockEn{font-size:46px;color:#ff5a6e}
+#s1 .live{font-size:26px;padding:10px 26px;margin-top:18px}
+#s1 .live i{width:16px;height:16px}
+#flash{position:absolute;inset:0;background:var(--red);pointer-events:none;mix-blend-mode:screen}
+
+/* S2 */
+.slam{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slam span{font-size:330px;font-weight:900;line-height:1;position:relative}
+.slam .ecg path{stroke-width:10}
+#phrase{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#2a0b13 0%,#120509 55%,#050203 100%)}
+#phraseInner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#phraseSmall{font-family:'Montserrat';font-weight:700;font-size:28px;letter-spacing:.5em;color:#ff5a6e;margin-bottom:6px}
+.prow{display:flex;direction:rtl;gap:36px}
+.prow span{font-size:150px;font-weight:900;line-height:1.25;display:inline-block}
+.prow span.hl{color:var(--red)}
+#phraseEn{font-family:'Montserrat';font-weight:800;font-size:66px;letter-spacing:.08em;height:90px;white-space:pre;margin-top:26px}
+#phraseEn .caret{display:inline-block;width:6px;height:60px;background:var(--red);margin-left:8px;vertical-align:-6px}
+
+/* S3 */
+#s3{background:linear-gradient(135deg,#e0102f 0%,#9e0a20 100%)}
+#s3 .row{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:90px;direction:ltr}
+#countBox{width:470px;height:470px;border-radius:40px;background:#fff;color:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Montserrat';font-weight:900;font-size:320px;line-height:1;box-shadow:24px 24px 0 #0a0a0c}
+#s3 .ttl{text-align:right}
+#s3 .ttl .a{font-size:190px;font-weight:900;line-height:1.1}
+#s3 .ttl .b{font-family:'Montserrat';font-weight:800;font-size:64px;letter-spacing:.2em}
+
+/* S4: cards */
+.sec{position:absolute;inset:0;overflow:hidden}
+.sec .num{position:absolute;left:-30px;bottom:30px;font-family:'Montserrat';font-weight:900;font-size:560px;line-height:.8;color:transparent;-webkit-text-stroke:4px rgba(255,255,255,.14)}
+.sec.light .num{-webkit-text-stroke-color:rgba(10,10,12,.1)}
+.sec .icon{position:absolute;left:50%;top:120px;width:240px;height:240px;margin-left:-120px;border-radius:50%;background:rgba(255,255,255,.12);border:6px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center}
+.sec.light .icon{background:rgba(224,16,47,.08);border-color:rgba(224,16,47,.4)}
+.sec .icon svg{width:140px;height:140px;fill:none;stroke:currentColor;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.sec .ar{position:absolute;left:0;right:0;top:390px;text-align:center;font-size:200px;font-weight:900;line-height:1.15;white-space:nowrap}
+.sec .enn{position:absolute;left:0;right:0;top:650px;text-align:center;font-family:'Montserrat';font-weight:800;font-size:60px;letter-spacing:.24em;text-transform:uppercase;opacity:.9;white-space:nowrap}
+.sec .idx{position:absolute;left:80px;top:60px;font-family:'Montserrat';font-weight:800;font-size:38px;letter-spacing:.1em}
+.sec .ecg path{stroke-width:5}
+
+#s4b{background:radial-gradient(ellipse at 50% 40%,#2a0b13 0%,#120509 60%,#050203 100%)}
+#grid{position:absolute;left:60px;right:60px;top:170px;bottom:170px;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(2,1fr);gap:20px;direction:rtl}
+#gridTitle{position:absolute;left:0;right:0;top:40px;text-align:center;font-size:70px;font-weight:900}
+#gridTitle span{font-family:'Montserrat';font-size:30px;letter-spacing:.3em;color:#ff5a6e;margin-right:20px}
+.tile{border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.tile svg{width:86px;height:86px;fill:none;stroke:currentColor;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.tile .a{font-size:46px;font-weight:900;line-height:1.25;white-space:nowrap}
+.tile .b{font-family:'Montserrat';font-weight:700;font-size:17px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;white-space:nowrap}
+
+/* S5: phone */
+#s5{background:radial-gradient(ellipse at 30% 50%,#2a0b13 0%,#120509 55%,#050203 100%)}
+#phone{position:absolute;left:330px;top:95px;width:450px;height:890px;border-radius:66px;background:#050506;padding:18px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 3px #333,0 0 120px rgba(224,16,47,.25)}
+#screen{position:relative;width:100%;height:100%;border-radius:50px;overflow:hidden;background:#f4f4f6}
+#notch{position:absolute;left:50%;top:14px;width:130px;height:34px;margin-left:-65px;border-radius:20px;background:#050506;z-index:5}
+#flipWrap{position:absolute;inset:0;transform-origin:center}
+.app{position:absolute;inset:0;color:#111}
+.app .top{height:150px;background:linear-gradient(135deg,#e0102f,#9e0a20);color:#fff;padding:62px 22px 0;display:flex;align-items:center;justify-content:space-between}
+.app .alogo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:30px;white-space:nowrap}
+.app.ltr .alogo{font-family:'Montserrat';font-size:21px;letter-spacing:.03em}
+.app .alogo b{width:44px;height:44px;border-radius:50%;background:#fff;color:#e0102f;font-family:'Montserrat';font-size:20px;display:flex;align-items:center;justify-content:center}
+.app .lang{height:36px;min-width:50px;border-radius:18px;background:#fff;color:#e0102f;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:'Montserrat';padding:0 10px}
+.app .chips{display:flex;gap:10px;padding:14px 18px;white-space:nowrap;overflow:hidden;font-weight:800;font-size:18px}
+.app.ltr .chips{font-family:'Montserrat';font-size:14px}
+.app .chips span{padding:4px 14px;border-radius:16px;background:#e6e6ea}
+.app .chips span:first-child{background:#111;color:#fff}
+.app .hero{position:relative;margin:4px 18px 0;height:230px;border-radius:22px;overflow:hidden;background:linear-gradient(160deg,#2a0b13,#0a0a0c)}
+.app .hero svg{position:absolute;inset:0;width:100%;height:100%}
+.app .hero .tag{position:absolute;top:16px;inset-inline-start:16px;background:#e0102f;color:#fff;font-weight:900;font-size:17px;padding:3px 14px;border-radius:8px}
+.app.ltr .hero .tag{font-family:'Montserrat';font-size:12px;letter-spacing:.14em;padding:7px 12px}
+.app .hero .hl{position:absolute;left:18px;right:18px;bottom:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.app .hero .hl i{display:block;height:16px;border-radius:8px;background:rgba(255,255,255,.95)}
+.app .item{display:flex;gap:14px;margin:14px 18px 0;align-items:center}
+.app .item b{width:110px;height:84px;border-radius:14px;flex:none}
+.app .item div{flex:1;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.app .item em{font-style:normal;font-weight:800;font-size:15px;color:#e0102f}
+.app.ltr .item em{font-family:'Montserrat';font-size:11px;letter-spacing:.12em}
+.app .item i{display:block;height:12px;border-radius:6px;background:#cdd0d8;width:92%}
+.app .item i.s{width:60%}
+#tap{position:absolute;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.45);border:4px solid #fff;z-index:6;pointer-events:none}
+
+#langPanel{position:absolute;left:960px;width:840px;top:150px;text-align:center}
+#lpCap{font-family:'Montserrat';font-weight:700;font-size:26px;letter-spacing:.35em;color:#ff5a6e}
+#lpCapAr{font-size:36px;font-weight:700;opacity:.85}
+#lpAr{font-size:190px;font-weight:900;line-height:1.3;margin-top:24px}
+#lpEn{font-family:'Montserrat';font-weight:900;font-size:124px;line-height:1.2}
+#lpPlus{font-family:'Montserrat';font-weight:900;font-size:80px;color:var(--red);line-height:1}
+#both{position:absolute;left:0;right:0;top:640px;white-space:nowrap;font-size:56px;font-weight:900;line-height:1.4}
+#both .e{display:block;font-family:'Montserrat';font-weight:800;font-size:32px;letter-spacing:.2em;color:#ff5a6e}
+#langDots{margin:40px auto 0;display:flex;justify-content:center;gap:24px;direction:ltr}
+#langDots div{height:84px;min-width:170px;padding:0 30px;border-radius:42px;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:36px}
+#langDots .d1{font-family:'Montserrat';font-size:32px}
+
+/* S6 */
+#s6{background:radial-gradient(ellipse at 50% 42%,#2a0b13 0%,#120509 50%,#050203 100%)}
+#s6 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#s6 .name{font-size:180px}
+#s6 .badge24{width:190px;height:190px;font-size:104px}
+#s6 .lockEn{font-size:40px;color:#ff5a6e;margin-top:4px}
+#s6 .sl1{font-size:70px;font-weight:900;margin-top:40px;line-height:1.3}
+#s6 .sl2{font-family:'Montserrat';font-weight:700;font-size:32px;letter-spacing:.22em;opacity:.9;margin-top:8px}
+#s6 .pills{display:flex;justify-content:center;gap:22px;margin-top:44px;direction:ltr}
+.pill{height:74px;border-radius:37px;padding:0 36px;display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;border:3px solid rgba(255,255,255,.35)}
+.pill.url2{background:var(--red);border-color:var(--red);font-family:'Montserrat';font-size:38px}
+.pill.enp{font-family:'Montserrat';font-size:30px}
+#fadeOut{position:absolute;inset:0;background:#000;pointer-events:none}
+
+/* overlays */
+#wipe{position:absolute;inset:0;pointer-events:none;z-index:60}
+#wipe div{position:absolute;left:0;width:3000px;height:136px}
+#ticker{position:absolute;left:0;right:0;bottom:0;height:70px;background:#0a0a0c;border-top:3px solid var(--red);overflow:hidden;z-index:40}
+#tickLabel{position:absolute;right:0;top:0;width:210px;height:67px;background:var(--red);display:flex;align-items:center;justify-content:center;gap:12px;z-index:2}
+#tickLabel i{width:14px;height:14px;border-radius:50%;background:#fff}
+#tickLabel .a{font-size:32px;font-weight:900;line-height:1}
+#tickLabel .b{font-family:'Montserrat';font-weight:800;font-size:15px;letter-spacing:.2em}
+#tickClip{position:absolute;left:0;right:210px;top:0;height:67px;overflow:hidden}
+#tickTrack{position:absolute;top:0;left:0;height:67px;display:flex;white-space:nowrap}
+.tickSeg{display:flex;align-items:center;height:67px;font-size:30px;font-weight:700;direction:rtl}
+.tickSeg span{padding:0 20px}
+.tickSeg em{font-style:normal;color:var(--red);font-size:22px}
+#bug{position:absolute;right:50px;top:36px;display:flex;align-items:center;gap:12px;z-index:41;direction:rtl;background:rgba(10,10,12,.82);padding:8px 10px 8px 16px;border-radius:40px;color:#fff}
+#bug .t{font-size:40px;font-weight:900;line-height:1}
+#bug .b{width:52px;height:52px;border-radius:50%;background:var(--red);font-family:'Montserrat';font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(255,255,255,.25)}
+#bug .lv{font-family:'Montserrat';font-weight:800;font-size:16px;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-right:10px;padding:6px 12px;border-radius:14px;background:rgba(0,0,0,.35)}
+#bug .lv i{width:10px;height:10px;border-radius:50%;background:var(--red)}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.4) 100%);z-index:50}
+
+#controls{position:fixed;left:0;right:0;bottom:0;height:56px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;direction:ltr;font-family:'Montserrat';font-size:14px}
+#controls button{background:var(--red);color:#fff;border:0;border-radius:6px;font-weight:800;padding:8px 14px;cursor:pointer;font-family:inherit}
+#controls input{flex:1;accent-color:var(--red)}
+body.render #controls{display:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+  <!-- S1: heartbeat line -> logo -->
+  <div class="scene" id="s1">
+    <div class="monitorGrid"></div>
+    <svg class="ecg" viewBox="0 0 1920 1080"><path id="s1glow" stroke="rgba(224,16,47,.35)" stroke-width="22"/><path id="s1ecg" stroke="#ff2a45" stroke-width="7"/><circle id="s1head" r="12" fill="#fff"/></svg>
+    <div class="lockWrap" id="s1lock">
+      <div class="lockup"><div class="name">نبض فلسطين</div><div class="badge24" id="s1badge">24<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5.84" opacity=".7"/></svg></div></div>
+      <div class="lockEn" id="s1en">Nabd Palestine 24</div>
+      <div class="live" id="s1live"><i id="s1dot"></i>LIVE · مباشر</div>
+    </div>
+    <div id="flash"></div>
+  </div>
+
+  <!-- S2: slogan -->
+  <div class="scene" id="s2">
+    <div class="slam" id="w1" style="background:#e0102f"><svg class="ecg" viewBox="0 0 1920 1080"><path class="bgecg" stroke="rgba(255,255,255,.25)"/></svg><span>نبض</span></div>
+    <div class="slam" id="w2" style="background:#0a0a0c"><svg class="ecg" viewBox="0 0 1920 1080"><path class="bgecg" stroke="rgba(224,16,47,.45)"/></svg><span>فلسطين</span></div>
+    <div class="slam" id="w3" style="background:#fff;color:#e0102f"><span class="en" style="font-size:520px">24</span></div>
+    <div class="slam" id="w4" style="background:#0fa958"><span>ساعة</span></div>
+    <div id="phrase">
+      <div class="monitorGrid"></div>
+      <svg class="ecg" viewBox="0 0 1920 1080"><path id="phEcg" stroke="rgba(224,16,47,.4)" stroke-width="5"/></svg>
+      <div id="phraseInner">
+        <div id="phraseSmall">NABA24.PS</div>
+        <div class="prow" id="row1"><span>نبض</span><span class="hl">فلسطين</span></div>
+        <div class="prow" id="row2"><span>على</span><span>مدار</span><span>الساعة</span></div>
+        <div id="phraseEn"><span id="phraseEnTxt"></span><span class="caret" id="caret"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="scene" id="s3">
+    <svg class="ecg" viewBox="0 0 1920 1080" id="s3ecgs"><path class="bgecg" stroke="rgba(255,255,255,.14)" stroke-width="6"/></svg>
+    <div class="row">
+      <div id="countBox"><span id="count">00</span></div>
+      <div class="ttl"><div class="a" id="s3a">أقسام الموقع</div><div class="b" id="s3b">SITE SECTIONS</div></div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scene" id="s4"></div>
+  <div class="scene" id="s4b"><div id="gridTitle"><span>ALL SECTIONS</span>كل الأقسام</div><div id="grid"></div></div>
+
+  <!-- S5: bilingual on a phone -->
+  <div class="scene" id="s5">
+    <div id="phone"><div id="screen"><div id="notch"></div>
+      <div id="flipWrap">
+        <div class="app" dir="rtl" id="appAR">
+          <div class="top"><div class="alogo"><b>24</b>نبض فلسطين</div><div class="lang">EN</div></div>
+          <div class="chips"><span>الرئيسية</span><span>محليات</span><span>القدس</span><span>غزة</span><span>رياضة</span></div>
+          <div class="hero"><svg viewBox="0 0 400 230"><path d="M0 130 H140 L160 100 L175 130 H200 L215 40 L235 200 L250 110 L262 130 H400" fill="none" stroke="#e0102f" stroke-width="5" stroke-linejoin="round"/></svg><div class="tag">عاجل</div><div class="hl"><i style="width:80%"></i><i style="width:52%"></i></div></div>
+          <div class="item"><b style="background:linear-gradient(135deg,#e0102f,#9e0a20)"></b><div><em>القدس</em><i></i><i class="s"></i></div></div>
+          <div class="item"><b style="background:linear-gradient(135deg,#0fa958,#0a6b39)"></b><div><em>اقتصاد</em><i></i><i class="s"></i></div></div>
+          <div class="item"><b style="background:linear-gradient(135deg,#2a2d36,#0a0a0c)"></b><div><em>رياضة</em><i></i><i class="s"></i></div></div>
+        </div>
+        <div class="app ltr" dir="ltr" id="appEN">
+          <div class="top"><div class="alogo"><b>24</b>NABD PALESTINE</div><div class="lang" style="font-family:Cairo">ع</div></div>
+          <div class="chips"><span>Home</span><span>Local</span><span>Jerusalem</span><span>Gaza</span><span>Sports</span></div>
+          <div class="hero"><svg viewBox="0 0 400 230"><path d="M0 130 H140 L160 100 L175 130 H200 L215 40 L235 200 L250 110 L262 130 H400" fill="none" stroke="#e0102f" stroke-width="5" stroke-linejoin="round"/></svg><div class="tag">BREAKING</div><div class="hl"><i style="width:80%"></i><i style="width:52%"></i></div></div>
+          <div class="item"><b style="background:linear-gradient(135deg,#e0102f,#9e0a20)"></b><div><em>JERUSALEM</em><i></i><i class="s"></i></div></div>
+          <div class="item"><b style="background:linear-gradient(135deg,#0fa958,#0a6b39)"></b><div><em>ECONOMY</em><i></i><i class="s"></i></div></div>
+          <div class="item"><b style="background:linear-gradient(135deg,#2a2d36,#0a0a0c)"></b><div><em>SPORTS</em><i></i><i class="s"></i></div></div>
+        </div>
+      </div>
+      <div id="tap"></div>
+    </div></div>
+    <div id="langPanel">
+      <div id="lpCap">ONE SITE · TWO LANGUAGES</div>
+      <div id="lpCapAr">موقع واحد بلغتين</div>
+      <div id="lpAr">العربية</div>
+      <div id="lpPlus">+</div>
+      <div id="lpEn">ENGLISH</div>
+      <div id="langDots"><div class="d1">EN</div><div class="d2">عربي</div></div>
+      <div id="both">باللغتين العربية والإنجليزية<span class="e">IN ARABIC &amp; ENGLISH</span></div>
+    </div>
+  </div>
+
+  <!-- S6: outro -->
+  <div class="scene" id="s6">
+    <div class="monitorGrid" style="opacity:.6"></div>
+    <svg class="ecg" viewBox="0 0 1920 1080"><path id="s6ecg" stroke="rgba(224,16,47,.55)" stroke-width="6"/></svg>
+    <div class="wrap">
+      <div class="lockup" id="s6lock"><div class="name">نبض فلسطين</div><div class="badge24" id="s6badge">24<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5.84" opacity=".7"/></svg></div></div>
+      <div class="lockEn" id="s6en">Nabd Palestine 24</div>
+      <div class="sl1" id="s6sl1">نبض فلسطين على مدار الساعة</div>
+      <div class="sl2" id="s6sl2">PALESTINE'S PULSE — 24/7</div>
+      <div class="pills" id="s6pills">
+        <div class="pill url2">naba24.ps</div>
+        <div class="pill">العربية</div>
+        <div class="pill enp">English</div>
+      </div>
+    </div>
+    <div id="fadeOut"></div>
+  </div>
+
+  <!-- overlays -->
+  <div id="ticker">
+    <div id="tickClip"><div id="tickTrack"></div></div>
+    <div id="tickLabel"><i id="tickDot"></i><span class="a">مباشر</span><span class="b">LIVE</span></div>
+  </div>
+  <div id="bug"><div class="b">24</div><span class="t">نبض فلسطين</span><span class="lv"><i id="bugDot"></i>LIVE</span></div>
+  <div id="wipe"></div>
+  <div id="vignette"></div>
+</div></div>
+
+<div id="controls">
+  <button id="playBtn">▶ Play</button>
+  <input type="range" id="scrub" min="0" max="31.875" step="0.001" value="0">
+  <span id="time">0.00s</span>
+</div>
+<audio id="music" src="music.m4a" preload="auto"></audio>
+
+<script>
+/* ============================================================
+   Timeline in beats at 128 BPM (B = 0.46875s). Keep in sync with music.js
+   ============================================================ */
+const BPM = 128, B = 60 / BPM, FPS = 30;
+const b = n => n * B;
+const T = {
+  logoHit: b(4),
+  s2: b(8), w2: b(9), w3: b(10), w4: b(11), phrase: b(12),
+  s3: b(18),
+  s4: b(21), secDur: b(2),
+  grid: b(45),
+  s5: b(48), switches: [50, 52, 53, 54, 55, 55.5, 56, 56.5].map(b), both: b(57),
+  s6: b(60),
+  end: b(68)
+};
+const DURATION = T.end;
+const WIPES = [T.s2, T.s3, T.s4, T.grid, T.s5, T.s6];
+
+const ICONS = {
+  pin:'<path d="M50 90 C50 90 22 62 22 40 a28 28 0 0 1 56 0 C78 62 50 90 50 90Z"/><circle cx="50" cy="40" r="10"/>',
+  dome:'<path d="M28 50 a22 22 0 0 1 44 0"/><path d="M50 16v12"/><path d="M18 50h64"/><path d="M24 50v34h52V50"/><path d="M38 84V68h24v16"/><path d="M12 86h76"/>',
+  waves:'<path d="M10 40c10-8 20-8 30 0s20 8 30 0 20-8 30 0"/><path d="M10 60c10-8 20-8 30 0s20 8 30 0 20-8 30 0"/><path d="M10 80c10-8 20-8 30 0s20 8 30 0 20-8 30 0"/><circle cx="72" cy="18" r="8"/>',
+  olive:'<path d="M18 86 C38 64 56 44 84 14"/><path d="M40 62c-14 0-22-8-24-18 12-2 22 4 24 18z"/><path d="M52 48c-2-14 4-24 14-28 4 12-2 22-14 28z"/><path d="M60 42c12-4 22 0 26 8-10 6-20 4-26-8z"/><path d="M30 74c-12 4-20 0-24-8 10-6 20-4 24 8z"/>',
+  bars:'<rect x="18" y="14" width="64" height="72" rx="6"/><path d="M34 14v72M50 14v72M66 14v72"/>',
+  globe:'<circle cx="50" cy="50" r="34"/><ellipse cx="50" cy="50" rx="14" ry="34"/><path d="M16 50h68M21 33h58M21 67h58"/>',
+  chart:'<path d="M14 86h72"/><path d="M24 86V64M42 86V52M60 86V58M78 86V40"/><path d="M18 44 L38 28 L54 36 L82 14"/><path d="M68 14h14v14"/>',
+  ball:'<circle cx="50" cy="50" r="34"/><path d="M50 37 l12 9-5 14h-14l-5-14z"/><path d="M50 16v21M62 46l19-6M57 60l12 16M43 60l-12 16M38 46l-19-6"/>',
+  doc:'<path d="M26 12h34l18 18v58H26z"/><path d="M60 12v18h18"/><path d="M36 50h32M36 62h32M36 74h20"/>',
+  pen:'<path d="M22 78 L30 56 L66 20 L80 34 L44 70 Z"/><path d="M58 28l14 14"/><path d="M14 88h44"/>',
+  spark:'<path d="M40 14l6 20 20 6-20 6-6 20-6-20-20-6 20-6z"/><path d="M74 54l4 12 12 4-12 4-4 12-4-12-12-4 12-4z"/>',
+  play:'<rect x="10" y="20" width="80" height="60" rx="12"/><path d="M42 36v28l24-14z"/>'
+};
+// kind: 'red' | 'dark' | 'light' | 'green'
+const SECTIONS = [
+  {ar:'محليات',     en:'Local',         icon:'pin',   k:'red'},
+  {ar:'القدس',      en:'Jerusalem',     icon:'dome',  k:'dark'},
+  {ar:'غزة',        en:'Gaza',          icon:'waves', k:'light'},
+  {ar:'الضفة',      en:'West Bank',     icon:'olive', k:'green'},
+  {ar:'الأسرى',     en:'Prisoners',     icon:'bars',  k:'red'},
+  {ar:'عربي ودولي', en:'Arab & World',  icon:'globe', k:'dark'},
+  {ar:'اقتصاد',     en:'Economy',       icon:'chart', k:'light'},
+  {ar:'رياضة',      en:'Sports',        icon:'ball',  k:'green'},
+  {ar:'تقارير',     en:'Reports',       icon:'doc',   k:'red'},
+  {ar:'مقالات',     en:'Opinion',       icon:'pen',   k:'dark'},
+  {ar:'منوعات',     en:'Variety',       icon:'spark', k:'light'},
+  {ar:'فيديو',      en:'Video',         icon:'play',  k:'red'},
+];
+const KIND = {
+  red:   {bg:'linear-gradient(135deg,#e0102f,#8e0a1d)', fg:'#fff', line:'rgba(255,255,255,.35)'},
+  dark:  {bg:'linear-gradient(135deg,#1d2028,#0a0a0c)', fg:'#fff', line:'rgba(224,16,47,.7)'},
+  light: {bg:'linear-gradient(135deg,#ffffff,#e9e9ee)', fg:'#e0102f', line:'rgba(224,16,47,.45)'},
+  green: {bg:'linear-gradient(135deg,#0fa958,#086a37)', fg:'#fff', line:'rgba(255,255,255,.35)'},
+};
+
+/* ---------------- helpers ---------------- */
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+const E = {
+  outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  outCubic: x => 1 - Math.pow(1 - x, 3),
+  inCubic: x => x * x * x,
+  inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  outBack: x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+function st(el, o = {}) {
+  const {op = 1, x = 0, y = 0, s = 1, sx, r = 0, blur = 0, extra = ''} = o;
+  el.style.opacity = op;
+  el.style.transform = `translate(${x}px,${y}px) scale(${sx ?? s},${s}) rotate(${r}deg) ${extra}`;
+  el.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
+}
+const shake = (t, a, amp = 10, len = .18) => (t < a || t > a + len) ? 0 : Math.sin((t - a) * 140) * amp * (1 - (t - a) / len);
+// heartbeat pulse: quick "lub-dub" scale bump on each beat
+const pulse = (t, amt = .04) => {
+  const ph = (t % B) / B;
+  return 1 + amt * (Math.exp(-ph * 18) + .55 * Math.exp(-Math.abs(ph - .22) * 30));
+};
+const blink = t => (Math.floor(t / B) % 2 === 0 ? 1 : .25);
+
+/* ECG path generator: flat line with heartbeat complexes at given x positions */
+function ecgPath(y, beats, amp = 1, x0 = -20, x1 = 1940) {
+  let d = `M${x0} ${y}`;
+  for (const x of beats) {
+    d += ` L${x - 90} ${y} L${x - 70} ${y - 26 * amp} L${x - 52} ${y} L${x - 20} ${y} L${x} ${y - 190 * amp} L${x + 22} ${y + 150 * amp} L${x + 40} ${y - 40 * amp} L${x + 52} ${y} L${x + 100} ${y} L${x + 125} ${y - 34 * amp} L${x + 150} ${y}`;
+  }
+  return d + ` L${x1} ${y}`;
+}
+const MAIN_ECG = ecgPath(540, [460, 1000, 1500], 1.3);
+['s1ecg', 's1glow'].forEach(id => $(id).setAttribute('d', MAIN_ECG));
+document.querySelectorAll('.bgecg').forEach((p, i) => p.setAttribute('d', ecgPath(i === 2 ? 540 : 800, [300, 820, 1340, 1860], i === 2 ? 1.6 : 1.2, -20, 2400)));
+$('phEcg').setAttribute('d', ecgPath(930, [200, 700, 1200, 1700], .6, -20, 2400));
+$('s6ecg').setAttribute('d', ecgPath(880, [260, 760, 1260, 1760], .7, -20, 2400));
+const s1ecg = $('s1ecg'), s1len = s1ecg.getTotalLength();
+
+/* ---------------- build dynamic DOM ---------------- */
+const svg = n => `<svg viewBox="0 0 100 100">${ICONS[n]}</svg>`;
+const s4 = $('s4'), grid = $('grid');
+const cards = SECTIONS.map((sec, i) => {
+  const K = KIND[sec.k];
+  const d = document.createElement('div');
+  d.className = 'sec' + (sec.k === 'light' ? ' light' : '');
+  d.style.background = K.bg; d.style.color = K.fg; d.style.zIndex = i + 1;
+  d.innerHTML = `
+    <div class="num">${String(i + 1).padStart(2, '0')}</div>
+    <svg class="ecg" viewBox="0 0 1920 1080"><path d="${ecgPath(900, [350, 980, 1610], .5, -20, 2600)}" stroke="${K.line}"/></svg>
+    <div class="icon">${svg(sec.icon)}</div>
+    <div class="ar">${sec.ar}</div>
+    <div class="enn">${sec.en}</div>
+    <div class="idx"><span style="color:${sec.k === 'light' ? '#0a0a0c' : '#fff'}">${String(i + 1).padStart(2, '0')}</span> <span style="opacity:.5">/ ${SECTIONS.length}</span></div>`;
+  s4.appendChild(d);
+  return {el: d, icon: d.querySelector('.icon'), ar: d.querySelector('.ar'), en: d.querySelector('.enn'),
+          idx: d.querySelector('.idx'), num: d.querySelector('.num'), ecg: d.querySelector('.ecg path')};
+});
+const tiles = SECTIONS.map(sec => {
+  const K = KIND[sec.k], d = document.createElement('div');
+  d.className = 'tile'; d.style.background = K.bg; d.style.color = K.fg;
+  d.innerHTML = `${svg(sec.icon)}<div class="a">${sec.ar}</div><div class="b">${sec.en}</div>`;
+  grid.appendChild(d); return d;
+});
+cards.forEach(c => { c.len = c.ecg.getTotalLength(); c.ecg.style.strokeDasharray = c.len; });
+
+const tickTrack = $('tickTrack');
+const segHTML = '<div class="tickSeg">' + SECTIONS.map(s => `<span>${s.ar}</span><em>●</em><span class="en" style="font-size:24px;font-weight:600">${s.en.toUpperCase()}</span><em>●</em>`).join('') + '</div>';
+tickTrack.innerHTML = segHTML + segHTML + segHTML;
+let segW = 2000;
+
+// slice wipe: 8 horizontal bars
+const wipe = $('wipe');
+const bars = [...Array(8)].map((_, i) => { const d = document.createElement('div'); d.style.top = (i * 135) + 'px'; wipe.appendChild(d); return d; });
+
+/* ---------------- scenes ---------------- */
+const scenes = {s1: [0, T.s2], s2: [T.s2, T.s3], s3: [T.s3, T.s4], s4: [T.s4, T.grid], s4b: [T.grid, T.s5], s5: [T.s5, T.s6], s6: [T.s6, T.end + 1]};
+
+function renderAt(t) {
+  for (const [id, [a, bb]] of Object.entries(scenes)) show($(id), t >= a && t < bb);
+
+  /* ---- S1 ---- */
+  if (t < T.s2) {
+    const k = P(t, 0.05, T.logoHit);
+    const L = s1len * k;
+    for (const id of ['s1ecg', 's1glow']) { const p = $(id); p.style.strokeDasharray = `${L} ${s1len}`; }
+    const head = s1ecg.getPointAtLength(L);
+    const $h = $('s1head'); $h.setAttribute('cx', head.x); $h.setAttribute('cy', head.y);
+    const lineOut = P(t, T.logoHit, T.logoHit + .35);
+    $('s1ecg').parentNode.style.opacity = 1 - lineOut * .85;
+    $('s1ecg').parentNode.style.transform = `translateY(${lineOut * 330}px)`;
+    $h.style.opacity = t < T.logoHit ? 1 : 0;
+    const lk = P(t, T.logoHit, T.logoHit + .45);
+    show($('s1lock'), t >= T.logoHit);
+    st($('s1lock'), {op: P(t, T.logoHit, T.logoHit + .06), s: lerp(1.5, 1, E.outExpo(lk)) * (t > T.logoHit + .45 ? pulse(t, .025) : 1), blur: lerp(20, 0, E.outExpo(lk)), x: shake(t, T.logoHit, 16)});
+    st($('s1badge'), {s: E.outBack(P(t, T.logoHit + .08, T.logoHit + .45)), r: lerp(-90, 0, E.outCubic(P(t, T.logoHit + .08, T.logoHit + .45)))});
+    $('s1en').style.letterSpacing = $('s1en').style.paddingLeft = lerp(1, .32, E.outExpo(P(t, T.logoHit + .1, T.logoHit + .7))) + 'em';
+    st($('s1en'), {op: P(t, T.logoHit + .1, T.logoHit + .3)});
+    st($('s1live'), {op: P(t, T.logoHit + .5, T.logoHit + .7), y: lerp(20, 0, E.outCubic(P(t, T.logoHit + .5, T.logoHit + .8)))});
+    $('s1dot').style.opacity = blink(t);
+    $('flash').style.opacity = t >= T.logoHit ? .9 * (1 - E.outCubic(P(t, T.logoHit, T.logoHit + .35))) : 0;
+  }
+
+  /* ---- S2 ---- */
+  if (t >= T.s2 && t < T.s3) {
+    const words = [['w1', T.s2, T.w2], ['w2', T.w2, T.w3], ['w3', T.w3, T.w4], ['w4', T.w4, T.phrase]];
+    for (const [id, a, e] of words) {
+      const el = $(id), on = t >= a && t < e; show(el, on);
+      if (!on) continue;
+      const k = E.outExpo(P(t, a, a + .25));
+      st(el.querySelector('span'), {s: lerp(1.5, 1, k), blur: lerp(14, 0, k), x: shake(t, a, 18)});
+      const g = el.querySelector('.ecg'); if (g) g.style.transform = `translateX(${-(t - a) * 900}px)`;
+    }
+    const ph = $('phrase'); show(ph, t >= T.phrase);
+    if (t >= T.phrase) {
+      [...$('row1').children, ...$('row2').children].forEach((sp, i) => {
+        const a = T.phrase + i * .07, k = E.outBack(P(t, a, a + .35));
+        st(sp, {op: P(t, a, a + .1), y: lerp(90, 0, k), s: lerp(.6, 1, k)});
+      });
+      st($('phraseSmall'), {op: P(t, T.phrase + .3, T.phrase + .6)});
+      const en = "PALESTINE'S PULSE — 24/7", a = T.phrase + .5;
+      $('phraseEnTxt').textContent = en.slice(0, Math.floor(en.length * P(t, a, a + .8)));
+      $('caret').style.opacity = (t < a || Math.floor(t * 4) % 2 === 0) ? 1 : 0;
+      $('phEcg').style.transform = `translateX(${-(t - T.phrase) * 300}px)`;
+      st($('phraseInner'), {s: lerp(1, 1.05, P(t, T.phrase, T.s3)) * pulse(t, .012)});
+    }
+  }
+
+  /* ---- S3 ---- */
+  if (t >= T.s3 && t < T.s4) {
+    const n = Math.round(SECTIONS.length * E.outCubic(P(t, T.s3 + .1, T.s3 + .9)));
+    $('count').textContent = String(n).padStart(2, '0');
+    st($('countBox'), {s: lerp(.3, 1, E.outBack(P(t, T.s3, T.s3 + .4))), r: lerp(20, 0, E.outExpo(P(t, T.s3, T.s3 + .4))), op: P(t, T.s3, T.s3 + .08)});
+    st($('s3a'), {op: P(t, T.s3 + .1, T.s3 + .25), y: lerp(120, 0, E.outExpo(P(t, T.s3 + .1, T.s3 + .5)))});
+    st($('s3b'), {op: P(t, T.s3 + .25, T.s3 + .4), y: lerp(-80, 0, E.outExpo(P(t, T.s3 + .25, T.s3 + .6)))});
+    $('s3ecgs').style.transform = `translateX(${-(t - T.s3) * 500}px)`;
+  }
+
+  /* ---- S4: cards ---- */
+  if (t >= T.s4 && t < T.grid) {
+    cards.forEach((c, i) => {
+      const a = T.s4 + i * T.secDur, u = t - a;
+      const on = u >= 0 && u < T.secDur + .3; show(c.el, on);
+      if (!on) return;
+      const k = i === 0 ? 1 : E.outExpo(P(u, 0, .28));
+      // alternate: reveal from bottom / from top
+      c.el.style.clipPath = i % 2 ? `inset(0 0 ${(1 - k) * 100}% 0)` : `inset(${(1 - k) * 100}% 0 0 0)`;
+      c.el.style.transform = `translateY(${(i % 2 ? -1 : 1) * (1 - k) * 160}px)`;
+      st(c.icon, {s: E.outBack(P(u, .06, .34)) * pulse(t, .05), op: P(u, .06, .12)});
+      st(c.ar, {op: P(u, .04, .14), s: lerp(1.35, 1, E.outExpo(P(u, .04, .36))), blur: lerp(10, 0, P(u, .04, .22))});
+      c.en.style.letterSpacing = lerp(.8, .24, E.outExpo(P(u, .12, .5))) + 'em';
+      st(c.en, {op: P(u, .12, .24)});
+      st(c.idx, {op: P(u, .1, .26)});
+      st(c.num, {x: lerp(-60, 40, u / (T.secDur + .3))});
+      c.ecg.style.strokeDashoffset = c.len * (1 - P(u, 0, T.secDur));
+    });
+  }
+
+  /* ---- S4b: grid ---- */
+  if (t >= T.grid && t < T.s5) {
+    tiles.forEach((el, i) => {
+      const col = i % 6, row = Math.floor(i / 6), a = T.grid + (col + row) * .05, k = P(t, a, a + .3);
+      st(el, {op: P(t, a, a + .08), s: lerp(.4, 1, E.outBack(k)), r: lerp(row ? -8 : 8, 0, E.outCubic(k))});
+    });
+    st($('gridTitle'), {op: P(t, T.grid, T.grid + .15), y: lerp(-40, 0, E.outExpo(P(t, T.grid, T.grid + .4)))});
+    st(grid, {s: lerp(1, 1.06, E.inCubic(P(t, T.grid + .6, T.s5)))});
+  }
+
+  /* ---- S5: phone ---- */
+  if (t >= T.s5 && t < T.s6) {
+    const pk = P(t, T.s5, T.s5 + .5);
+    st($('phone'), {op: P(t, T.s5, T.s5 + .1), y: lerp(700, 0, E.outExpo(pk)), r: lerp(-14, -4, E.outCubic(pk))});
+    let passed = 0, last = -1;
+    T.switches.forEach((sw, i) => { if (t >= sw) { passed++; last = i; } });
+    const mode = passed % 2, swT = last >= 0 ? T.switches[last] : -9;
+    let flip = 1;
+    for (const sw of T.switches) { const d = Math.abs(t - sw); if (d < .08) flip = Math.min(flip, d / .08); }
+    $('flipWrap').style.transform = `scaleX(${Math.max(flip, .02)})`;
+    show($('appAR'), mode === 0); show($('appEN'), mode === 1);
+    // tap indicator sits on the language pill (left in rtl, right in ltr)
+    const tapOn = t >= T.s5 + .6 && t < T.both;
+    let tp = 0; for (const sw of T.switches) if (t >= sw - .12 && t < sw + .12) tp = Math.max(tp, 1 - Math.abs(t - sw) / .12);
+    const pillX = mode === 0 ? 22 + 25 : 414 - 22 - 25; // inside screen coords
+    $('tap').style.left = (18 + pillX - 45) + 'px';
+    $('tap').style.top = (18 + 62 + 18 - 45) + 'px';
+    st($('tap'), {op: tapOn ? .35 + .65 * tp : 0, s: lerp(1.3, .75, tp)});
+    const ck = P(t, T.s5 + .15, T.s5 + .5);
+    st($('lpCap'), {op: ck, y: lerp(-20, 0, E.outCubic(ck))}); st($('lpCapAr'), {op: ck, y: lerp(-20, 0, E.outCubic(ck))});
+    const bothK = P(t, T.both, T.both + .25), sinceSw = P(t, swT, swT + .15);
+    const arOp = lerp(mode === 0 ? 1 : .2, 1, bothK), enOp = lerp(mode === 1 ? 1 : .2, 1, bothK);
+    st($('lpAr'), {op: arOp * P(t, T.s5 + .2, T.s5 + .4), y: lerp(80, 0, E.outExpo(P(t, T.s5 + .2, T.s5 + .6))), s: mode === 0 && t < T.both && last >= 0 ? lerp(1.12, 1, E.outCubic(sinceSw)) : 1});
+    st($('lpPlus'), {op: P(t, T.s5 + .3, T.s5 + .5), r: t >= T.both ? lerp(0, 180, E.outCubic(P(t, T.both, T.both + .4))) : 0});
+    st($('lpEn'), {op: enOp * P(t, T.s5 + .35, T.s5 + .55), y: lerp(-80, 0, E.outExpo(P(t, T.s5 + .35, T.s5 + .75))), s: mode === 1 && t < T.both ? lerp(1.12, 1, E.outCubic(sinceSw)) : 1});
+    const ld = $('langDots').children;
+    ld[0].style.background = mode === 1 && t < T.both ? '#e0102f' : 'transparent';
+    ld[1].style.background = mode === 0 && t < T.both ? '#e0102f' : 'transparent';
+    st($('langDots'), {op: P(t, T.s5 + .45, T.s5 + .65) * (1 - P(t, T.both - .05, T.both + .1))});
+    const bk2 = P(t, T.both, T.both + .35);
+    st($('both'), {op: P(t, T.both, T.both + .1), s: lerp(.7, 1, E.outBack(bk2)), y: lerp(40, 0, E.outCubic(bk2))});
+  }
+
+  /* ---- S6: outro ---- */
+  if (t >= T.s6) {
+    const items = [['s6lock', 0], ['s6en', .3], ['s6sl1', .55], ['s6sl2', .75], ['s6pills', 1.0]];
+    for (const [id, d] of items) {
+      const a = T.s6 + d, kk = P(t, a, a + .45);
+      st($(id), {op: P(t, a, a + .1), y: lerp(50, 0, E.outExpo(kk)), s: id === 's6lock' ? lerp(1.35, 1, E.outExpo(kk)) * (t > a + .45 ? pulse(t, .02) : 1) : 1, blur: id === 's6lock' ? lerp(16, 0, E.outExpo(kk)) : 0});
+    }
+    st($('s6badge'), {s: E.outBack(P(t, T.s6 + .1, T.s6 + .45))});
+    $('s6en').style.letterSpacing = $('s6en').style.paddingLeft = lerp(1, .32, E.outExpo(P(t, T.s6 + .3, T.s6 + .9))) + 'em';
+    [...$('s6pills').children].forEach((p, i) => { const a = T.s6 + 1.0 + i * .12; st(p, {op: P(t, a, a + .1), s: lerp(.5, 1, E.outBack(P(t, a, a + .35)))}); });
+    $('s6ecg').style.transform = `translateX(${-(t - T.s6) * 220}px)`;
+    $('fadeOut').style.opacity = E.inOutCubic(P(t, T.end - .8, T.end));
+  }
+
+  /* ---- overlays ---- */
+  const tickOn = t >= T.s4 && t < T.s5; show($('ticker'), tickOn);
+  if (tickOn) {
+    $('ticker').style.transform = `translateY(${(1 - E.outExpo(P(t, T.s4, T.s4 + .4))) * 80}px)`;
+    tickTrack.style.transform = `translateX(${-segW + ((t - T.s4) * 280) % segW}px)`;
+    $('tickDot').style.opacity = blink(t);
+  }
+  const bugOn = t >= T.s4 && t < T.s6; show($('bug'), bugOn);
+  if (bugOn) { st($('bug'), {op: P(t, T.s4 + .1, T.s4 + .4), x: lerp(60, 0, E.outCubic(P(t, T.s4 + .1, T.s4 + .5)))}); $('bugDot').style.opacity = blink(t); }
+
+  let wOn = false;
+  for (const w of WIPES) {
+    if (t <= w - .3 || t >= w + .3) continue;
+    wOn = true;
+    bars.forEach((bar, i) => {
+      const d = (i % 2 ? 1 : -1) * .012 * (i + 1) / 2;
+      bar.style.transform = `translateX(${lerp(1920, -3000, E.inOutCubic(P(t, w - .25 + d, w + .25 + d)))}px)`;
+      bar.style.background = i % 2 ? '#0a0a0c' : '#e0102f';
+      bar.style.boxShadow = 'inset 300px 0 0 #fff';
+    });
+  }
+  show(wipe, wOn);
+}
+
+/* ---------------- boot ---------------- */
+const isRender = new URLSearchParams(location.search).has('render');
+if (isRender) document.body.classList.add('render');
+window.DURATION = DURATION; window.FPS = FPS; window.renderAt = renderAt;
+Promise.all(['900 100px Cairo', '700 40px Cairo', '800 40px Montserrat', '900 40px Montserrat', '600 20px Montserrat']
+  .map(f => document.fonts.load(f))).then(() => document.fonts.ready).then(() => {
+  segW = tickTrack.firstElementChild.getBoundingClientRect().width;
+  renderAt(0); window.READY = true;
+  if (!isRender) initPlayer();
+});
+
+function initPlayer() {
+  const stage = $('stage'), vp = $('viewport'), audio = $('music');
+  const fit = () => { stage.style.transform = `scale(${Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080)})`; };
+  addEventListener('resize', fit); fit();
+  let playing = false, t0 = 0, start = 0, cur = 0;
+  const btn = $('playBtn'), scrub = $('scrub'), time = $('time');
+  const hasAudio = () => audio.readyState >= 2 && !audio.error;
+  const draw = t => { cur = t; renderAt(t); scrub.value = t; time.textContent = t.toFixed(2) + 's'; };
+  function tick() {
+    if (!playing) return;
+    let t = hasAudio() && !audio.paused ? audio.currentTime : t0 + (performance.now() - start) / 1000;
+    if (t >= DURATION) { t = DURATION; pause(); }
+    draw(t); requestAnimationFrame(tick);
+  }
+  function play() {
+    if (cur >= DURATION) cur = 0;
+    playing = true; btn.textContent = '❚❚ Pause'; t0 = cur; start = performance.now();
+    try { audio.currentTime = cur; audio.play().catch(() => {}); } catch (e) {}
+    requestAnimationFrame(tick);
+  }
+  function pause() { playing = false; btn.textContent = '▶ Play'; audio.pause(); }
+  btn.onclick = () => playing ? pause() : play();
+  scrub.oninput = () => { pause(); draw(+scrub.value); };
+  addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); btn.click(); } });
+}
+</script>
+</body>
+</html>
