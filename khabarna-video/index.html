@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خبرنا فلسطين — فيديو جرافيك</title>
+<style>
+@font-face{font-family:'Almarai';src:url(fonts/Almarai-ExtraBold.ttf) format('truetype');font-weight:800}
+@font-face{font-family:'Plex';src:url(fonts/IBMPlexSansArabic-Bold.ttf) format('truetype');font-weight:700}
+@font-face{font-family:'Fira';src:url(fonts/FiraSansExtraCondensed-Bold.ttf) format('truetype');font-weight:700}
+@font-face{font-family:'Fira';src:url(fonts/FiraSansExtraCondensed-Black.ttf) format('truetype');font-weight:900}
+@font-face{font-family:'Mono';src:url(fonts/ShareTechMono-Regular.ttf) format('truetype');font-weight:400}
+:root{--paper:#f3f3f0;--ink:#141414;--red:#c8322b;--green:#2d7a3e;--grey:#8a8a86}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;height:100%;overflow:hidden}
+body{font-family:'Almarai',sans-serif;font-weight:800;color:var(--ink)}
+#viewport{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+body.render #viewport{inset:0;display:block}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--paper);flex:none;transform-origin:center}
+body.render #stage{transform:none!important}
+.scene{position:absolute;inset:0;overflow:hidden}
+.fira{font-family:'Fira',sans-serif}
+.mono{font-family:'Mono',monospace}
+.mask{overflow:hidden;display:block}
+.mask>*{display:block}
+/* the site's signature double rule: a full bar and a shorter one under it */
+.rule2{position:relative;height:40px}
+.rule2 i{position:absolute;right:0;height:14px;border-radius:7px;background:currentColor;transform-origin:right center}
+.rule2 i:first-child{top:0;left:0}
+.rule2 i:last-child{top:26px;width:45%}
+.rule2.ltr i{right:auto;left:0;transform-origin:left center}
+.rule2.ltr i:first-child{right:0}
+.dot{display:inline-block;border-radius:50%;background:currentColor}
+
+/* logo */
+.logo{display:flex;align-items:center;direction:rtl}
+.logo svg{flex:none}
+.logo .txt{display:flex;flex-direction:column;align-items:flex-end;line-height:.92;font-family:'Almarai';color:var(--ink)}
+.logo .txt span:last-child{margin-top:.04em}
+
+/* S1 */
+#s1 .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#s1 .logo{gap:40px}
+#s1 .logo svg{width:380px;height:333px}
+#s1 .logo .txt{font-size:175px}
+#s1 .rule2{width:1250px;margin-top:50px;color:var(--ink)}
+#s1dom{font-family:'Fira';font-weight:700;font-size:44px;letter-spacing:.3em;margin-top:26px}
+#flash{position:absolute;inset:0;background:#fff;pointer-events:none}
+
+/* S2 */
+.slam{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.slam span{font-size:330px;line-height:1.1}
+#clockBig{font-family:'Mono';font-size:400px;line-height:1;color:var(--red)}
+#phrase{position:absolute;inset:0;background:var(--paper)}
+#phraseInner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#phraseInner .rule2{width:1300px}
+.prow{display:flex;direction:rtl;gap:40px;margin:18px 0 6px}
+.prow .mask span{font-size:136px;line-height:1.3}
+.prow .red{color:var(--red)}
+#phraseEn{font-family:'Fira';font-weight:900;font-size:92px;letter-spacing:.04em;height:112px;white-space:pre;margin:8px 0 24px}
+#phraseEn .caret{display:inline-block;width:10px;height:84px;background:var(--red);margin-left:8px;vertical-align:-10px}
+
+/* S3 feed */
+#s3{background:var(--paper)}
+#feed{position:absolute;left:170px;right:170px;top:90px}
+#feedHead{display:flex;align-items:center;gap:40px;direction:rtl}
+#feedHead .t{font-size:120px;display:flex;align-items:center;gap:26px;white-space:nowrap}
+#feedHead .t .en{font-family:'Fira';font-weight:900;font-size:90px;color:var(--grey)}
+#feedHead .t .dot{width:34px;height:34px;color:var(--red)}
+#feedHead .rule2{flex:1}
+.row{display:flex;direction:rtl;align-items:center;gap:60px;height:132px;border-bottom:3px solid rgba(20,20,20,.12)}
+.row .time{font-family:'Mono';font-size:88px;width:290px;text-align:right;direction:ltr;flex:none}
+.row .body{flex:1;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.row .cat{font-family:'Plex';font-size:38px;color:var(--red);line-height:1}
+.row .bars{display:flex;flex-direction:column;gap:12px;width:100%;align-items:flex-start}
+.row .bars i{display:block;height:20px;border-radius:10px;background:var(--ink);transform-origin:right center}
+
+/* S3b sections title */
+#s3b{background:var(--ink);color:var(--paper)}
+#s3b .wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:80px;direction:ltr}
+#count{font-family:'Mono';font-size:420px;color:var(--red);line-height:1}
+#s3b .ttl{text-align:right}
+#s3b .ttl .a{font-size:200px;line-height:1.2}
+#s3b .ttl .b{font-family:'Fira';font-weight:900;font-size:110px;letter-spacing:.1em;line-height:1}
+
+/* S4 cards */
+.sec{position:absolute;inset:0;overflow:hidden}
+.sec .top{position:absolute;right:150px;left:150px;top:200px;display:flex;direction:rtl;align-items:center;gap:22px;font-family:'Plex';font-size:44px}
+.sec .top b{width:70px;height:10px;border-radius:5px;background:currentColor;display:inline-block}
+.sec .top .ago{opacity:.55;font-size:36px}
+.sec .ar{position:absolute;right:150px;left:150px;top:270px;text-align:right}
+.sec .ar span{font-size:250px;line-height:1.25;white-space:nowrap}
+.sec .rule2{position:absolute;right:150px;left:150px;top:620px}
+.sec .en{position:absolute;left:150px;top:700px}
+.sec .en span{font-family:'Fira';font-weight:900;font-size:150px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+.sec .ico{position:absolute;right:150px;top:700px;width:180px;height:180px;border-radius:24px;display:flex;align-items:center;justify-content:center}
+.sec .ico svg{width:112px;height:112px;fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.sec .idx{position:absolute;left:150px;top:210px;font-family:'Mono';font-size:54px;direction:ltr}
+
+/* grid */
+#s4b{background:var(--paper)}
+#mast{position:absolute;left:90px;right:90px;top:50px;display:flex;align-items:center;justify-content:space-between;direction:rtl}
+#mast .logo svg{width:120px;height:105px}
+#mast .logo{gap:16px}
+#mast .logo .txt{font-size:56px}
+#mast .date{font-family:'Fira';font-weight:700;font-size:40px;letter-spacing:.2em;color:var(--grey)}
+#mastRule{position:absolute;left:90px;right:90px;top:180px}
+#grid{position:absolute;left:90px;right:90px;top:250px;bottom:110px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);direction:rtl}
+.cell{position:relative;display:flex;align-items:center;gap:22px;padding:0 30px;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+.cell:nth-child(4n){border-left:0}
+.cell:nth-child(n+9){border-bottom:0}
+.cell svg{width:78px;height:78px;fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.cell .a{font-size:50px;line-height:1.3;white-space:nowrap}
+.cell .b{font-family:'Fira';font-weight:700;font-size:26px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);white-space:nowrap}
+.cell .inner{display:flex;align-items:center;gap:22px}
+
+/* S5 phone */
+#s5{transition:none}
+#phone{position:absolute;left:260px;top:70px;width:480px;height:940px;border-radius:70px;background:#0c0c0c;padding:18px;box-shadow:0 50px 90px rgba(0,0,0,.35),0 0 0 3px #2a2a2a}
+#screen{position:relative;width:100%;height:100%;border-radius:54px;overflow:hidden}
+#notch{position:absolute;left:50%;top:14px;width:130px;height:34px;margin-left:-65px;border-radius:20px;background:#0c0c0c;z-index:5}
+#flipWrap{position:absolute;inset:0;transform-origin:center}
+.app{position:absolute;inset:0;padding:66px 22px 0}
+.app .hdr{display:flex;align-items:center;justify-content:space-between;height:74px}
+.app .hdr .logo svg{width:70px;height:61px}
+.app .hdr .logo{gap:8px}
+.app .hdr .logo .txt{font-size:25px}
+.app .icons{display:flex;align-items:center;gap:16px}
+.app .icons svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.app .lang{width:52px;height:46px;border:3px solid currentColor;display:flex;align-items:center;justify-content:center;font-family:'Fira';font-weight:700;font-size:22px}
+.app .lang.ar{font-family:'Almarai';font-size:22px}
+.app .bar{height:9px;border-radius:5px;background:currentColor;margin:10px 0 14px}
+.app .img{height:230px;border-radius:4px;overflow:hidden}
+.app .img svg{width:100%;height:100%;display:block}
+.app .cat{display:flex;align-items:center;gap:10px;font-family:'Plex';font-size:17px;margin:16px 0 6px}
+.app .cat b{width:22px;height:5px;border-radius:3px;background:currentColor;display:inline-block}
+.app .cat span:last-child{opacity:.55}
+.app .hl{display:flex;flex-direction:column;gap:10px;margin:8px 0 18px}
+.app .hl i{display:block;height:22px;border-radius:5px;background:currentColor}
+.app .nowh{display:flex;align-items:center;gap:12px;font-size:28px;margin-bottom:6px}
+.app .nowh .dot{width:12px;height:12px;opacity:.5}
+.app .nowh .r{flex:1;display:flex;flex-direction:column;gap:6px}
+.app .nowh .r i{display:block;height:7px;border-radius:4px;background:currentColor}
+.app .nowh .r i:last-child{width:55%}
+.app .it{display:flex;align-items:flex-start;gap:16px;margin-top:14px}
+.app .it .tm{font-family:'Mono';font-size:28px;flex:none;direction:ltr}
+.app .it .bb{flex:1;display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.app .it .bb i{display:block;height:11px;border-radius:6px;background:currentColor;opacity:.85}
+.app .it .bb i:last-child{width:62%}
+#tap{position:absolute;width:84px;height:84px;border-radius:50%;background:rgba(200,50,43,.35);border:4px solid var(--red);z-index:6;pointer-events:none}
+
+#langPanel{position:absolute;left:880px;width:900px;top:130px;text-align:center}
+#lpCap{font-family:'Fira';font-weight:700;font-size:40px;letter-spacing:.3em;color:var(--grey)}
+#lpCapAr{font-family:'Plex';font-size:40px}
+#lpAr{font-size:200px;line-height:1.3;margin-top:20px}
+#lpEn{font-family:'Fira';font-weight:900;font-size:190px;line-height:1}
+#lpPlus{margin:10px auto;width:520px}
+#chips{margin:44px auto 0;display:flex;justify-content:center;gap:22px;direction:ltr}
+#chips div{height:84px;min-width:130px;padding:0 26px;border:4px solid currentColor;display:flex;align-items:center;justify-content:center;gap:12px;font-size:36px}
+#chips .c1{font-family:'Fira';font-weight:700;font-size:40px}
+#chips svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+#both{position:absolute;left:0;right:0;top:660px;white-space:nowrap;font-size:58px;line-height:1.4}
+#both .e{display:block;font-family:'Fira';font-weight:900;font-size:52px;letter-spacing:.12em;color:var(--red)}
+
+/* S6 */
+#s6 .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#s6 .logo{gap:34px}
+#s6 .logo svg{width:300px;height:263px}
+#s6 .logo .txt{font-size:140px}
+#s6 .rule2{width:1100px;margin-top:40px}
+#s6 .sl1{font-size:76px;line-height:1.4;margin-top:18px}
+#s6 .sl2{font-family:'Fira';font-weight:900;font-size:52px;letter-spacing:.1em;color:var(--red)}
+#s6 .pills{display:flex;gap:22px;margin-top:40px;direction:ltr}
+.pill{height:80px;padding:0 36px;display:flex;align-items:center;border:4px solid var(--ink);font-size:36px}
+.pill.url{background:var(--red);border-color:var(--red);color:#fff;font-family:'Fira';font-weight:700;font-size:48px;letter-spacing:.03em}
+.pill.enp{font-family:'Fira';font-weight:700;font-size:42px}
+#fadeOut{position:absolute;inset:0;background:#000;pointer-events:none}
+
+/* overlays */
+#shutter{position:absolute;inset:0;pointer-events:none;z-index:60}
+#shutter div{position:absolute;left:0;right:0;height:0;background:var(--ink)}
+#shT{top:0;border-bottom:0 solid var(--red)}
+#shB{bottom:0;border-top:0 solid var(--red)}
+#strip{position:absolute;left:0;right:0;bottom:0;height:72px;background:var(--ink);color:var(--paper);z-index:40;overflow:hidden}
+#stripLabel{position:absolute;right:0;top:0;height:72px;width:330px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;gap:16px;direction:rtl;z-index:2}
+#stripLabel .t{font-size:34px}
+#stripLabel .c{font-family:'Mono';font-size:36px;direction:ltr}
+#stripLabel .dot{width:14px;height:14px}
+#stripClip{position:absolute;left:0;right:330px;top:0;height:72px;overflow:hidden}
+#stripTrack{position:absolute;top:0;left:0;height:72px;display:flex;white-space:nowrap}
+.seg{display:flex;align-items:center;height:72px;font-size:30px;direction:rtl}
+.seg span{padding:0 20px}
+.seg .e{font-family:'Fira';font-weight:700;font-size:30px;letter-spacing:.06em;opacity:.7}
+.seg em{font-style:normal;color:var(--red)}
+#bug{position:absolute;right:56px;top:40px;z-index:41;background:var(--paper);padding:8px 18px 8px 14px;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#bug .logo svg{width:72px;height:63px}
+#bug .logo{gap:10px}
+#bug .logo .txt{font-size:28px}
+
+#controls{position:fixed;left:0;right:0;bottom:0;height:56px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;direction:ltr;font-family:sans-serif;font-size:14px;color:#fff}
+#controls button{background:var(--red);color:#fff;border:0;border-radius:6px;font-weight:800;padding:8px 14px;cursor:pointer}
+#controls input{flex:1;accent-color:var(--red)}
+body.render #controls{display:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+  <!-- S1: logo builds itself -->
+  <div class="scene" id="s1">
+    <div class="center">
+      <div class="logo" id="s1logo"></div>
+      <div class="rule2" id="s1rule"><i></i><i></i></div>
+      <div id="s1dom">KHABARNA.PS</div>
+    </div>
+    <div id="flash"></div>
+  </div>
+
+  <!-- S2: slogan -->
+  <div class="scene" id="s2">
+    <div class="slam" id="w1" style="background:var(--ink);color:var(--paper)"><span>أخبار</span></div>
+    <div class="slam" id="w2" style="background:var(--red);color:#fff"><span>فلسطين</span></div>
+    <div class="slam" id="w3" style="background:var(--paper)"><div id="clockBig">22:04</div></div>
+    <div class="slam" id="w4" style="background:var(--green);color:#fff"><span>لحظة بلحظة</span></div>
+    <div id="phrase">
+      <div id="phraseInner">
+        <div class="rule2" id="phRule1"><i></i><i></i></div>
+        <div class="prow" id="prow">
+          <div class="mask"><span>أخبار</span></div><div class="mask"><span class="red">فلسطين</span></div><div class="mask"><span>لحظة</span></div><div class="mask"><span>بلحظة</span></div>
+        </div>
+        <div id="phraseEn"><span id="phraseEnTxt"></span><span class="caret" id="caret"></span></div>
+        <div class="rule2 ltr" id="phRule2"><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: the "Now" live feed -->
+  <div class="scene" id="s3">
+    <div id="feed">
+      <div id="feedHead"><div class="t"><span class="dot"></span>الآن <span class="en">NOW</span></div><div class="rule2" id="feedRule"><i></i><i></i></div></div>
+      <div id="rows"></div>
+    </div>
+  </div>
+  <div class="scene" id="s3b">
+    <div class="wrap"><div id="count">00</div><div class="ttl"><div class="mask"><div class="a" id="s3a">أقسام الموقع</div></div><div class="mask"><div class="b" id="s3bb">SECTIONS</div></div></div></div>
+  </div>
+
+  <!-- S4 -->
+  <div class="scene" id="s4"></div>
+  <div class="scene" id="s4b">
+    <div id="mast"><div class="logo" id="mastLogo"></div><div class="date">ALL SECTIONS · كل الأقسام</div></div>
+    <div class="rule2" id="mastRule"><i></i><i></i></div>
+    <div id="grid"></div>
+  </div>
+
+  <!-- S5: bilingual + dark mode on the phone -->
+  <div class="scene" id="s5">
+    <div id="phone"><div id="screen"><div id="notch"></div>
+      <div id="flipWrap"><div class="app" id="appAR" dir="rtl"></div><div class="app" id="appEN" dir="ltr"></div></div>
+      <div id="tap"></div>
+    </div></div>
+    <div id="langPanel">
+      <div id="lpCap">ONE SITE · TWO LANGUAGES</div>
+      <div id="lpCapAr">موقع واحد بلغتين</div>
+      <div id="lpAr">العربية</div>
+      <div class="rule2" id="lpPlus"><i></i><i></i></div>
+      <div id="lpEn">ENGLISH</div>
+      <div id="chips"><div class="c1" id="chEN">EN</div><div class="c2" id="chAR">ع</div><div class="c3" id="chDark"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></div></div>
+      <div id="both">باللغتين العربية والإنجليزية<span class="e">IN ARABIC &amp; ENGLISH</span></div>
+    </div>
+  </div>
+
+  <!-- S6: outro -->
+  <div class="scene" id="s6">
+    <div class="center">
+      <div class="logo" id="s6logo"></div>
+      <div class="rule2" id="s6rule"><i></i><i></i></div>
+      <div class="sl1" id="s6sl1">أخبار فلسطين لحظة بلحظة</div>
+      <div class="sl2" id="s6sl2">PALESTINE NEWS, MINUTE BY MINUTE</div>
+      <div class="pills" id="s6pills"><div class="pill url">khabarna.ps</div><div class="pill">العربية</div><div class="pill enp">English</div></div>
+    </div>
+    <div id="fadeOut"></div>
+  </div>
+
+  <!-- overlays -->
+  <div id="strip">
+    <div id="stripClip"><div id="stripTrack"></div></div>
+    <div id="stripLabel"><span class="dot" id="stripDot"></span><span class="t">الآن</span><span class="c" id="stripClock">22:04:00</span></div>
+  </div>
+  <div id="bug"><div class="logo" id="bugLogo"></div></div>
+  <div id="shutter"><div id="shT"></div><div id="shB"></div></div>
+</div></div>
+
+<div id="controls">
+  <button id="playBtn">▶ Play</button>
+  <input type="range" id="scrub" min="0" max="33.9" step="0.001" value="0">
+  <span id="time">0.00s</span>
+</div>
+<audio id="music" src="music.m4a" preload="auto"></audio>
+
+<script>
+/* ============================================================
+   Timeline in beats at 124 BPM. Keep in sync with music.js
+   ============================================================ */
+const BPM = 124, B = 60 / BPM, FPS = 30;
+const b = n => n * B;
+const T = {
+  logoText: b(4),
+  s2: b(8), w: [8, 9, 10, 11].map(b), phrase: b(12),
+  s3: b(18), s3b: b(24),
+  s4: b(26), secDur: b(2),
+  grid: b(50),
+  s5: b(53), switches: [55, 57, 58, 59, 59.5, 60, 60.5, 61].map(b), dark: b(61.5), both: b(62),
+  s6: b(64),
+  end: b(70)
+};
+const DURATION = T.end;
+const CUTS = [T.s2, T.s3, T.s3b, T.s4, T.grid, T.s5, T.s6];
+
+/* ---- logo (speech bubble with the flag and news lines) ---- */
+function logoSVG(id = '') {
+  return `<svg viewBox="0 0 160 140" ${id ? `id="${id}"` : ''}>
+    <path class="lgTail" d="M36 100 L28 134 L66 100 Z" fill="#c8322b"/>
+    <rect class="lgBubble" x="9" y="9" width="142" height="94" rx="20" fill="#fff" stroke="#c8322b" stroke-width="10" pathLength="1"/>
+    <g class="lgFlag">
+      <rect class="f1" x="27" y="27" width="58" height="14" fill="#141414"/>
+      <rect class="f2" x="27" y="41" width="58" height="14" fill="#f3f3f0"/>
+      <rect class="f3" x="27" y="55" width="58" height="14" fill="#2d7a3e"/>
+      <path class="f4" d="M27 27 L52 48 L27 69 Z" fill="#c8322b"/>
+      <rect x="27" y="27" width="58" height="42" fill="none" stroke="#141414" stroke-width="2.5"/>
+    </g>
+    <g stroke="#141414" stroke-width="6" stroke-linecap="butt">
+      <path class="ln" d="M93 31 H134" pathLength="1"/><path class="ln" d="M93 43 H134" pathLength="1"/>
+      <path class="ln" d="M93 55 H134" pathLength="1"/><path class="ln" d="M93 67 H134" pathLength="1"/>
+      <path class="ln" d="M27 84 H134" pathLength="1"/>
+    </g></svg>`;
+}
+const logoHTML = () => logoSVG() + '<div class="txt"><span>خبرنا</span><span>فلسطين</span></div>';
+['s1logo', 's6logo', 'mastLogo', 'bugLogo'].forEach(id => document.getElementById(id).innerHTML = logoHTML());
+
+const ICONS = {
+  clock:'<circle cx="50" cy="50" r="36"/><path d="M50 28v22l14 10"/>',
+  olive:'<path d="M18 86 C38 64 56 44 84 14"/><path d="M40 62c-14 0-22-8-24-18 12-2 22 4 24 18z"/><path d="M52 48c-2-14 4-24 14-28 4 12-2 22-14 28z"/><path d="M60 42c12-4 22 0 26 8-10 6-20 4-26-8z"/><path d="M30 74c-12 4-20 0-24-8 10-6 20-4 24 8z"/>',
+  waves:'<path d="M10 42c10-8 20-8 30 0s20 8 30 0 20-8 30 0"/><path d="M10 62c10-8 20-8 30 0s20 8 30 0 20-8 30 0"/><path d="M10 82c10-8 20-8 30 0s20 8 30 0 20-8 30 0"/><circle cx="72" cy="18" r="8"/>',
+  dome:'<path d="M28 50 a22 22 0 0 1 44 0"/><path d="M50 16v12"/><path d="M18 50h64"/><path d="M24 50v34h52V50"/><path d="M38 84V68h24v16"/><path d="M12 86h76"/>',
+  bars:'<rect x="18" y="14" width="64" height="72" rx="6"/><path d="M34 14v72M50 14v72M66 14v72"/>',
+  globe:'<circle cx="50" cy="50" r="34"/><ellipse cx="50" cy="50" rx="14" ry="34"/><path d="M16 50h68M21 33h58M21 67h58"/>',
+  chart:'<path d="M14 86h72"/><path d="M24 86V64M42 86V52M60 86V58M78 86V40"/><path d="M18 44 L38 28 L54 36 L82 14"/><path d="M68 14h14v14"/>',
+  ball:'<circle cx="50" cy="50" r="34"/><path d="M50 37 l12 9-5 14h-14l-5-14z"/><path d="M50 16v21M62 46l19-6M57 60l12 16M43 60l-12 16M38 46l-19-6"/>',
+  chip:'<rect x="28" y="28" width="44" height="44" rx="6"/><rect x="40" y="40" width="20" height="20"/><path d="M38 28V14M50 28V14M62 28V14M38 86V72M50 86V72M62 86V72M28 38H14M28 50H14M28 62H14M86 38H72M86 50H72M86 62H72"/>',
+  doc:'<path d="M26 12h34l18 18v58H26z"/><path d="M60 12v18h18"/><path d="M36 50h32M36 62h32M36 74h20"/>',
+  pen:'<path d="M22 78 L30 56 L66 20 L80 34 L44 70 Z"/><path d="M58 28l14 14"/><path d="M14 88h44"/>',
+  spark:'<path d="M40 14l6 20 20 6-20 6-6 20-6-20-20-6 20-6z"/><path d="M74 54l4 12 12 4-12 4-4 12-4-12-12-4 12-4z"/>',
+};
+const SECTIONS = [
+  {ar:'الآن',        en:'Now',          icon:'clock', k:'paper'},
+  {ar:'الضفة الغربية', en:'West Bank',   icon:'olive', k:'ink'},
+  {ar:'غزة',         en:'Gaza',         icon:'waves', k:'red'},
+  {ar:'القدس',       en:'Jerusalem',    icon:'dome',  k:'paper'},
+  {ar:'الأسرى',      en:'Prisoners',    icon:'bars',  k:'green'},
+  {ar:'عربي ودولي',  en:'Arab & World', icon:'globe', k:'ink'},
+  {ar:'اقتصاد',      en:'Economy',      icon:'chart', k:'paper'},
+  {ar:'رياضة',       en:'Sports',       icon:'ball',  k:'red'},
+  {ar:'تكنولوجيا',   en:'Technology',   icon:'chip',  k:'ink'},
+  {ar:'تقارير',      en:'Reports',      icon:'doc',   k:'paper'},
+  {ar:'آراء',        en:'Opinion',      icon:'pen',   k:'green'},
+  {ar:'منوعات',      en:'Variety',      icon:'spark', k:'ink'},
+];
+const KIND = {
+  paper: {bg:'#f3f3f0', fg:'#141414', acc:'#c8322b', icoBg:'#141414', icoFg:'#f3f3f0'},
+  ink:   {bg:'#141414', fg:'#f3f3f0', acc:'#c8322b', icoBg:'#c8322b', icoFg:'#fff'},
+  red:   {bg:'#c8322b', fg:'#ffffff', acc:'#141414', icoBg:'#fff', icoFg:'#c8322b'},
+  green: {bg:'#2d7a3e', fg:'#ffffff', acc:'#141414', icoBg:'#fff', icoFg:'#2d7a3e'},
+};
+
+/* ---------------- helpers ---------------- */
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+const E = {
+  outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  outCubic: x => 1 - Math.pow(1 - x, 3),
+  inCubic: x => x * x * x,
+  inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  outBack: x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+function st(el, o = {}) {
+  const {op = 1, x = 0, y = 0, s = 1, sx, r = 0, blur = 0, extra = ''} = o;
+  el.style.opacity = op;
+  el.style.transform = `translate(${x}px,${y}px) scale(${sx ?? s},${s}) rotate(${r}deg) ${extra}`;
+  el.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
+}
+const shake = (t, a, amp = 10, len = .16) => (t < a || t > a + len) ? 0 : Math.sin((t - a) * 140) * amp * (1 - (t - a) / len);
+// draw a .rule2 (two bars) with progress k
+function rule(el, k, stagger = .25) {
+  const [a, c] = el.children;
+  a.style.transform = `scaleX(${E.outExpo(clamp(k / (1 - stagger)))})`;
+  c.style.transform = `scaleX(${E.outExpo(clamp((k - stagger) / (1 - stagger)))})`;
+}
+// reveal text from a mask: slides up from below
+const rise = (el, k, dist = 110) => { el.style.transform = `translateY(${(1 - E.outExpo(k)) * dist}%)`; };
+const pad = n => String(n).padStart(2, '0');
+const fmt = mins => `${pad(Math.floor(mins / 60) % 24)}:${pad(Math.floor(mins % 60))}`;
+
+/* build logo animation handles */
+function logoParts(root) {
+  return {bubble: root.querySelector('.lgBubble'), tail: root.querySelector('.lgTail'),
+    flag: [...root.querySelectorAll('.lgFlag .f1, .lgFlag .f2, .lgFlag .f3, .lgFlag .f4')],
+    lines: [...root.querySelectorAll('.ln')], txt: [...root.querySelectorAll('.txt span')], svg: root.querySelector('svg')};
+}
+function drawLogo(L, t, t0, speed = 1) {
+  const q = x => t0 + x / speed;
+  L.bubble.style.strokeDasharray = 1;
+  L.bubble.style.strokeDashoffset = 1 - E.inOutCubic(P(t, q(0), q(1.1)));
+  L.bubble.style.fillOpacity = P(t, q(.8), q(1.1));
+  L.tail.style.transformOrigin = '36px 100px';
+  L.tail.style.transform = `scale(${E.outBack(P(t, q(1.0), q(1.3)))})`;
+  L.flag.forEach((f, i) => {
+    const k = E.outExpo(P(t, q(1.1 + i * .1), q(1.5 + i * .1)));
+    f.style.transformOrigin = '27px 48px';
+    f.style.transform = i === 3 ? `scale(${k})` : `scaleX(${k})`;
+  });
+  L.lines.forEach((l, i) => { l.style.strokeDasharray = 1; l.style.strokeDashoffset = 1 - E.outCubic(P(t, q(1.3 + i * .09), q(1.6 + i * .09))); });
+}
+const L1 = logoParts($('s1logo')), L6 = logoParts($('s6logo'));
+
+/* feed rows */
+const FEED = [['22:04', 'تكنولوجيا', [.92, .55]], ['21:58', 'عربي ودولي', [.84, .7]], ['20:54', 'اقتصاد', [.95, .42]],
+              ['19:50', 'غزة', [.78, .6]], ['18:54', 'الضفة الغربية', [.9, .5]], ['18:48', 'اقتصاد', [.7, .35]]];
+const rowsEl = $('rows');
+const rows = FEED.map(([tm, cat, w]) => {
+  const d = document.createElement('div'); d.className = 'row';
+  d.innerHTML = `<div class="time">${tm}</div><div class="body"><div class="cat">— ${cat}</div><div class="bars">${w.map(x => `<i style="width:${x * 100}%"></i>`).join('')}</div></div>`;
+  rowsEl.appendChild(d);
+  const [h, m] = tm.split(':').map(Number);
+  return {el: d, time: d.querySelector('.time'), mins: h * 60 + m, bars: [...d.querySelectorAll('.bars i')], cat: d.querySelector('.cat')};
+});
+
+/* section cards */
+const svgIcon = (n, c) => `<svg viewBox="0 0 100 100" stroke="${c}">${ICONS[n]}</svg>`;
+const cards = SECTIONS.map((sec, i) => {
+  const K = KIND[sec.k], d = document.createElement('div');
+  d.className = 'sec'; d.style.background = K.bg; d.style.color = K.fg; d.style.zIndex = i + 1;
+  d.innerHTML = `
+    <div class="top"><b style="background:${K.acc}"></b><span>قسم</span><span class="ago">${pad(i + 1)} / ${SECTIONS.length}</span></div>
+    <div class="idx">${fmt(22 * 60 + 4 - i * 7)}</div>
+    <div class="ar mask"><span>${sec.ar}</span></div>
+    <div class="rule2"><i></i><i style="background:${K.acc}"></i></div>
+    <div class="en mask"><span>${sec.en}</span></div>
+    <div class="ico" style="background:${K.icoBg}">${svgIcon(sec.icon, K.icoFg)}</div>`;
+  $('s4').appendChild(d);
+  return {el: d, ar: d.querySelector('.ar span'), en: d.querySelector('.en span'), rule: d.querySelector('.rule2'),
+          top: d.querySelector('.top'), ico: d.querySelector('.ico'), idx: d.querySelector('.idx')};
+});
+const cells = SECTIONS.map((sec, i) => {
+  const d = document.createElement('div'); d.className = 'cell';
+  d.innerHTML = `<div class="inner">${svgIcon(sec.icon, i % 3 === 1 ? '#c8322b' : '#141414')}<div><div class="a">${sec.ar}</div><div class="b">${sec.en}</div></div></div>`;
+  $('grid').appendChild(d); return d.querySelector('.inner');
+});
+
+/* phone app (mirrors the site's mobile header, hero, and "Now" list) */
+const ICO = {
+  search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  moon: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>',
+  menu: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h11"/></svg>'
+};
+const HERO = `<svg viewBox="0 0 400 230" preserveAspectRatio="none"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdb9a3"/><stop offset="1" stop-color="#8e97a3"/></linearGradient></defs>
+  <rect width="400" height="230" fill="url(#sky)"/><path d="M0 110 C60 70 110 80 160 100 S260 60 320 85 400 90 400 90 V230 H0z" fill="#5d6260"/>
+  <path d="M0 140 C80 120 160 135 240 125 S360 130 400 128 V230 H0z" fill="#6f7272"/><rect y="150" width="400" height="80" fill="#7c7f82"/></svg>`;
+function appHTML(lang) {
+  const ar = lang === 'ar';
+  const icons = `<div class="icons"><span>${ICO.search}</span><span class="lang ${ar ? '' : 'ar'}">${ar ? 'EN' : 'ع'}</span><span>${ICO.moon}</span><span>${ICO.menu}</span></div>`;
+  const logo = `<div class="logo">${logoSVG()}<div class="txt"><span>خبرنا</span><span>فلسطين</span></div></div>`;
+  const times = ['22:04', '21:58', '20:54'];
+  return `<div class="hdr">${ar ? logo + icons : icons.replace('class="icons"', 'class="icons" style="flex-direction:row"') + logo}</div>
+    <div class="bar"></div>
+    <div class="img">${HERO}</div>
+    <div class="cat"><b></b><span>${ar ? 'الضفة الغربية' : 'WEST BANK'}</span><span>${ar ? 'منذ 25 دقيقة' : '25 min ago'}</span></div>
+    <div class="hl"><i style="width:88%"></i><i style="width:70%"></i><i style="width:46%"></i></div>
+    <div class="nowh"><span class="dot"></span><span${ar ? '' : ' style="font-family:Fira;font-weight:700;font-size:32px"'}>${ar ? 'الآن' : 'Now'}</span><div class="r"><i></i><i></i></div></div>
+    ${times.map((tm, i) => `<div class="it"><span class="tm">${tm}</span><div class="bb"><i></i><i style="width:${[62, 48, 70][i]}%"></i></div></div>`).join('')}`;
+}
+$('appAR').innerHTML = appHTML('ar'); $('appEN').innerHTML = appHTML('en');
+// EN header: logo stays Arabic but sits on the left, icons on the right (as on the real site)
+$('appEN').querySelector('.hdr').style.flexDirection = 'row-reverse';
+
+/* bottom "Now" strip */
+const track = $('stripTrack');
+const seg = '<div class="seg">' + SECTIONS.map(s => `<span>${s.ar}</span><span class="e">${s.en.toUpperCase()}</span><em>■</em>`).join('') + '</div>';
+track.innerHTML = seg + seg + seg;
+let segW = 2000;
+
+/* ---------------- render ---------------- */
+const scenes = {s1: [0, T.s2], s2: [T.s2, T.s3], s3: [T.s3, T.s3b], s3b: [T.s3b, T.s4], s4: [T.s4, T.grid], s4b: [T.grid, T.s5], s5: [T.s5, T.s6], s6: [T.s6, T.end + 1]};
+
+function renderAt(t) {
+  for (const [id, [a, e]] of Object.entries(scenes)) show($(id), t >= a && t < e);
+
+  /* ---- S1 ---- */
+  if (t < T.s2) {
+    drawLogo(L1, t, 0.1, 1.05);
+    L1.txt.forEach((sp, i) => {
+      const a = T.logoText + i * .1, k = P(t, a, a + .3);
+      st(sp, {op: P(t, a, a + .05), s: lerp(1.6, 1, E.outExpo(k)), x: shake(t, a, 12)});
+    });
+    st(L1.svg, {s: t >= T.logoText ? lerp(1.08, 1, E.outCubic(P(t, T.logoText, T.logoText + .3))) : 1});
+    const lk = P(t, 0, T.logoText);  // before the text lands, the logo sits centred
+    st($('s1logo'), {x: t < T.logoText ? -230 : lerp(-230, 0, E.outExpo(P(t, T.logoText, T.logoText + .35)))});
+    rule($('s1rule'), P(t, T.logoText + .15, T.logoText + .8));
+    const dk = P(t, T.logoText + .5, T.logoText + 1.1);
+    $('s1dom').textContent = 'KHABARNA.PS'.slice(0, Math.ceil(11 * dk));
+    $('flash').style.opacity = t >= T.logoText ? .8 * (1 - E.outCubic(P(t, T.logoText, T.logoText + .3))) : 0;
+    st($('s1').querySelector('.center'), {s: lerp(1, 1.04, P(t, T.logoText, T.s2))});
+  }
+
+  /* ---- S2 ---- */
+  if (t >= T.s2 && t < T.s3) {
+    const words = ['w1', 'w2', 'w3', 'w4'];
+    words.forEach((id, i) => {
+      const a = T.w[i], e = i < 3 ? T.w[i + 1] : T.phrase, el = $(id), on = t >= a && t < e;
+      show(el, on); if (!on) return;
+      const k = E.outExpo(P(t, a, a + .25));
+      st(el.firstElementChild, {s: lerp(1.5, 1, k), blur: lerp(12, 0, k), x: shake(t, a, 18)});
+    });
+    if (t >= T.w[2] && t < T.w[3]) {       // a clock rolling fast
+      const m = Math.floor(lerp(18 * 60 + 48, 22 * 60 + 4, E.outCubic(P(t, T.w[2], T.w[2] + B * .8))));
+      $('clockBig').textContent = fmt(m);
+    }
+    const ph = $('phrase'); show(ph, t >= T.phrase);
+    if (t >= T.phrase) {
+      rule($('phRule1'), P(t, T.phrase, T.phrase + .5));
+      [...$('prow').children].forEach((m, i) => rise(m.firstElementChild, P(t, T.phrase + .05 + i * .07, T.phrase + .45 + i * .07)));
+      const en = 'PALESTINE NEWS, MINUTE BY MINUTE', a = T.phrase + .5;
+      $('phraseEnTxt').textContent = en.slice(0, Math.floor(en.length * P(t, a, a + .9)));
+      $('caret').style.opacity = (t < a || Math.floor(t / B) % 2 === 0) ? 1 : 0;
+      rule($('phRule2'), P(t, T.phrase + .3, T.phrase + .8));
+      st($('phraseInner'), {s: lerp(1, 1.05, P(t, T.phrase, T.s3))});
+    }
+  }
+
+  /* ---- S3: Now feed ---- */
+  if (t >= T.s3 && t < T.s3b) {
+    const h = $('feedHead');
+    st(h, {op: P(t, T.s3, T.s3 + .1), y: lerp(-40, 0, E.outExpo(P(t, T.s3, T.s3 + .4)))});
+    rule($('feedRule'), P(t, T.s3 + .1, T.s3 + .6));
+    h.querySelector('.dot').style.opacity = Math.floor(t / B) % 2 ? .3 : 1;
+    rows.forEach((r, i) => {
+      const a = T.s3 + b(.5) + i * b(.5), k = P(t, a, a + .35);
+      st(r.el, {op: P(t, a, a + .06), y: lerp(60, 0, E.outExpo(k))});
+      // digits roll into place
+      const rk = P(t, a, a + .3);
+      r.time.textContent = rk < 1 ? fmt(Math.floor(r.mins - (1 - rk) * 97)) : fmt(r.mins);
+      r.bars.forEach((bar, j) => bar.style.transform = `scaleX(${E.outExpo(P(t, a + .05 + j * .06, a + .45 + j * .06))})`);
+      st(r.cat, {op: P(t, a + .1, a + .2)});
+    });
+    st($('feed'), {y: lerp(0, -40, E.inOutCubic(P(t, T.s3 + b(4), T.s3b)))});
+  }
+  if (t >= T.s3b && t < T.s4) {
+    $('count').textContent = pad(Math.round(12 * E.outCubic(P(t, T.s3b, T.s3b + .6))));
+    st($('count'), {s: lerp(.5, 1, E.outBack(P(t, T.s3b, T.s3b + .35)))});
+    rise($('s3a'), P(t, T.s3b + .05, T.s3b + .4)); rise($('s3bb'), P(t, T.s3b + .15, T.s3b + .5));
+  }
+
+  /* ---- S4 cards ---- */
+  if (t >= T.s4 && t < T.grid) {
+    cards.forEach((c, i) => {
+      const a = T.s4 + i * T.secDur, u = t - a, on = u >= 0 && u < T.secDur + .3;
+      show(c.el, on); if (!on) return;
+      const k = i === 0 ? 1 : E.outExpo(P(u, 0, .3));
+      c.el.style.transform = `translateY(${(1 - k) * 1080}px)`;
+      rise(c.ar, P(u, .08, .45));
+      rule(c.rule, P(u, .12, .6));
+      rise(c.en, P(u, .2, .55));
+      st(c.top, {op: P(u, .1, .2), x: lerp(60, 0, E.outExpo(P(u, .1, .4)))});
+      st(c.idx, {op: P(u, .15, .25)});
+      st(c.ico, {s: E.outBack(P(u, .18, .45)), r: lerp(-20, 0, E.outCubic(P(u, .18, .45)))});
+      c.el.firstElementChild.nextElementSibling.style.opacity = P(u, .15, .25);
+    });
+  }
+
+  /* ---- grid ---- */
+  if (t >= T.grid && t < T.s5) {
+    st($('mast'), {op: P(t, T.grid, T.grid + .1), y: lerp(-40, 0, E.outExpo(P(t, T.grid, T.grid + .4)))});
+    rule($('mastRule'), P(t, T.grid + .05, T.grid + .5));
+    const order = [0, 1, 2, 3, 7, 6, 5, 4, 8, 9, 10, 11];
+    cells.forEach((el, i) => { const a = T.grid + .1 + order.indexOf(i) * .045; st(el, {op: P(t, a, a + .06), y: lerp(40, 0, E.outExpo(P(t, a, a + .3)))}); });
+    const g = $('grid'); g.style.borderColor = 'transparent';
+    [...g.children].forEach((cell, i) => cell.style.borderColor = `rgba(20,20,20,${P(t, T.grid + .05 + i * .02, T.grid + .3 + i * .02)})`);
+  }
+
+  /* ---- S5 phone ---- */
+  if (t >= T.s5 && t < T.s6) {
+    const dk = E.inOutCubic(P(t, T.dark, T.dark + .25));           // dark mode amount
+    const bg = `rgb(${lerp(243, 20, dk)},${lerp(243, 20, dk)},${lerp(240, 20, dk)})`;
+    const fg = `rgb(${lerp(20, 243, dk)},${lerp(20, 243, dk)},${lerp(20, 240, dk)})`;
+    $('s5').style.background = bg; $('s5').style.color = fg;
+    ['appAR', 'appEN'].forEach(id => { $(id).style.background = bg; $(id).style.color = fg; });
+    document.querySelectorAll('#s5 .app .txt').forEach(x => x.style.color = fg);
+    const pk = P(t, T.s5, T.s5 + .5);
+    st($('phone'), {op: P(t, T.s5, T.s5 + .1), y: lerp(800, 0, E.outExpo(pk)), r: lerp(10, 3, E.outCubic(pk))});
+    let passed = 0, last = -1;
+    T.switches.forEach((sw, i) => { if (t >= sw) { passed++; last = i; } });
+    const mode = passed % 2, swT = last >= 0 ? T.switches[last] : -9;
+    let flip = 1; for (const sw of T.switches) { const d = Math.abs(t - sw); if (d < .08) flip = Math.min(flip, d / .08); }
+    $('flipWrap').style.transform = `scaleX(${Math.max(flip, .02)})`;
+    show($('appAR'), mode === 0); show($('appEN'), mode === 1);
+    // tap indicator on the language box, then on the moon for dark mode
+    const appEl = mode ? $('appEN') : $('appAR');
+    let target = appEl.querySelector('.lang');
+    if (t >= T.dark - .15) target = appEl.querySelectorAll('.icons > span')[2];
+    const scr = $('screen').getBoundingClientRect(), tr = target.getBoundingClientRect(), sc = scr.width / 444;
+    const tx = (tr.left + tr.width / 2 - scr.left) / sc, ty = (tr.top + tr.height / 2 - scr.top) / sc;
+    let tp = 0; for (const sw of [...T.switches, T.dark]) if (t >= sw - .1 && t < sw + .12) tp = Math.max(tp, 1 - Math.abs(t - sw) / .12);
+    $('tap').style.left = (18 + tx - 42) + 'px'; $('tap').style.top = (18 + ty - 42) + 'px';
+    st($('tap'), {op: (t >= T.s5 + .6 && t < T.both) ? .3 + .7 * tp : 0, s: lerp(1.3, .7, tp)});
+    // right panel
+    const ck = P(t, T.s5 + .15, T.s5 + .5);
+    st($('lpCap'), {op: ck}); st($('lpCapAr'), {op: ck});
+    const bothK = P(t, T.both, T.both + .25), sinceSw = P(t, swT, swT + .15);
+    st($('lpAr'), {op: lerp(mode === 0 ? 1 : .18, 1, bothK) * P(t, T.s5 + .2, T.s5 + .35), y: lerp(80, 0, E.outExpo(P(t, T.s5 + .2, T.s5 + .6))), s: mode === 0 && t < T.dark && last >= 0 ? lerp(1.12, 1, E.outCubic(sinceSw)) : 1});
+    st($('lpEn'), {op: lerp(mode === 1 ? 1 : .18, 1, bothK) * P(t, T.s5 + .35, T.s5 + .5), y: lerp(-80, 0, E.outExpo(P(t, T.s5 + .35, T.s5 + .75))), s: mode === 1 && t < T.dark ? lerp(1.12, 1, E.outCubic(sinceSw)) : 1});
+    $('lpPlus').style.color = fg; rule($('lpPlus'), P(t, T.s5 + .3, T.s5 + .8));
+    const chipOn = (el, on) => { el.style.background = on ? '#c8322b' : 'transparent'; el.style.color = on ? '#fff' : fg; el.style.borderColor = on ? '#c8322b' : fg; };
+    chipOn($('chEN'), mode === 1 && t < T.dark); chipOn($('chAR'), mode === 0 && t < T.dark); chipOn($('chDark'), t >= T.dark);
+    st($('chips'), {op: P(t, T.s5 + .45, T.s5 + .6) * (1 - P(t, T.both + .2, T.both + .35))});
+    const bk = P(t, T.both, T.both + .35);
+    st($('both'), {op: P(t, T.both, T.both + .1), y: lerp(50, 0, E.outExpo(bk))});
+  }
+
+  /* ---- S6 ---- */
+  if (t >= T.s6) {
+    drawLogo(L6, t, T.s6, 2.6);
+    L6.txt.forEach((sp, i) => { const a = T.s6 + .35 + i * .08; st(sp, {op: P(t, a, a + .05), s: lerp(1.5, 1, E.outExpo(P(t, a, a + .3)))}); });
+    rule($('s6rule'), P(t, T.s6 + .45, T.s6 + 1));
+    [['s6sl1', .6], ['s6sl2', .8], ['s6pills', 1.0]].forEach(([id, d]) => {
+      const a = T.s6 + d; st($(id), {op: P(t, a, a + .1), y: lerp(40, 0, E.outExpo(P(t, a, a + .4)))});
+    });
+    [...$('s6pills').children].forEach((p, i) => { const a = T.s6 + 1.0 + i * .1; st(p, {op: P(t, a, a + .08), s: lerp(.6, 1, E.outBack(P(t, a, a + .3)))}); });
+    $('fadeOut').style.opacity = E.inOutCubic(P(t, T.end - .7, T.end));
+  }
+
+  /* ---- overlays ---- */
+  const stripOn = t >= T.s4 && t < T.s5; show($('strip'), stripOn);
+  if (stripOn) {
+    $('strip').style.transform = `translateY(${(1 - E.outExpo(P(t, T.s4, T.s4 + .4))) * 80}px)`;
+    track.style.transform = `translateX(${-segW + ((t - T.s4) * 300) % segW}px)`;
+    const secs = Math.floor(22 * 3600 + 4 * 60 + (t - T.s4) * 1);
+    $('stripClock').textContent = `${pad(Math.floor(secs / 3600))}:${pad(Math.floor(secs / 60) % 60)}:${pad(secs % 60)}`;
+    $('stripDot').style.opacity = Math.floor(t / B) % 2 ? .35 : 1;
+  }
+  const bugOn = t >= T.s4 && t < T.s5; show($('bug'), bugOn);
+  if (bugOn) st($('bug'), {op: P(t, T.s4 + .1, T.s4 + .3), y: lerp(-30, 0, E.outCubic(P(t, T.s4 + .1, T.s4 + .4)))});
+
+  // shutter transition: black panels close to the centre, cut, then open
+  let sh = 0;
+  for (const c of CUTS) if (t > c - .22 && t < c + .22) sh = t < c ? E.inCubic(P(t, c - .22, c)) : 1 - E.outCubic(P(t, c, c + .22));
+  $('shT').style.height = $('shB').style.height = (sh * 545) + 'px';
+  $('shT').style.borderBottomWidth = $('shB').style.borderTopWidth = (sh > 0 ? 12 : 0) + 'px';
+}
+
+/* ---------------- boot ---------------- */
+const isRender = new URLSearchParams(location.search).has('render');
+if (isRender) document.body.classList.add('render');
+window.DURATION = DURATION; window.FPS = FPS; window.renderAt = renderAt;
+Promise.all(['800 100px Almarai', '700 40px Plex', '700 40px Fira', '900 40px Fira', '400 40px Mono'].map(f => document.fonts.load(f)))
+  .then(() => document.fonts.ready).then(() => {
+    segW = track.firstElementChild.getBoundingClientRect().width;
+    renderAt(0); window.READY = true;
+    if (!isRender) initPlayer();
+  });
+
+function initPlayer() {
+  const stage = $('stage'), vp = $('viewport'), audio = $('music');
+  const fit = () => { stage.style.transform = `scale(${Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080)})`; };
+  addEventListener('resize', fit); fit();
+  let playing = false, t0 = 0, start = 0, cur = 0;
+  const btn = $('playBtn'), scrub = $('scrub'), time = $('time');
+  const hasAudio = () => audio.readyState >= 2 && !audio.error;
+  const draw = t => { cur = t; renderAt(t); scrub.value = t; time.textContent = t.toFixed(2) + 's'; };
+  function tick() {
+    if (!playing) return;
+    let t = hasAudio() && !audio.paused ? audio.currentTime : t0 + (performance.now() - start) / 1000;
+    if (t >= DURATION) { t = DURATION; pause(); }
+    draw(t); requestAnimationFrame(tick);
+  }
+  function play() {
+    if (cur >= DURATION) cur = 0;
+    playing = true; btn.textContent = '❚❚ Pause'; t0 = cur; start = performance.now();
+    try { audio.currentTime = cur; audio.play().catch(() => {}); } catch (e) {}
+    requestAnimationFrame(tick);
+  }
+  function pause() { playing = false; btn.textContent = '▶ Play'; audio.pause(); }
+  btn.onclick = () => playing ? pause() : play();
+  scrub.oninput = () => { pause(); draw(+scrub.value); };
+  addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); btn.click(); } });
+}
+</script>
+</body>
+</html>
