@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نبض فلسطين 24 — فيديو جرافيك</title>
+<title>نبأ فلسطين 24 — فيديو جرافيك</title>
 <style>
 @font-face{font-family:'Cairo';src:url(fonts/Cairo.ttf) format('truetype');font-weight:200 1000}
 @font-face{font-family:'Montserrat';src:url(fonts/Montserrat.ttf) format('truetype');font-weight:100 900}
@@ -25,6 +25,13 @@ body.render #stage{transform:none!important}
 .lockup{display:flex;align-items:center;gap:36px;direction:rtl}
 .lockup .name{font-weight:900;line-height:1.15;white-space:nowrap}
 .badge24{position:relative;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Montserrat';font-weight:900;color:#fff;box-shadow:0 0 0 8px rgba(224,16,47,.25),0 0 60px rgba(224,16,47,.6)}
+.lockup.col{flex-direction:column;gap:6px}
+.logoTile{border-radius:40px;overflow:hidden;background:#f1f1f1;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 30px 70px rgba(0,0,0,.5),0 0 90px rgba(224,16,47,.35)}
+.logoTile img{display:block;width:100%}
+#s1 .logoTile{width:560px}
+#s1 .name{font-size:150px}
+#s6 .logoTile{width:440px}
+#s6 .name{font-size:120px}
 .badge24 svg{position:absolute;inset:-18px;width:calc(100% + 36px);height:calc(100% + 36px)}
 .lockEn{font-family:'Montserrat';font-weight:800;text-transform:uppercase;white-space:nowrap;text-align:center}
 .live{display:inline-flex;align-items:center;gap:12px;font-family:'Montserrat';font-weight:800;letter-spacing:.2em;border:3px solid rgba(255,255,255,.3);border-radius:40px}
@@ -130,7 +137,7 @@ body.render #stage{transform:none!important}
 #s6 .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #s6 .name{font-size:180px}
 #s6 .badge24{width:190px;height:190px;font-size:104px}
-#s6 .lockEn{font-size:40px;color:#ff5a6e;margin-top:4px}
+#s6 .lockEn{font-size:40px;color:#ff5a6e;margin-top:18px}
 #s6 .sl1{font-size:70px;font-weight:900;margin-top:40px;line-height:1.3}
 #s6 .sl2{font-family:'Montserrat';font-weight:700;font-size:32px;letter-spacing:.22em;opacity:.9;margin-top:8px}
 #s6 .pills{display:flex;justify-content:center;gap:22px;margin-top:44px;direction:ltr}
@@ -153,6 +160,7 @@ body.render #stage{transform:none!important}
 .tickSeg span{padding:0 20px}
 .tickSeg em{font-style:normal;color:var(--red);font-size:22px}
 #bug{position:absolute;right:50px;top:36px;display:flex;align-items:center;gap:12px;z-index:41;direction:rtl;background:rgba(10,10,12,.82);padding:8px 10px 8px 16px;border-radius:40px;color:#fff}
+#bug .bl{height:54px;border-radius:10px;display:block}
 #bug .t{font-size:40px;font-weight:900;line-height:1}
 #bug .b{width:52px;height:52px;border-radius:50%;background:var(--red);font-family:'Montserrat';font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(255,255,255,.25)}
 #bug .lv{font-family:'Montserrat';font-weight:800;font-size:16px;letter-spacing:.2em;display:flex;align-items:center;gap:8px;margin-right:10px;padding:6px 12px;border-radius:14px;background:rgba(0,0,0,.35)}
@@ -173,8 +181,8 @@ body.render #controls{display:none}
     <div class="monitorGrid"></div>
     <svg class="ecg" viewBox="0 0 1920 1080"><path id="s1glow" stroke="rgba(224,16,47,.35)" stroke-width="22"/><path id="s1ecg" stroke="#ff2a45" stroke-width="7"/><circle id="s1head" r="12" fill="#fff"/></svg>
     <div class="lockWrap" id="s1lock">
-      <div class="lockup"><div class="name">نبض فلسطين</div><div class="badge24" id="s1badge">24<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5.84" opacity=".7"/></svg></div></div>
-      <div class="lockEn" id="s1en">Nabd Palestine 24</div>
+      <div class="lockup col"><div class="logoTile" id="s1badge"><img src="logo-crop.jpg" alt=""></div><div class="name">نبأ فلسطين</div><div hidden>24<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5.84" opacity=".7"/></svg></div></div>
+      <div class="lockEn" id="s1en">Naba Palestine 24</div>
       <div class="live" id="s1live"><i id="s1dot"></i>LIVE · مباشر</div>
     </div>
     <div id="flash"></div>
@@ -182,7 +190,7 @@ body.render #controls{display:none}
 
   <!-- S2: slogan -->
   <div class="scene" id="s2">
-    <div class="slam" id="w1" style="background:#e0102f"><svg class="ecg" viewBox="0 0 1920 1080"><path class="bgecg" stroke="rgba(255,255,255,.25)"/></svg><span>نبض</span></div>
+    <div class="slam" id="w1" style="background:#e0102f"><svg class="ecg" viewBox="0 0 1920 1080"><path class="bgecg" stroke="rgba(255,255,255,.25)"/></svg><span>نبأ</span></div>
     <div class="slam" id="w2" style="background:#0a0a0c"><svg class="ecg" viewBox="0 0 1920 1080"><path class="bgecg" stroke="rgba(224,16,47,.45)"/></svg><span>فلسطين</span></div>
     <div class="slam" id="w3" style="background:#fff;color:#e0102f"><span class="en" style="font-size:520px">24</span></div>
     <div class="slam" id="w4" style="background:#0fa958"><span>ساعة</span></div>
@@ -191,7 +199,7 @@ body.render #controls{display:none}
       <svg class="ecg" viewBox="0 0 1920 1080"><path id="phEcg" stroke="rgba(224,16,47,.4)" stroke-width="5"/></svg>
       <div id="phraseInner">
         <div id="phraseSmall">NABA24.PS</div>
-        <div class="prow" id="row1"><span>نبض</span><span class="hl">فلسطين</span></div>
+        <div class="prow" id="row1"><span>نبأ</span><span class="hl">فلسطين</span></div>
         <div class="prow" id="row2"><span>على</span><span>مدار</span><span>الساعة</span></div>
         <div id="phraseEn"><span id="phraseEnTxt"></span><span class="caret" id="caret"></span></div>
       </div>
@@ -216,7 +224,7 @@ body.render #controls{display:none}
     <div id="phone"><div id="screen"><div id="notch"></div>
       <div id="flipWrap">
         <div class="app" dir="rtl" id="appAR">
-          <div class="top"><div class="alogo"><b>24</b>نبض فلسطين</div><div class="lang">EN</div></div>
+          <div class="top"><div class="alogo"><img src="logo-crop.jpg" alt="" style="height:42px;border-radius:8px">نبأ فلسطين</div><div class="lang">EN</div></div>
           <div class="chips"><span>الرئيسية</span><span>محليات</span><span>القدس</span><span>غزة</span><span>رياضة</span></div>
           <div class="hero"><svg viewBox="0 0 400 230"><path d="M0 130 H140 L160 100 L175 130 H200 L215 40 L235 200 L250 110 L262 130 H400" fill="none" stroke="#e0102f" stroke-width="5" stroke-linejoin="round"/></svg><div class="tag">عاجل</div><div class="hl"><i style="width:80%"></i><i style="width:52%"></i></div></div>
           <div class="item"><b style="background:linear-gradient(135deg,#e0102f,#9e0a20)"></b><div><em>القدس</em><i></i><i class="s"></i></div></div>
@@ -224,7 +232,7 @@ body.render #controls{display:none}
           <div class="item"><b style="background:linear-gradient(135deg,#2a2d36,#0a0a0c)"></b><div><em>رياضة</em><i></i><i class="s"></i></div></div>
         </div>
         <div class="app ltr" dir="ltr" id="appEN">
-          <div class="top"><div class="alogo"><b>24</b>NABD PALESTINE</div><div class="lang" style="font-family:Cairo">ع</div></div>
+          <div class="top"><div class="alogo"><img src="logo-crop.jpg" alt="" style="height:42px;border-radius:8px">NABA PALESTINE</div><div class="lang" style="font-family:Cairo">ع</div></div>
           <div class="chips"><span>Home</span><span>Local</span><span>Jerusalem</span><span>Gaza</span><span>Sports</span></div>
           <div class="hero"><svg viewBox="0 0 400 230"><path d="M0 130 H140 L160 100 L175 130 H200 L215 40 L235 200 L250 110 L262 130 H400" fill="none" stroke="#e0102f" stroke-width="5" stroke-linejoin="round"/></svg><div class="tag">BREAKING</div><div class="hl"><i style="width:80%"></i><i style="width:52%"></i></div></div>
           <div class="item"><b style="background:linear-gradient(135deg,#e0102f,#9e0a20)"></b><div><em>JERUSALEM</em><i></i><i class="s"></i></div></div>
@@ -250,10 +258,10 @@ body.render #controls{display:none}
     <div class="monitorGrid" style="opacity:.6"></div>
     <svg class="ecg" viewBox="0 0 1920 1080"><path id="s6ecg" stroke="rgba(224,16,47,.55)" stroke-width="6"/></svg>
     <div class="wrap">
-      <div class="lockup" id="s6lock"><div class="name">نبض فلسطين</div><div class="badge24" id="s6badge">24<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5.84" opacity=".7"/></svg></div></div>
-      <div class="lockEn" id="s6en">Nabd Palestine 24</div>
-      <div class="sl1" id="s6sl1">نبض فلسطين على مدار الساعة</div>
-      <div class="sl2" id="s6sl2">PALESTINE'S PULSE — 24/7</div>
+      <div class="lockup col" id="s6lock"><div class="logoTile" id="s6badge"><img src="logo-crop.jpg" alt=""></div><div class="name">نبأ فلسطين</div><div hidden>24<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5.84" opacity=".7"/></svg></div></div>
+      <div class="lockEn" id="s6en">Naba Palestine 24</div>
+      <div class="sl1" id="s6sl1">نبأ فلسطين على مدار الساعة</div>
+      <div class="sl2" id="s6sl2">PALESTINE NEWS — 24/7</div>
       <div class="pills" id="s6pills">
         <div class="pill url2">naba24.ps</div>
         <div class="pill">العربية</div>
@@ -268,7 +276,7 @@ body.render #controls{display:none}
     <div id="tickClip"><div id="tickTrack"></div></div>
     <div id="tickLabel"><i id="tickDot"></i><span class="a">مباشر</span><span class="b">LIVE</span></div>
   </div>
-  <div id="bug"><div class="b">24</div><span class="t">نبض فلسطين</span><span class="lv"><i id="bugDot"></i>LIVE</span></div>
+  <div id="bug"><img class="bl" src="logo-crop.jpg" alt=""><span class="t">نبأ فلسطين</span><span class="lv"><i id="bugDot"></i>LIVE</span></div>
   <div id="wipe"></div>
   <div id="vignette"></div>
 </div></div>
@@ -433,7 +441,7 @@ function renderAt(t) {
     const lk = P(t, T.logoHit, T.logoHit + .45);
     show($('s1lock'), t >= T.logoHit);
     st($('s1lock'), {op: P(t, T.logoHit, T.logoHit + .06), s: lerp(1.5, 1, E.outExpo(lk)) * (t > T.logoHit + .45 ? pulse(t, .025) : 1), blur: lerp(20, 0, E.outExpo(lk)), x: shake(t, T.logoHit, 16)});
-    st($('s1badge'), {s: E.outBack(P(t, T.logoHit + .08, T.logoHit + .45)), r: lerp(-90, 0, E.outCubic(P(t, T.logoHit + .08, T.logoHit + .45)))});
+    st($('s1badge'), {s: E.outBack(P(t, T.logoHit + .08, T.logoHit + .45)), r: lerp(-8, 0, E.outCubic(P(t, T.logoHit + .08, T.logoHit + .45)))});
     $('s1en').style.letterSpacing = $('s1en').style.paddingLeft = lerp(1, .32, E.outExpo(P(t, T.logoHit + .1, T.logoHit + .7))) + 'em';
     st($('s1en'), {op: P(t, T.logoHit + .1, T.logoHit + .3)});
     st($('s1live'), {op: P(t, T.logoHit + .5, T.logoHit + .7), y: lerp(20, 0, E.outCubic(P(t, T.logoHit + .5, T.logoHit + .8)))});
@@ -458,7 +466,7 @@ function renderAt(t) {
         st(sp, {op: P(t, a, a + .1), y: lerp(90, 0, k), s: lerp(.6, 1, k)});
       });
       st($('phraseSmall'), {op: P(t, T.phrase + .3, T.phrase + .6)});
-      const en = "PALESTINE'S PULSE — 24/7", a = T.phrase + .5;
+      const en = "PALESTINE NEWS — 24/7", a = T.phrase + .5;
       $('phraseEnTxt').textContent = en.slice(0, Math.floor(en.length * P(t, a, a + .8)));
       $('caret').style.opacity = (t < a || Math.floor(t * 4) % 2 === 0) ? 1 : 0;
       $('phEcg').style.transform = `translateX(${-(t - T.phrase) * 300}px)`;
