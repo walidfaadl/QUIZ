@@ -8,13 +8,13 @@
 @font-face{font-family:'Kufi';src:url(fonts/ReemKufi.ttf) format('truetype');font-weight:400 700}
 @font-face{font-family:'Cairo';src:url(fonts/Cairo.ttf) format('truetype');font-weight:200 1000}
 @font-face{font-family:'Montserrat';src:url(fonts/Montserrat.ttf) format('truetype');font-weight:100 900}
-:root{--night:#050b22;--indigo:#0b1640;--glass:#1e5bff;--glass2:#0a3dc2;--turq:#20d3e0;--gold:#f2c14e;--gold2:#c8962e;--white:#fff}
+:root{--night:#03140f;--indigo:#0b3a30;--glass:#2fa58a;--glass2:#1f6f5c;--turq:#5fe0b8;--gold:#f2c14e;--gold2:#c8962e;--white:#fff}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#000;height:100%;overflow:hidden}
 body{font-family:'Cairo',sans-serif;color:#fff}
 #viewport{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
 body.render #viewport{inset:0;display:block}
-#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--night);flex:none;transform-origin:center}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#03140f;flex:none;transform-origin:center}
 body.render #stage{transform:none!important}
 .layer{position:absolute;inset:0}
 .scene{position:absolute;inset:0;overflow:hidden}
@@ -34,7 +34,14 @@ body.render #stage{transform:none!important}
 #vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);z-index:65}
 
 /* emblem */
-.emblem{position:absolute;left:50%;filter:drop-shadow(0 0 30px rgba(30,91,255,.6)) drop-shadow(0 0 60px rgba(242,193,78,.25))}
+.emblem{position:absolute;left:50%;filter:drop-shadow(0 0 40px rgba(47,165,138,.55)) drop-shadow(0 0 80px rgba(226,193,90,.25))}
+.lg{position:relative;width:100%;height:100%}
+.lg svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lg .disc{position:absolute;inset:11%;border-radius:50%;overflow:hidden;background:#fff}
+.lg .disc img{width:100%;height:100%;display:block;object-fit:cover}
+.lg .sheen{position:absolute;top:-20%;bottom:-20%;width:28%;left:-40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);transform:skewX(-20deg)}
+.av .lg svg,.ring .lg svg,#bug .lg svg{display:none}
+.av .lg .disc,.ring .lg .disc,#bug .lg .disc{inset:0}
 .emblem svg{width:100%;height:100%;overflow:visible}
 
 /* S1 */
@@ -50,19 +57,19 @@ body.render #stage{transform:none!important}
 #skyline{position:absolute;left:0;bottom:0;width:1080px;height:760px}
 #skyline svg{width:100%;height:100%}
 .sk{fill:none;stroke:#f2c14e;stroke-width:3;stroke-linejoin:round}
-#w1{top:400px;font-size:130px;font-weight:900}
-#w2{top:600px}
+#w1{top:330px;font-size:130px;font-weight:900}
+#w2{top:500px}
 #w2 span{font-family:'Kufi';font-weight:700;font-size:330px;line-height:1.2}
-#w3{top:1040px;font-size:104px;font-weight:900}
+#w3{top:930px;font-size:96px;font-weight:900;line-height:1.35;text-align:center}
 #w3 small{display:block;text-align:center;font-family:'Montserrat';font-weight:700;font-size:30px;letter-spacing:.4em;color:var(--turq)}
 #tiles{position:absolute;left:90px;right:90px;top:760px;display:grid;grid-template-columns:1fr 1fr;gap:34px;direction:rtl}
 .tile{height:330px;border-radius:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .tile svg{width:120px;height:120px;fill:none;stroke:#fff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
-.tile .t{font-size:62px;font-weight:900;line-height:1.2}
+.tile .t{font-size:56px;white-space:nowrap;font-weight:900;line-height:1.2}
 .tile .e{font-family:'Montserrat';font-weight:700;font-size:22px;letter-spacing:.3em;opacity:.7}
 #tilesHead{top:330px}
 #tilesHead .a{font-size:92px;font-weight:900;line-height:1.3}
-#tilesHead .b{font-family:'Montserrat';font-weight:700;font-size:28px;letter-spacing:.4em;color:var(--turq)}
+#tilesHead .b{font-size:52px;font-weight:800;color:var(--turq)}
 
 /* S3 platforms */
 .plat .head{top:150px}
@@ -81,7 +88,7 @@ body.render #stage{transform:none!important}
 .fb .bar i{width:48px;height:48px;border-radius:50%;background:#e4e6eb;display:inline-block;margin-left:10px}
 .post{padding:22px 26px;direction:rtl}
 .post .who{display:flex;align-items:center;gap:16px}
-.post .av{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle,#1e5bff,#0a1f66);display:flex;align-items:center;justify-content:center;flex:none}
+.post .av{width:78px;height:78px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
 .post .av svg{width:62px;height:62px}
 .post .nm{font-weight:900;font-size:30px;line-height:1.3}
 .post .tm{font-size:22px;color:#65676b;font-weight:600}
@@ -97,24 +104,29 @@ body.render #stage{transform:none!important}
 .ig{padding-top:90px;direction:ltr}
 .ig .top{display:flex;align-items:center;gap:40px;padding:10px 34px}
 .ig .ring{width:170px;height:170px;border-radius:50%;padding:7px;background:conic-gradient(#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75);flex:none}
-.ig .ring>div{width:100%;height:100%;border-radius:50%;border:6px solid #fff;background:radial-gradient(circle,#1e5bff,#0a1f66);display:flex;align-items:center;justify-content:center}
+.ig .ring>div{width:100%;height:100%;border-radius:50%;border:6px solid #fff;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .ig .ring svg{width:120px;height:120px}
 .ig .stats{display:flex;gap:34px;flex:1;justify-content:space-around}
-.ig .stats div{display:flex;flex-direction:column;align-items:center;gap:10px}
-.ig .stats i{display:block;width:70px;height:26px;border-radius:8px;background:#222}
-.ig .stats s{display:block;width:90px;height:16px;border-radius:8px;background:#c7c7c7;text-decoration:none}
+.ig .stats div{display:flex;flex-direction:column;align-items:center;gap:2px}
+.ig .stats b{font-family:'Montserrat';font-weight:800;font-size:34px}
+.ig .stats s{font-family:'Montserrat';font-size:22px;color:#555;text-decoration:none}
 .ig .uname{font-family:'Montserrat';font-weight:800;font-size:34px;padding:14px 34px 4px}
 .ig .bio{padding:0 34px;font-weight:800;font-size:28px;direction:rtl;text-align:left}
+.ig .bio2{padding:4px 34px 0;font-weight:700;font-size:24px;direction:rtl;text-align:right;display:flex;align-items:center;gap:6px}
+.ig .rd{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff6b6b,#c0141c);display:inline-block}
 .ig .btn{margin:18px 34px;height:66px;border-radius:14px;background:#0095f6;color:#fff;font-family:'Montserrat';font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center}
 .ig .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
 .ig .grid div{height:198px}
 /* telegram */
 .tg{background:linear-gradient(160deg,#a7d7a0,#d7e7b2 40%,#8fc9c4);height:100%}
 .tg .bar{height:140px;background:#fff;display:flex;align-items:flex-end;gap:18px;padding:0 26px 18px;direction:rtl;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-.tg .bar .av{width:74px;height:74px;border-radius:50%;background:radial-gradient(circle,#1e5bff,#0a1f66);display:flex;align-items:center;justify-content:center}
+.tg .bar .av{width:74px;height:74px;border-radius:50%;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .tg .bar .av svg{width:58px;height:58px}
 .tg .bar .nm{font-weight:900;font-size:30px;line-height:1.2}
 .tg .bar .sub{font-size:22px;color:#708499;font-weight:700}
+.tg .pin{margin:14px 20px 0;background:rgba(255,255,255,.9);border-radius:22px;padding:10px 22px;direction:rtl;border-right:6px solid #2481cc;display:flex;flex-direction:column}
+.tg .pin b{font-size:22px;color:#2481cc}
+.tg .pin span{font-size:24px;font-weight:700}
 .tg .msgs{position:absolute;left:0;right:0;bottom:120px;display:flex;flex-direction:column;gap:18px;padding:0 24px;direction:rtl}
 .tg .msg{align-self:flex-start;width:84%;background:#fff;border-radius:28px 28px 28px 8px;padding:18px 22px 12px;box-shadow:0 3px 8px rgba(0,0,0,.08)}
 .tg .msg .nm{font-weight:900;font-size:24px;color:#2481cc}
@@ -135,11 +147,14 @@ body.render #stage{transform:none!important}
 #s4head{top:230px}
 #s4head .a{font-size:96px;font-weight:900;line-height:1.3}
 #s4head .b{font-family:'Kufi';font-weight:700;font-size:130px;line-height:1.25}
-#handles{position:absolute;left:110px;right:110px;top:1330px;display:flex;flex-direction:column;gap:26px}
+#handles{position:absolute;left:110px;right:110px;top:1230px;display:flex;flex-direction:column;gap:26px}
 .hrow{height:130px;border-radius:65px;display:flex;align-items:center;gap:26px;padding:0 20px 0 36px;direction:ltr}
 .hrow svg{width:96px;height:96px;flex:none}
 .hrow .h{font-family:'Montserrat';font-weight:800;font-size:44px;flex:1}
 .hrow .p{font-weight:900;font-size:36px;opacity:.75;direction:rtl}
+.hrow .h.num{font-size:64px;font-weight:900;direction:ltr}
+#total{position:absolute;left:0;right:0;top:1740px;text-align:center;font-size:62px;font-weight:900}
+#total b{font-family:'Kufi';font-size:84px}
 
 /* S5 notifications */
 #lock{position:absolute;left:150px;top:110px;width:780px;height:1560px;border-radius:96px;background:#0a0a0c;padding:22px;box-shadow:0 60px 120px rgba(0,0,0,.6),0 0 0 3px rgba(255,255,255,.14)}
@@ -168,15 +183,17 @@ body.render #stage{transform:none!important}
 #s6title{top:740px}
 #s6title .a{font-size:56px;font-weight:800;color:var(--turq);letter-spacing:.3em;padding-right:.3em}
 #s6title .b{font-family:'Kufi';font-weight:700;font-size:150px;line-height:1.25;white-space:nowrap}
-#s6title .c{font-family:'Montserrat';font-weight:700;font-size:30px;letter-spacing:.42em;padding-left:.42em;color:rgba(255,255,255,.85)}
+#s6title .c{font-size:44px;font-weight:800;color:rgba(255,255,255,.92)}
 #follow{top:1180px}
 #follow .t{font-size:76px;font-weight:900;margin-bottom:28px}
 #follow .rows{display:flex;flex-direction:column;gap:24px;width:860px}
+#rep{margin-top:34px;display:flex;align-items:center;gap:14px;font-size:44px;font-weight:900;color:var(--gold);direction:rtl}
+#rep svg{width:50px;height:50px;fill:none;stroke:var(--gold);stroke-width:7}
 #fadeOut{position:absolute;inset:0;background:#000;pointer-events:none;z-index:80}
 
 /* watermark */
 #bug{position:absolute;left:0;right:0;top:44px;display:flex;justify-content:center;align-items:center;gap:14px;z-index:60;direction:rtl}
-#bug svg{width:64px;height:64px}
+#bug .lg{width:70px;height:70px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.6)}
 #bug span{font-size:34px;font-weight:900}
 
 #controls{position:fixed;left:0;right:0;bottom:0;height:56px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;direction:ltr;font-family:sans-serif;font-size:14px;color:#fff}
@@ -201,7 +218,7 @@ body.render #controls{display:none}
     <div class="center" id="s1title">
       <div class="a">شبكة</div>
       <div class="b gold" id="s1name">أخبار الخليل</div>
-      <div class="c">HEBRON NEWS NETWORK</div>
+      <div class="c">KHALELNEWS</div>
       <div class="line" id="s1line"></div>
     </div>
   </div>
@@ -212,8 +229,8 @@ body.render #controls{display:none}
     <div id="skyline"></div>
     <div class="center" id="w1">من قلب</div>
     <div class="center" id="w2"><span class="gold" id="w2t">الخليل</span></div>
-    <div class="center" id="w3">أولاً بأول<small>FROM THE HEART OF HEBRON</small></div>
-    <div class="center" id="tilesHead"><div class="a">كل ما يحدث في الخليل</div><div class="b">NEWS · PHOTOS · VIDEO · LIVE</div></div>
+    <div class="center" id="w3"><div>نبثّ لكم الخبر</div><div class="gold" id="w3g">أولاً بأول</div></div>
+    <div class="center" id="tilesHead"><div class="a">ونواكب معكم الأحداث</div><div class="b">في عموم فلسطين</div></div>
     <div id="tiles"></div>
   </div>
 
@@ -227,7 +244,7 @@ body.render #controls{display:none}
     <div class="center" id="s4head"><div class="a">شبكة واحدة</div><div class="b gold" id="s4b">ثلاث منصات</div></div>
     <div id="orbit"></div>
     <div class="emblem" id="s4em"></div>
-    <div id="handles"></div>
+    <div id="handles"></div><div id="total">أكثر من <b class="gold" id="totalN">358 ألف</b> متابع</div>
   </div>
 
   <!-- S5: notifications -->
@@ -244,8 +261,8 @@ body.render #controls{display:none}
   <!-- S6: outro -->
   <div class="scene" id="s6">
     <div class="emblem" id="s6em"></div>
-    <div class="center" id="s6title"><div class="a">شبكة</div><div class="b gold" id="s6name">أخبار الخليل</div><div class="c">HEBRON NEWS NETWORK</div></div>
-    <div class="center" id="follow"><div class="t">تابعونا على</div><div class="rows" id="followRows"></div></div>
+    <div class="center" id="s6title"><div class="a">شبكة</div><div class="b gold" id="s6name">أخبار الخليل</div><div class="c">من قلب الخليل نبثّ لكم الخبر أولاً بأول</div></div>
+    <div class="center" id="follow"><div class="t">تابعونا على</div><div class="rows" id="followRows"></div><div id="rep"><svg viewBox="0 0 100 100"><path d="M50 90 C50 90 24 62 24 40 a26 26 0 0 1 52 0 C76 62 50 90 50 90Z"/><circle cx="50" cy="40" r="9"/></svg>كن مراسلاً ميدانياً في منطقتك</div></div>
     <div id="fadeOut"></div>
   </div>
 
@@ -302,39 +319,25 @@ const glint = (el, t, a, dur = .9) => { el.style.backgroundPosition = `${lerp(10
 function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
 
 /* ---------------- graphics ---------------- */
-function emblemSVG() {
-  return `<svg viewBox="-100 -100 200 200">
-    <defs><radialGradient id="glassG" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#8fd8ff"/><stop offset=".35" stop-color="#2f74ff"/><stop offset="1" stop-color="#08268f"/></radialGradient></defs>
-    <g class="emRot">
-      <rect class="emS" x="-68" y="-68" width="136" height="136" fill="none" stroke="#f2c14e" stroke-width="4" pathLength="1"/>
-      <rect class="emS" x="-68" y="-68" width="136" height="136" fill="none" stroke="#f2c14e" stroke-width="4" pathLength="1" transform="rotate(45)"/>
-      ${[...Array(8)].map((_, i) => `<circle class="emDot" cx="${Math.cos(i * Math.PI / 4) * 96}" cy="${Math.sin(i * Math.PI / 4) * 96}" r="4" fill="#f2c14e"/>`).join('')}
-    </g>
-    <circle class="emC" r="60" fill="none" stroke="#20d3e0" stroke-width="2.5" pathLength="1"/>
-    <circle class="emG" r="52" fill="url(#glassG)"/>
-    <ellipse class="emG" cx="-16" cy="-24" rx="20" ry="11" fill="rgba(255,255,255,.35)"/>
-    <g class="emM" fill="#fff">
-      <path d="M-30 26 H30 V6 H-30 Z"/>
-      <path d="M-30 6 V2 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h4 v-4 h4 v4 h2 v4z"/>
-      <path d="M-30 6 V-24 H-22 V6 Z"/><path d="M-32 -16 H-20 V-13 H-32 Z"/><path d="M-30 -24 L-26 -34 L-22 -24 Z"/>
-      <path d="M22 6 V-24 H30 V6 Z"/><path d="M20 -16 H32 V-13 H20 Z"/><path d="M22 -24 L26 -34 L30 -24 Z"/>
-      <path d="M-10 6 A10 10 0 0 1 10 6 Z"/><path d="M-1 -5 h2 v-5 h-2z"/>
-      <g fill="#08268f"><path d="M-20 22 v-8 a3 3 0 0 1 6 0 v8z"/><path d="M-6 22 v-8 a3 3 0 0 1 6 0 v8z"/><path d="M8 22 v-8 a3 3 0 0 1 6 0 v8z"/></g>
-    </g></svg>`;
+function emblemSVG() {   // the network's real logo (logo.jpg) framed by animated teal/gold rings
+  return `<div class="lg"><svg viewBox="-100 -100 200 200">
+    <circle class="emRot" r="98" fill="none" stroke="#e2c15a" stroke-width="2.4" stroke-dasharray="1.2 7.5" stroke-linecap="round"/>
+    <circle class="emS" r="92" fill="none" stroke="#e2c15a" stroke-width="2.6" pathLength="1" transform="rotate(-90)"/>
+    <circle class="emS" r="86.5" fill="none" stroke="#2fa58a" stroke-width="5" pathLength="1" transform="rotate(90)"/>
+  </svg><div class="disc"><img src="logo.jpg" alt=""><i class="sheen"></i></div></div>`;
 }
 function emblemParts(root) {
-  return {rot: root.querySelector('.emRot'), sq: [...root.querySelectorAll('.emS')], c: root.querySelector('.emC'),
-          g: [...root.querySelectorAll('.emG')], m: root.querySelector('.emM'), dots: [...root.querySelectorAll('.emDot')]};
+  return {rot: root.querySelector('.emRot'), sq: [...root.querySelectorAll('.emS')], disc: root.querySelector('.disc'), sheen: root.querySelector('.sheen')};
 }
 function drawEmblem(Em, t, t0, spd = 1) {
   const q = x => t0 + x / spd;
-  Em.sq.forEach((s, i) => { s.style.strokeDasharray = 1; s.style.strokeDashoffset = 1 - E.inOutCubic(P(t, q(i * .25), q(1.3 + i * .25))); });
-  Em.c.style.strokeDasharray = 1; Em.c.style.strokeDashoffset = 1 - E.outCubic(P(t, q(.9), q(1.6)));
-  Em.g.forEach(g => { g.style.opacity = P(t, q(1.3), q(1.8)); });
-  Em.m.style.opacity = P(t, q(1.7), q(2.0));
-  Em.m.style.transform = `translateY(${(1 - E.outBack(P(t, q(1.7), q(2.1)))) * 30}px)`;
-  Em.dots.forEach((d, i) => { const k = E.outBack(P(t, q(1.4 + i * .05), q(1.7 + i * .05))); d.setAttribute('r', 4 * k); });
-  Em.rot.style.transform = `rotate(${t * 12}deg)`;
+  Em.sq.forEach((c, i) => { c.style.strokeDasharray = 1; c.style.strokeDashoffset = 1 - E.inOutCubic(P(t, q(i * .2), q(1.1 + i * .2))); });
+  Em.rot.style.transformBox = 'fill-box'; Em.rot.style.transformOrigin = 'center';
+  Em.rot.style.transform = `rotate(${t * 12}deg)`; Em.rot.style.opacity = P(t, q(1), q(1.5));
+  const k = P(t, q(.8), q(1.4));
+  Em.disc.style.clipPath = `circle(${50 * E.outExpo(k)}% at 50% 50%)`;
+  Em.disc.style.transform = `scale(${lerp(.7, 1, E.outBack(k))})`;
+  Em.sheen.style.left = lerp(-40, 130, E.inOutCubic(P(t, q(1.5), q(2.3)))) + '%';
 }
 // Hebron skyline: hills, old-city houses, and the Ibrahimi Mosque with its two minarets
 function skylineSVG(stroke = true) {
@@ -343,17 +346,17 @@ function skylineSVG(stroke = true) {
   for (let x = -20; x < 1100; x += 70 + R() * 40) {
     if (x > 250 && x < 820) continue;
     const w = 60 + R() * 50, h = 60 + R() * 110, y = 560 - h;
-    houses.push(`<rect x="${x}" y="${y}" width="${w}" height="${h + 200}" fill="#0c1640"/>`);
-    if (R() > .45) houses.push(`<path d="M${x + w * .25} ${y} a${w * .25} ${w * .22} 0 0 1 ${w * .5} 0z" fill="#0c1640"/>`);
+    houses.push(`<rect x="${x}" y="${y}" width="${w}" height="${h + 200}" fill="#0c302a"/>`);
+    if (R() > .45) houses.push(`<path d="M${x + w * .25} ${y} a${w * .25} ${w * .22} 0 0 1 ${w * .5} 0z" fill="#0c302a"/>`);
     for (let k = 0; k < 2; k++) if (R() > .35) houses.push(`<rect x="${x + 12 + k * 26}" y="${y + 24 + R() * 30}" width="10" height="16" fill="#f2c14e" opacity="${.35 + R() * .5}"/>`);
   }
   const cren = [...Array(22)].map((_, i) => `h10 v-12 h8 v12`).join(' ');
   const sk = stroke ? 'class="sk" pathLength="1"' : '';
   return `<svg viewBox="0 0 1080 760" preserveAspectRatio="xMidYMax slice">
-    <path d="M0 470 C160 400 330 430 520 400 S880 350 1080 420 V760 H0Z" fill="#13205a"/>
-    <path d="M0 520 C200 480 420 510 600 490 S900 470 1080 500 V760 H0Z" fill="#101b4c"/>
+    <path d="M0 470 C160 400 330 430 520 400 S880 350 1080 420 V760 H0Z" fill="#154a3f"/>
+    <path d="M0 520 C200 480 420 510 600 490 S900 470 1080 500 V760 H0Z" fill="#113d34"/>
     ${houses.join('')}
-    <g fill="#08112e">
+    <g fill="#07221d">
       <rect x="300" y="360" width="480" height="400"/>
       <path d="M300 360 ${cren}"/>
       <rect x="300" y="130" width="54" height="240"/><rect x="290" y="200" width="74" height="16"/><rect x="306" y="110" width="42" height="24"/><path d="M306 110 L327 60 L348 110Z"/>
@@ -377,6 +380,8 @@ const ICON = {
   like: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#1877F2"/><path d="M11 18h5v12h-5zM17 29V18l5-8c1.5 0 2.5 1 2.2 2.8L23.5 17H29c1.6 0 2.6 1.4 2.2 2.9l-2 7.5c-.3 1-1.2 1.6-2.2 1.6z" fill="#fff"/></svg>`,
   heart: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#f33e58"/><path d="M20 30s-9-5.6-9-11.6A5 5 0 0 1 20 15a5 5 0 0 1 9 3.4C29 24.4 20 30 20 30z" fill="#fff"/></svg>`,
   heartIG: `<svg viewBox="0 0 40 40"><path d="M20 35S3 25 3 13.5A8.5 8.5 0 0 1 20 9a8.5 8.5 0 0 1 17 4.5C37 25 20 35 20 35z" fill="#ff3040"/></svg>`,
+  pin: '<svg viewBox="0 0 100 100"><path d="M50 90 C50 90 24 62 24 40 a26 26 0 0 1 52 0 C76 62 50 90 50 90Z"/><circle cx="50" cy="40" r="9"/></svg>',
+  cloud: '<svg viewBox="0 0 100 100"><path d="M30 72 h42 a16 16 0 0 0 0-32 a22 22 0 0 0-42-4 a18 18 0 0 0 0 36z"/><path d="M38 82 l-4 8 M52 82 l-4 8 M66 82 l-4 8"/></svg>',
   bolt: '<svg viewBox="0 0 100 100"><path d="M56 10 L24 56 H48 L42 90 L76 42 H52 Z"/></svg>',
   photo: '<svg viewBox="0 0 100 100"><rect x="12" y="20" width="76" height="60" rx="10"/><circle cx="36" cy="40" r="7"/><path d="M14 74 L40 52 L56 64 L70 52 L88 68"/></svg>',
   video: '<svg viewBox="0 0 100 100"><rect x="10" y="22" width="80" height="56" rx="12"/><path d="M42 38v24l22-12z"/></svg>',
@@ -393,26 +398,26 @@ const skStrokes = [...document.querySelectorAll('#skyline .sk')], skWins = [...d
 $('bug').innerHTML = emblemSVG() + '<span>شبكة أخبار الخليل</span>';
 drawEmblem(emblemParts($('bug')), 99, 0);
 
-const TILES = [['bolt', 'عاجل', 'BREAKING', 'linear-gradient(145deg,#e0223a,#8a0f22)'], ['photo', 'صور', 'PHOTOS', 'linear-gradient(145deg,#1e5bff,#0a2a8f)'],
-               ['video', 'فيديو', 'VIDEO', 'linear-gradient(145deg,#12a5b4,#0b5a74)'], ['live', 'بث مباشر', 'LIVE', 'linear-gradient(145deg,#f2a93b,#b86a12)']];
+const TILES = [['bolt', 'عاجل', 'BREAKING', 'linear-gradient(145deg,#e0223a,#8a0f22)'], ['pin', 'أخبار محلية', 'LOCAL', 'linear-gradient(145deg,#2fa58a,#0f5a48)'],
+               ['cloud', 'الراصد الجوي', 'WEATHER', 'linear-gradient(145deg,#3aa0e0,#1a5d99)'], ['video', 'فيديو', 'VIDEO', 'linear-gradient(145deg,#d9b44a,#8f6f1c)']];
 $('tiles').innerHTML = TILES.map(([ic, t, e, bg]) => `<div class="tile" style="background:${bg};box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.3)">${ICON[ic]}<div class="t">${t}</div><div class="e">${e}</div></div>`).join('');
 const tiles = [...$('tiles').children];
 
 const avatar = `<div class="av">${emblemSVG()}</div>`;
 const PLAT = {
-  sFB: {name: 'فيسبوك', handle: 'شبكة أخبار الخليل', icon: 'fb', bg: 'radial-gradient(ellipse at 50% 30%,#2a7bff 0%,#0f3fa8 45%,#061646 100%)', float: ['like', 'heart'],
+  sFB: {name: 'فيسبوك', handle: 'أخبار الخليل', icon: 'fb', bg: 'radial-gradient(ellipse at 50% 30%,#2a7bff 0%,#0f3fa8 45%,#061646 100%)', float: ['like', 'heart'],
     screen: `<div class="fb"><div class="bar"><b>facebook</b><span><i></i><i></i></span></div>
-      <div class="post"><div class="who">${avatar}<div><div class="nm">شبكة أخبار الخليل</div><div class="tm">الآن</div></div></div>
+      <div class="post"><div class="who">${avatar}<div><div class="nm">أخبار الخليل</div><div class="tm">الآن</div></div></div>
       <div class="txt"><i style="width:94%"></i><i style="width:70%"></i></div><div class="img">${miniImg(0)}</div>
       <div class="react"><span class="r">${ICON.like}</span><span class="r">${ICON.heart}</span><span class="cnt"></span></div>
       <div class="acts"><span>أعجبني</span><span>تعليق</span><span>مشاركة</span></div></div>
-      <div class="post"><div class="who">${avatar}<div><div class="nm">شبكة أخبار الخليل</div><div class="tm">منذ 5 د</div></div></div><div class="txt"><i style="width:88%"></i><i style="width:55%"></i></div></div></div>`},
+      <div class="post"><div class="who">${avatar}<div><div class="nm">أخبار الخليل</div><div class="tm">منذ 5 د</div></div></div><div class="txt"><i style="width:88%"></i><i style="width:55%"></i></div></div></div>`},
   sIG: {name: 'إنستغرام', handle: '@khaleelnews', icon: 'ig', bg: 'radial-gradient(ellipse at 30% 20%,#fcaf45 0%,#e1306c 35%,#833ab4 70%,#2a0d4f 100%)', float: ['heartIG'],
-    screen: `<div class="ig"><div class="top"><div class="ring"><div>${emblemSVG()}</div></div><div class="stats"><div><i></i><s></s></div><div><i></i><s></s></div><div><i></i><s></s></div></div></div>
-      <div class="uname">khaleelnews</div><div class="bio">شبكة أخبار الخليل</div><div class="btn">Follow</div>
+    screen: `<div class="ig"><div class="top"><div class="ring"><div>${emblemSVG()}</div></div><div class="stats"><div><b>4,500</b><s>posts</s></div><div><b>66.8K</b><s>followers</s></div><div><b>1</b><s>following</s></div></div></div>
+      <div class="uname">khaleelnews</div><div class="bio">شبكة أخبار الخليل</div><div class="bio2"><span class="rd"></span><span class="rd"></span> من قلب الخليل نبثّ لكم الخبر أولاً بأول</div><div class="btn">Follow</div>
       <div class="grid">${[...Array(9)].map((_, i) => `<div style="background:${['linear-gradient(135deg,#1e5bff,#0b1640)', 'linear-gradient(135deg,#f2c14e,#c8622e)', 'linear-gradient(135deg,#20d3e0,#0b3d74)', 'linear-gradient(135deg,#e0223a,#5a0b1a)'][i % 4]}"></div>`).join('')}</div></div>`},
   sTG: {name: 'تلغرام', handle: 't.me/khalelnews', icon: 'tg', bg: 'radial-gradient(ellipse at 50% 25%,#37bbfe 0%,#0f7cc4 45%,#06244a 100%)', float: [],
-    screen: `<div class="tg"><div class="bar"><div class="av">${emblemSVG()}</div><div><div class="nm">شبكة أخبار الخليل</div><div class="sub">قناة</div></div></div>
+    screen: `<div class="tg"><div class="bar"><div class="av">${emblemSVG()}</div><div><div class="nm">شبكة أخبار الخليل</div><div class="sub">80,289 مشترك</div></div></div><div class="pin"><b>رسالة مثبتة</b><span>كن مراسلاً ميدانياً في منطقتك</span></div>
       <div class="msgs">${[0, 1, 2].map(i => `<div class="msg"><div class="nm">شبكة أخبار الخليل</div>${i === 1 ? `<div class="img">${miniImg(1)}</div>` : ''}<div class="ln"><i style="width:96%"></i><i style="width:${[64, 50, 78][i]}%"></i></div><div class="meta"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#8a9aa9" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>${['20:21', '20:23', '20:25'][i]}</span></div></div>`).join('')}</div>
       <div class="join">انضمام</div></div>`},
 };
@@ -434,14 +439,16 @@ $('orbit').innerHTML = ['fb', 'ig', 'tg'].map(k => `<div class="orb">${ICON[k]}<
 const orbs = [...$('orbit').children];
 const HANDLES = [['ig', '@khaleelnews', 'إنستغرام', 'linear-gradient(90deg,rgba(214,36,159,.55),rgba(253,89,73,.35))'],
                  ['tg', 't.me/khalelnews', 'تلغرام', 'linear-gradient(90deg,rgba(41,169,235,.55),rgba(41,169,235,.2))'],
-                 ['fb', 'Facebook', 'شبكة أخبار الخليل', 'linear-gradient(90deg,rgba(24,119,242,.6),rgba(24,119,242,.2))']];
+                 ['fb', 'Facebook', 'أخبار الخليل', 'linear-gradient(90deg,rgba(24,119,242,.6),rgba(24,119,242,.2))']];
 const rowHTML = ([ic, h, p, bg]) => `<div class="hrow glassCard" style="background:${bg}">${ICON[ic]}<span class="h">${h}</span><span class="p">${p}</span></div>`;
-$('handles').innerHTML = HANDLES.map(rowHTML).join('');
+const STATS = [['fb', 211, v => Math.round(v) + 'K', 'متابع على فيسبوك', HANDLES[2][3]], ['tg', 80289, v => Math.round(v).toLocaleString('en-US'), 'مشترك على تلغرام', HANDLES[1][3]],
+               ['ig', 66.8, v => v.toFixed(1) + 'K', 'متابع على إنستغرام', HANDLES[0][3]]];
+$('handles').innerHTML = STATS.map(([ic, v, f, p, bg]) => `<div class="hrow glassCard" style="background:${bg}">${ICON[ic]}<span class="h num">0</span><span class="p">${p}</span></div>`).join('');
 $('followRows').innerHTML = HANDLES.map(rowHTML).join('');
 const hrows = [...$('handles').children], frows = [...$('followRows').children];
 
 // lock screen notifications
-$('wall').innerHTML = `<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0b1a5c 0%,#1b3fa0 45%,#f2a15a 100%)"></div>` + skylineSVG(false);
+$('wall').innerHTML = `<div style="position:absolute;inset:0;background:linear-gradient(180deg,#06281f 0%,#1d6b58 45%,#e0b155 100%)"></div>` + skylineSVG(false);
 const NOTIF = ['tg', 'ig', 'fb', 'tg', 'fb', 'ig', 'tg'];
 $('notifs').innerHTML = NOTIF.map((k, i) => `<div class="nt">${ICON[k]}<div class="c"><div class="r1"><b>شبكة أخبار الخليل</b><span>${i === NOTIF.length - 1 ? 'الآن' : 'الآن'}</span></div><div class="r2">${i % 2 === 0 ? '<em>عاجل</em>' : ''}<i style="max-width:${[80, 95, 70, 88, 76, 92, 84][i]}%"></i></div></div></div>`).join('');
 const nts = [...$('notifs').children];
@@ -451,7 +458,7 @@ $('miss').insertAdjacentHTML('beforeend', `<div class="b">${ICON.bell}<span>فع
 const ctx = $('fx').getContext('2d');
 const PR = rng(2024);
 const parts = [...Array(90)].map(() => ({x: PR() * W, y: PR() * H, r: 3 + Math.pow(PR(), 3) * 38, sp: 20 + PR() * 90, ph: PR() * 6.28,
-  c: PR() < .55 ? [30 + PR() * 40, 110 + PR() * 80, 255] : (PR() < .5 ? [32, 211, 224] : [242, 193, 78])}));
+  c: PR() < .5 ? [40 + PR() * 40, 170 + PR() * 60, 140 + PR() * 40] : (PR() < .4 ? [150, 235, 200] : [240, 200, 90])}));
 function drawFx(t, amt) {
   ctx.clearRect(0, 0, W, H);
   if (amt <= 0) return;
@@ -485,9 +492,9 @@ function renderAt(t) {
   $('flash').style.opacity = fl * .75;
 
   // background mood per scene
-  let bg = 'radial-gradient(ellipse at 50% 35%,#13277a 0%,#0b1640 45%,#050b22 100%)', rays = 0, fxAmt = 1, pat = .1;
+  let bg = 'radial-gradient(ellipse at 50% 35%,#1c7a63 0%,#0b3a30 45%,#03140f 100%)', rays = 0, fxAmt = 1, pat = .1;
   if (t < T.s2) { rays = P(t, T.hit - .5, T.hit + .5) * .9; fxAmt = P(t, 0, 1.5); }
-  else if (t < T.fb) { bg = `linear-gradient(180deg,#050b22 0%,#0f1f63 ${lerp(55, 40, P(t, T.w2, T.w2 + 1))}%,#6a3a8a 75%,#f29a4e 100%)`; fxAmt = .7; pat = .06; }
+  else if (t < T.fb) { bg = `linear-gradient(180deg,#03140f 0%,#0b4034 ${lerp(55, 40, P(t, T.w2, T.w2 + 1))}%,#5d6b34 75%,#e0b155 100%)`; fxAmt = .7; pat = .06; }
   else if (t < T.s4) { bg = t < T.ig ? PLAT.sFB.bg : t < T.tg ? PLAT.sIG.bg : PLAT.sTG.bg; fxAmt = .45; pat = .08; }
   else if (t < T.s5) { rays = .55; }
   else if (t < T.s6) { fxAmt = .6; }
@@ -521,6 +528,7 @@ function renderAt(t) {
     const k2 = E.outExpo(P(t, T.w2, T.w2 + .4));
     st($('w2'), {op: P(t, T.w2, T.w2 + .08) * (1 - toTop), s: lerp(1.8, 1, k2), blur: lerp(20, 0, k2), x: shake(t, T.w2, 20)});
     glint($('w2t'), t, T.w2 + .3, 1.2);
+    glint($('w3g'), t, T.w3 + .4, 1);
     const k3 = E.outExpo(P(t, T.w3, T.w3 + .4));
     st($('w3'), {op: P(t, T.w3, T.w3 + .1) * (1 - toTop), y: lerp(60, 0, k3)});
     // skyline rises, outlines draw, windows light up
@@ -585,7 +593,14 @@ function renderAt(t) {
       st(o, {s: lerp(.62, 1.12, depth) * E.outBack(P(u, .15 + i * .08, .55 + i * .08)), op: lerp(.55, 1, depth)});
     });
     $('orbit').style.zIndex = 0; $('s4em').style.zIndex = 3;
-    hrows.forEach((r, i) => { const a = T.handles + i * B * .6, k = P(t, a, a + .45); st(r, {op: P(t, a, a + .08), x: lerp(i % 2 ? -500 : 500, 0, E.outExpo(k))}); });
+    hrows.forEach((r, i) => {
+      const a = T.handles + i * B * .6, k = P(t, a, a + .45);
+      st(r, {op: P(t, a, a + .08), x: lerp(i % 2 ? -500 : 500, 0, E.outExpo(k))});
+      const [, v, f] = STATS[i]; r.querySelector('.num').textContent = f(v * E.outCubic(P(t, a + .1, a + 1.3)));
+    });
+    const tk = P(t, T.handles + b(2.4), T.handles + b(2.4) + .5);
+    st($('total'), {op: P(t, T.handles + b(2.4), T.handles + b(2.4) + .1), s: lerp(1.4, 1, E.outExpo(tk))});
+    glint($('totalN'), t, T.handles + b(2.4) + .3, .9);
   }
 
   /* ---- S5: notifications ---- */
@@ -613,6 +628,7 @@ function renderAt(t) {
     glint($('s6name'), t, T.s6 + 1.1, 1.1);
     st($('follow').firstElementChild, {op: P(u, 1.1, 1.2), y: lerp(40, 0, E.outExpo(P(u, 1.1, 1.5)))});
     frows.forEach((r, i) => { const a = T.s6 + 1.35 + i * B * .5, k = P(t, a, a + .45); st(r, {op: P(t, a, a + .08), s: lerp(.6, 1, E.outBack(k))}); });
+    st($('rep'), {op: P(u, 2.9, 3.0), y: lerp(30, 0, E.outExpo(P(u, 2.9, 3.3)))});
     $('fadeOut').style.opacity = E.inOutCubic(P(t, T.end - .8, T.end));
   }
 }
