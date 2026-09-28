@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أخبار نابلس — فيديو جرافيك</title>
+<style>
+@font-face{font-family:'Almarai';src:url(fonts/Almarai-ExtraBold.ttf) format('truetype');font-weight:800}
+@font-face{font-family:'Cairo';src:url(fonts/Cairo.ttf) format('truetype');font-weight:200 1000}
+@font-face{font-family:'Montserrat';src:url(fonts/Montserrat.ttf) format('truetype');font-weight:100 900}
+:root{--red:#d8363a;--red2:#a8222a;--char:#3b3b3d;--ink:#161618;--paper:#f3f3f3;--grey:#9a9a9e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;height:100%;overflow:hidden}
+body{font-family:'Cairo',sans-serif;color:#fff}
+#viewport{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+body.render #viewport{inset:0;display:block}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--paper);flex:none;transform-origin:center}
+body.render #stage{transform:none!important}
+.scene{position:absolute;inset:0;overflow:hidden}
+.center{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;text-align:center}
+.en{font-family:'Montserrat',sans-serif}
+.alm{font-family:'Almarai',sans-serif}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.09) 2px,transparent 2px);background-size:36px 36px}
+.dotsW{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 2px,transparent 2px);background-size:36px 36px}
+.accent{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.accent i{display:block;height:12px;border-radius:6px}
+.accent i:first-child{width:70px;background:var(--red)}
+.accent i:last-child{width:34px;background:var(--char)}
+
+/* logo */
+.logoBox{position:absolute;left:50%}
+.logoBox svg,.logoBox img{position:absolute;inset:0;width:100%;height:100%}
+
+
+/* S1 */
+#s1{background:var(--paper)}
+#logo1{width:1000px;height:1000px;margin-left:-500px;top:250px}
+#s1tag{top:1250px}
+#s1tag .t{font-family:'Almarai';font-size:74px;color:var(--char);line-height:1.5}
+#s1tag .t b{color:var(--red);font-weight:800}
+
+/* S2 */
+#s2{background:radial-gradient(ellipse at 50% 30%,#2c2c30 0%,#19191b 60%,#0e0e10 100%)}
+#city{position:absolute;left:0;bottom:0;width:1080px;height:720px}
+#city svg{width:100%;height:100%}
+#w1{top:330px;font-family:'Almarai';font-size:170px}
+#w2{top:480px}
+#w2 span{font-family:'Almarai';font-size:330px;color:var(--red);line-height:1.2;text-shadow:0 20px 60px rgba(216,54,58,.35)}
+#w3{top:900px;flex-direction:row;justify-content:center;gap:26px;font-family:'Almarai';font-size:110px;direction:rtl}
+#w3 svg{width:110px;height:110px;fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+#cov{top:300px}
+#cov .a{font-family:'Almarai';font-size:92px;line-height:1.35}
+#cov .a b{color:var(--red);font-weight:800}
+#chips{top:640px;gap:36px}
+.chip{display:flex;align-items:center;gap:22px;height:170px;padding:0 60px;border-radius:24px;font-family:'Almarai';font-size:100px;direction:rtl}
+.chip svg{width:78px;height:78px;fill:none;stroke:currentColor;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+#honest{top:1250px}
+#honest .a{font-family:'Almarai';font-size:98px}
+#honest .src{font-size:34px;font-weight:700;color:var(--grey);margin-top:10px}
+
+/* S3 feed */
+#s3{background:#e9e9ea}
+#feed{position:absolute;left:110px;top:0;width:860px}
+.card{position:relative;width:860px;height:1060px;margin-bottom:46px;background:#fff;border-radius:30px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.15);color:var(--char)}
+.card .top{height:150px;display:flex;align-items:center;justify-content:space-between;padding:0 34px;direction:ltr}
+.card .top img{height:130px}
+.card .ch{display:flex;align-items:center;gap:10px;background:var(--red);color:#fff;font-family:'Almarai';font-size:40px;padding:10px 26px;border-radius:12px;direction:rtl}
+.card .ch svg{width:36px;height:36px;fill:none;stroke:#fff;stroke-width:6}
+.card .img{position:relative;height:540px;overflow:hidden}
+.card .img svg{width:100%;height:100%;display:block}
+.card .img .sw{position:absolute;left:-40px;right:-40px;bottom:-70px;height:170px;background:#fff;transform:skewY(-7deg);border-top:16px solid var(--red)}
+.card .hl{padding:0 40px;display:flex;flex-direction:column;align-items:flex-end;gap:18px;margin-top:6px}
+.card .hl i{display:block;height:30px;border-radius:8px;background:var(--char)}
+.card .hl i:first-child{background:var(--red)}
+.card .acc{position:absolute;right:40px;bottom:170px}
+.card .foot{position:absolute;left:0;right:0;bottom:0;height:150px}
+.card .foot svg{position:absolute;left:0;bottom:44px;width:100%;height:110px}
+.card .fr{position:absolute;left:34px;right:34px;bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:24px;color:#555;direction:ltr}
+.card .fr .ic{display:flex;gap:8px;align-items:center;font-family:'Montserrat';font-weight:600}
+.card .fr .ic span{width:30px;height:30px;border-radius:50%;background:var(--char)}
+#feedHead{position:absolute;left:0;right:0;top:0;height:470px;background:linear-gradient(#e9e9ea 72%,rgba(233,233,234,0));z-index:5}
+#feedHead .a{position:absolute;left:0;right:0;top:90px;text-align:center;font-family:'Almarai';font-size:130px;color:var(--red)}
+#feedHead .b{position:absolute;left:0;right:0;top:250px;text-align:center;font-family:'Almarai';font-size:104px;color:var(--char)}
+
+/* S4 platforms */
+.plat{background:radial-gradient(ellipse at 50% 25%,#2c2c30 0%,#18181a 60%,#0d0d0f 100%)}
+.plat .bars{position:absolute;inset:0;opacity:.22}
+.plat .bars i{position:absolute;left:0;width:1600px;height:120px;border-radius:60px}
+.plat .head{top:170px}
+.plat .ico{width:250px;height:250px;filter:drop-shadow(0 24px 40px rgba(0,0,0,.5))}
+.plat .ico svg{width:100%;height:100%}
+.plat .nm{font-family:'Almarai';font-size:96px;margin-top:20px;line-height:1.3}
+.plat .hd{font-family:'Montserrat';font-weight:700;font-size:44px;padding:10px 36px;border-radius:40px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);direction:ltr}
+.plat .hd.ar{font-family:'Almarai';direction:rtl}
+.plat .num{top:820px}
+.plat .num .n{font-family:'Montserrat';font-weight:900;font-size:230px;line-height:1;letter-spacing:-.02em}
+.plat .num .l{font-family:'Almarai';font-size:78px;color:rgba(255,255,255,.85);margin-top:10px}
+.plat .quote{position:absolute;left:100px;right:100px;top:1330px;padding:40px 48px;border-radius:30px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.14);direction:rtl;text-align:right}
+.plat .quote .q{font-size:52px;font-weight:800;line-height:1.5}
+.plat .quote .s{font-size:30px;font-weight:700;color:var(--grey);margin-top:14px}
+.plat .quote:before{content:'';position:absolute;right:-2px;top:36px;bottom:36px;width:10px;border-radius:5px;background:var(--pc)}
+
+/* S5 total */
+#s5{background:var(--paper);color:var(--char)}
+#bigLogo{width:1500px;height:1500px;margin-left:-574px;top:210px;opacity:.1}
+#tot{top:560px}
+#tot .n{font-family:'Montserrat';font-weight:900;font-size:260px;line-height:1;direction:ltr;color:var(--ink)}
+#tot .n b{color:var(--red)}
+#tot .l{font-family:'Almarai';font-size:92px;margin-top:20px}
+#tot .s{font-size:50px;font-weight:800;color:#666;margin-top:10px}
+#tot .icons{display:flex;gap:40px;margin-top:60px}
+#tot .icons div{width:150px;height:150px}
+#tot .icons svg{width:100%;height:100%;filter:drop-shadow(0 16px 26px rgba(0,0,0,.2))}
+
+/* S6 outro */
+#s6{background:var(--paper);color:var(--char)}
+#logo6{width:820px;height:820px;margin-left:-410px;top:90px}
+#s6t{top:860px}
+#s6t .a{font-family:'Almarai';font-size:78px;line-height:1.4}
+#s6t .b{font-family:'Almarai';font-size:62px;color:var(--red);line-height:1.5}
+#follow{position:absolute;left:110px;right:110px;top:1180px;display:flex;flex-direction:column;gap:24px}
+#follow .f{height:130px;border-radius:65px;background:#fff;box-shadow:0 14px 34px rgba(0,0,0,.1);display:flex;align-items:center;gap:26px;padding:0 20px 0 36px;direction:ltr}
+#follow .f svg{width:96px;height:96px;flex:none}
+#follow .f .h{font-family:'Montserrat';font-weight:800;font-size:44px;flex:1;color:var(--ink)}
+#follow .f .h.ar{font-family:'Almarai';direction:rtl;text-align:left}
+#follow .f .c{font-family:'Montserrat';font-weight:800;font-size:34px;color:var(--red)}
+#fadeOut{position:absolute;inset:0;background:#000;pointer-events:none;z-index:90}
+
+/* overlays */
+#wipe{position:absolute;inset:0;pointer-events:none;z-index:80}
+#wipe i{position:absolute;left:0;width:1300px;height:275px}
+#bug{position:absolute;left:50%;top:40px;width:128px;height:128px;margin-left:-64px;border-radius:50%;background:#fff;overflow:hidden;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#bug img{width:100%;height:100%}
+
+#controls{position:fixed;left:0;right:0;bottom:0;height:56px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;direction:ltr;font-family:sans-serif;font-size:14px;color:#fff}
+#controls button{background:var(--red);color:#fff;border:0;border-radius:6px;font-weight:800;padding:8px 14px;cursor:pointer}
+#controls input{flex:1;accent-color:var(--red)}
+body.render #controls{display:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+  <!-- S1: the striped logo assembles itself -->
+  <div class="scene" id="s1">
+    <div class="dots"></div>
+    <div class="logoBox" id="logo1"></div>
+    <div class="center" id="s1tag"><div class="t">نبض المدينة <b>..</b> لحظة بلحظة</div><div class="accent" id="s1acc"><i></i><i></i></div></div>
+  </div>
+
+  <!-- S2: voice of Nablus -->
+  <div class="scene" id="s2">
+    <div class="dotsW"></div>
+    <div id="city"></div>
+    <div class="center" id="w1">صوت</div>
+    <div class="center" id="w2"><span>نابلس</span></div>
+    <div class="center" id="w3"><svg viewBox="0 0 100 100"><rect x="36" y="10" width="28" height="50" rx="14"/><path d="M24 46a26 26 0 0 0 52 0M50 72v16M36 90h28"/></svg><span>من قلب الحدث</span></div>
+    <div class="center" id="cov"><div class="a">تغطية يومية<br>لأهم <b>الأخبار</b></div></div>
+    <div class="center" id="chips"></div>
+    <div class="center" id="honest"><div class="a">بكل نزاهة ووضوح</div><div class="accent"><i></i><i></i></div></div>
+  </div>
+
+  <!-- S3: the feed, in the network's post template -->
+  <div class="scene" id="s3">
+    <div id="feed"></div>
+    <div id="feedHead"><div class="a" id="fhA">نبض المدينة</div><div class="b" id="fhB">لحظة بلحظة</div></div>
+  </div>
+
+  <!-- S4: platforms (built by JS) -->
+  <div class="scene plat" id="pFB"></div>
+  <div class="scene plat" id="pTG"></div>
+  <div class="scene plat" id="pIG"></div>
+
+  <!-- S5: total reach -->
+  <div class="scene" id="s5">
+    <div class="dots"></div>
+    <div class="logoBox" id="bigLogo"></div>
+    <div class="center" id="tot">
+      <div class="n" id="totN">0</div>
+      <div class="l" id="totL">متابع ومشترك</div>
+      <div class="s" id="totS">عبر منصاتنا الثلاث</div>
+      <div class="icons" id="totI"></div>
+    </div>
+  </div>
+
+  <!-- S6: outro -->
+  <div class="scene" id="s6">
+    <div class="dots"></div>
+    <div class="logoBox" id="logo6"></div>
+    <div class="center" id="s6t"><div class="a" id="s6a">صوت نابلس من قلب الحدث</div><div class="b" id="s6b">نبض المدينة .. لحظة بلحظة</div></div>
+    <div id="follow"></div>
+    <div id="fadeOut"></div>
+  </div>
+
+  <div id="bug"><img src="logo.png" alt=""></div>
+  <div id="wipe"></div>
+</div></div>
+
+<div id="controls">
+  <button id="playBtn">▶ Play</button>
+  <input type="range" id="scrub" min="0" max="30" step="0.001" value="0">
+  <span id="time">0.00s</span>
+</div>
+<audio id="music" src="music.m4a" preload="auto"></audio>
+
+<script>
+/* ============================================================
+   Timeline in beats at 140 BPM. Keep in sync with music.js
+   ============================================================ */
+const W = 1080, H = 1920, BPM = 140, B = 60 / BPM, FPS = 30;
+const b = n => n * B;
+const T = {
+  name: b(4), tag: b(5.5),
+  s2: b(8), w2: b(9), w3: b(10.5), cov: b(14), chips: [15, 16, 17].map(b), honest: b(18.5),
+  s3: b(22),
+  fb: b(32), tg: b(38), ig: b(44),
+  s5: b(50),
+  s6: b(58), end: b(70)
+};
+const DURATION = T.end;
+const CUTS = [T.s2, T.s3, T.fb, T.tg, T.ig, T.s5, T.s6];
+
+/* ---------------- helpers ---------------- */
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, c = 1) => Math.min(c, Math.max(a, v));
+const P = (t, a, c) => clamp((t - a) / (c - a));
+const lerp = (a, c, k) => a + (c - a) * k;
+const E = {
+  outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  outCubic: x => 1 - Math.pow(1 - x, 3),
+  inCubic: x => x * x * x,
+  inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  inOutExpo: x => x <= 0 ? 0 : x >= 1 ? 1 : x < .5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2,
+  outBack: x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+function st(el, o = {}) {
+  const {op = 1, x = 0, y = 0, s = 1, r = 0, blur = 0, extra = ''} = o;
+  el.style.opacity = op;
+  el.style.transform = `${extra} translate(${x}px,${y}px) scale(${s}) rotate(${r}deg)`;
+  el.style.filter = blur > 0.05 ? `blur(${blur}px)` : '';
+}
+const shake = (t, a, amp = 12, len = .2) => (t < a || t > a + len) ? 0 : Math.sin((t - a) * 150) * amp * (1 - (t - a) / len);
+const kick = (t, amt = .03) => 1 + amt * Math.exp(-((t % (2 * B)) / B) * 7);   // pulse on the half-time kick
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+/* ---------------- the logo, rebuilt as vectors (same geometry as logo.png) ---------------- */
+const BARS = [175, 218, 262, 305, 348, 392, 435];
+function logoSVG(withText = true, id = '') {
+  return `<svg viewBox="0 0 640 640"><defs><clipPath id="lc${id}"><circle cx="245" cy="320" r="150"/></clipPath></defs>
+    <g clip-path="url(#lc${id})">${BARS.map((y, i) => `<rect class="lb" x="80" y="${y}" width="${i >= 2 && i <= 4 ? 165 : 330}" height="29" fill="#3b3b3d"/>`).join('')}</g>
+    ${withText ? `<text class="lt1" x="540" y="248" text-anchor="end" font-family="Almarai" font-size="54" fill="#58585b" direction="rtl">أخبـــــار</text>
+    <text class="lt2" x="542" y="362" text-anchor="end" font-family="Almarai" font-size="150" fill="#d8363a" direction="rtl">نابلس</text>
+    <text class="lt3" x="320" y="500" text-anchor="middle" font-family="Montserrat" font-weight="600" font-size="21" fill="#3b3b3d">https://t.me/nabuls_news</text>` : ''}
+  </svg>`;
+}
+function logoParts(root) { return {bars: [...root.querySelectorAll('.lb')], svg: root.querySelector('svg'), img: root.querySelector('img')}; }
+function drawLogo(L, t, t0, spd = 1, nameAt = null) {
+  const q = x => t0 + x / spd;
+  L.bars.forEach((r, i) => {           // bars slide in from alternating sides, one per 8th note
+    const k = E.outExpo(P(t, q(i * B * .5), q(i * B * .5 + .45)));
+    r.style.transform = `translateX(${(1 - k) * (i % 2 ? -420 : 420)}px)`;
+  });
+  if (!L.img) return;
+  const na = nameAt ?? q(b(4)), k = P(t, na, na + .35);
+  // the real artwork (with "أخبار نابلس") slams in on the beat and replaces the vector stripes
+  L.img.style.opacity = P(t, na, na + .05);
+  L.img.style.transform = `translate(${shake(t, na, 10)}px,0) scale(${lerp(1.25, 1, E.outExpo(k))})`;
+  L.svg.style.opacity = 1 - P(t, na + .05, na + .2);
+}
+/* ---------------- icons ---------------- */
+const ICON = {
+  fb: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#1877F2"/><path d="M58 100V63h12.5l2-15H58v-9.5c0-4.3 1.2-7.3 7.4-7.3h7.8V17.8c-1.4-.2-6-.6-11.3-.6-11.2 0-18.9 6.8-18.9 19.4V48H30.4v15h12.6v37z" fill="#fff"/></svg>`,
+  ig: `<svg viewBox="0 0 100 100"><defs><radialGradient id="igG" cx="28%" cy="108%" r="140%"><stop offset="0" stop-color="#fdf497"/><stop offset=".08" stop-color="#fdf497"/><stop offset=".45" stop-color="#fd5949"/><stop offset=".62" stop-color="#d6249f"/><stop offset=".92" stop-color="#285AEB"/></radialGradient></defs><rect width="100" height="100" rx="26" fill="url(#igG)"/><rect x="22" y="22" width="56" height="56" rx="17" fill="none" stroke="#fff" stroke-width="7"/><circle cx="50" cy="50" r="13.5" fill="none" stroke="#fff" stroke-width="7"/><circle cx="67.5" cy="32.5" r="4.4" fill="#fff"/></svg>`,
+  tg: `<svg viewBox="0 0 100 100"><defs><linearGradient id="tgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#37BBFE"/><stop offset="1" stop-color="#007DBB"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#tgG)"/><path d="M22.6 49.5c14.6-6.4 24.3-10.5 29.2-12.5 13.9-5.8 16.8-6.8 18.7-6.8.4 0 1.3.1 1.9.6.5.4.6.9.7 1.3.1.4.1 1.2 0 1.9-.8 7.9-4 27.1-5.6 36-.7 3.7-2.1 5-3.4 5.1-2.9.3-5.1-1.9-7.9-3.7-4.4-2.9-6.9-4.7-11.2-7.5-4.9-3.3-1.7-5.1 1.1-8 .7-.8 13.5-12.4 13.8-13.4 0-.1.1-.6-.2-.9s-.7-.2-1-.1c-.4.1-7.4 4.7-20.9 13.8-2 1.4-3.8 2-5.4 2-1.8 0-5.2-1-7.7-1.8-3.1-1-5.6-1.5-5.4-3.3.1-.9 1.4-1.8 3.7-2.7z" fill="#fff"/></svg>`,
+  bolt: '<svg viewBox="0 0 100 100"><path d="M56 8 L22 56 H48 L42 92 L78 40 H52 Z"/></svg>',
+  field: '<svg viewBox="0 0 100 100"><path d="M50 92 C50 92 22 62 22 40 a28 28 0 0 1 56 0 C78 62 50 92 50 92Z"/><circle cx="50" cy="40" r="10"/></svg>',
+  people: '<svg viewBox="0 0 100 100"><circle cx="34" cy="34" r="12"/><circle cx="68" cy="34" r="12"/><path d="M12 82c0-14 10-24 22-24s22 10 22 24M46 82c0-14 10-24 22-24s22 10 22 24"/></svg>',
+  news: '<svg viewBox="0 0 100 100"><rect x="14" y="18" width="72" height="64" rx="8"/><path d="M28 36h44M28 50h44M28 64h26"/></svg>',
+};
+
+/* Nablus between its two mountains (Ebal and Gerizim), the old city and the green dome */
+function citySVG(dark = true, lineOnly = false) {
+  const R = rng(11), parts = [];
+  const bFill = dark ? '#232326' : '#fff', stroke = dark ? 'rgba(255,255,255,.18)' : '#b9b9bc';
+  for (let x = -10; x < 1100; x += 34 + R() * 30) {
+    const w = 40 + R() * 46, h = 50 + R() * 120 + (Math.abs(x - 540) < 260 ? 40 : 0), y = 560 - h;
+    parts.push(`<rect x="${x}" y="${y}" width="${w}" height="${h + 200}" fill="${bFill}" stroke="${stroke}" stroke-width="2"/>`);
+    if (!lineOnly) for (let k = 0; k < 3; k++) if (R() > .5) parts.push(`<rect class="win" x="${x + 8 + k * 13}" y="${y + 16 + R() * 40}" width="8" height="12" fill="#ffcf6b" opacity="0"/>`);
+  }
+  const dome = lineOnly ? stroke : '#1f8f4e';
+  return `<svg viewBox="0 0 1080 720" preserveAspectRatio="xMidYMax slice">
+    <path d="M-20 420 C120 250 260 210 420 380 L420 720 H-20Z" fill="${dark ? '#1c1c1f' : '#fff'}" stroke="${stroke}" stroke-width="3"/>
+    <path d="M1100 400 C960 230 820 220 660 380 L660 720 H1100Z" fill="${dark ? '#1c1c1f' : '#fff'}" stroke="${stroke}" stroke-width="3"/>
+    ${parts.join('')}
+    <g stroke="${stroke}" stroke-width="3">
+      <rect x="610" y="250" width="30" height="190" fill="${bFill}"/><path d="M604 290h42M612 250 l13-40 13 40" fill="${bFill}"/>
+      <rect x="440" y="380" width="200" height="200" fill="${bFill}"/>
+      <path d="M470 380 a70 70 0 0 1 140 0z" fill="${dome}"/><rect x="536" y="290" width="8" height="24" fill="${dome}"/>
+      <path d="M445 380 a22 22 0 0 1 44 0z M591 380 a22 22 0 0 1 44 0z" fill="${dome}"/>
+    </g></svg>`;
+}
+// generic photo placeholders for the post cards (landscape, road, city)
+function photoSVG(k) {
+  const skies = [['#9cc7ea', '#e9f1f6'], ['#f3c38b', '#f6e7d2'], ['#7fb2dd', '#dbe9f3']][k % 3];
+  const R = rng(k * 31 + 5);
+  let hills = '', extra = '';
+  hills += `<path d="M0 300 C200 210 380 260 560 220 S860 180 1000 240 V560 H0Z" fill="#8a9a74"/>`;
+  hills += `<path d="M0 370 C220 320 420 360 640 330 S900 320 1000 350 V560 H0Z" fill="#6f8058"/>`;
+  if (k % 3 === 1) for (let i = 0; i < 22; i++) { const x = R() * 1000, y = 250 + R() * 120, w = 40 + R() * 60; extra += `<rect x="${x}" y="${y}" width="${w}" height="${90 + R() * 60}" fill="${['#d9cdb8', '#c9b99c', '#e8dfcf'][i % 3]}"/>`; }
+  if (k % 3 === 0) extra += `<path d="M430 560 L500 330 L520 330 L640 560Z" fill="#7a7a7a"/><path d="M505 360 v30 M512 430 v40 M522 500 v50" stroke="#eee" stroke-width="6"/>`;
+  for (let i = 0; i < 9; i++) { const x = R() * 1000, y = 360 + R() * 140; extra += `<circle cx="${x}" cy="${y}" r="${24 + R() * 22}" fill="#4f6b3a"/><rect x="${x - 4}" y="${y + 10}" width="8" height="40" fill="#5b4632"/>`; }
+  return `<svg viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${skies[0]}"/><stop offset="1" stop-color="${skies[1]}"/></linearGradient></defs><rect width="1000" height="560" fill="url(#sk${k})"/>${hills}${extra}</svg>`;
+}
+
+/* ---------------- build DOM ---------------- */
+$('logo1').innerHTML = logoSVG(false, 'a') + '<img src="logo.png" alt="" style="opacity:0">';
+$('logo6').innerHTML = logoSVG(false, 'b') + '<img src="logo.png" alt="" style="opacity:0">';
+$('bigLogo').innerHTML = logoSVG(false, 'c');
+const L1 = logoParts($('logo1')), L6 = logoParts($('logo6')), LB = logoParts($('bigLogo'));
+$('city').innerHTML = citySVG(true);
+const wins = [...document.querySelectorAll('#city .win')];
+
+const CHIPS = [['bolt', 'عاجل', 'background:#d8363a;color:#fff'], ['field', 'ميداني', 'background:#fff;color:#3b3b3d'], ['people', 'مجتمعي', 'background:#3b3b3d;color:#fff;border:4px solid rgba(255,255,255,.4)']];
+$('chips').innerHTML = CHIPS.map(([ic, t, css]) => `<div class="chip" style="${css}">${ICON[ic]}<span>${t}</span></div>`).join('');
+const chips = [...$('chips').children];
+
+const CARD_TAGS = ['عاجل', 'خبر', 'تصريح', 'خبر', 'عاجل', 'خبر', 'خبر'];
+$('feed').innerHTML = CARD_TAGS.map((tag, i) => `<div class="card">
+  <div class="top"><img src="logo.png" alt=""><div class="ch">${ICON.news}<span>${tag}</span></div></div>
+  <div class="img">${photoSVG(i)}<div class="sw"></div></div>
+  <div class="hl"><i style="width:${[70, 62, 80, 58, 74, 66, 72][i]}%"></i><i style="width:${[92, 86, 95, 90, 84, 94, 88][i]}%"></i><i style="width:${[48, 55, 40, 60, 44, 52, 46][i]}%"></i></div>
+  <div class="acc accent"><i></i><i></i></div>
+  <div class="foot">${citySVG(false, true)}<div class="fr"><div class="ic"><span></span><span></span><span></span>nablus_news</div><div>نبض المدينة .. لحظة بلحظة</div></div></div>
+</div>`).join('');
+const CARD_H = 1060 + 46;
+
+const PLAT = {
+  pFB: {icon: 'fb', name: 'فيسبوك', hd: 'أخبار نابلس', ar: true, n: 233000, fmt: v => Math.round(v / 1000) + 'K', label: 'متابع', color: '#1877F2',
+        q: 'صفحة إخبارية محلية، نهتم بشؤون نابلس وننقل لكم الخبر من قلب الحدث', s: '12K منشور'},
+  pTG: {icon: 'tg', name: 'تلغرام', hd: 't.me/nabuls_news', n: 182785, fmt: v => Math.round(v).toLocaleString('en-US'), label: 'مشترك', color: '#29A9EB',
+        q: 'قناة إخبارية محلية .. تُعنى بنقل الحدث بكل نزاهة ووضوح', s: 'أخبار نابلس'},
+  pIG: {icon: 'ig', name: 'إنستغرام', hd: '@nbls.news', n: 34100, fmt: v => (v / 1000).toFixed(1) + 'K', label: 'متابع', color: '#E1306C',
+        q: 'صوت نابلس من قلب الحدث .. تغطية يومية لأهم الأخبار', s: '3,154 منشور'},
+};
+for (const [id, p] of Object.entries(PLAT)) {
+  $(id).style.setProperty('--pc', p.color);
+  $(id).innerHTML = `<div class="dotsW"></div><div class="bars">${[...Array(7)].map((_, i) => `<i style="top:${140 + i * 250}px;background:${i === 3 ? '#d8363a' : p.color}"></i>`).join('')}</div>
+    <div class="center head"><div class="ico">${ICON[p.icon]}</div><div class="nm">${p.name}</div><div class="hd ${p.ar ? 'ar' : ''}">${p.hd}</div></div>
+    <div class="center num"><div class="n" style="text-shadow:0 0 80px ${p.color}">0</div><div class="l">${p.label}</div></div>
+    <div class="quote"><div class="q">${p.q}</div><div class="s">${p.s}</div></div>`;
+  Object.assign(p, {el: $(id), ico: $(id).querySelector('.ico'), nm: $(id).querySelector('.nm'), hdEl: $(id).querySelector('.hd'),
+    numEl: $(id).querySelector('.num'), nEl: $(id).querySelector('.n'), quote: $(id).querySelector('.quote'), bars: [...$(id).querySelectorAll('.bars i')]});
+}
+$('totI').innerHTML = ['fb', 'tg', 'ig'].map(k => `<div>${ICON[k]}</div>`).join('');
+const FOLLOW = [['fb', 'أخبار نابلس', '233K', true], ['tg', 't.me/nabuls_news', '182K'], ['ig', '@nbls.news', '34.1K']];
+$('follow').innerHTML = FOLLOW.map(([ic, h, c, ar]) => `<div class="f">${ICON[ic]}<span class="h ${ar ? 'ar' : ''}">${h}</span><span class="c">${c}</span></div>`).join('');
+const frows = [...$('follow').children];
+
+// stripe wipe: 7 bars like the logo, alternating directions, one red
+const wipe = $('wipe');
+const wbars = [...Array(7)].map((_, i) => { const d = document.createElement('i'); d.style.top = (i * 275) + 'px'; d.style.background = i === 3 ? '#d8363a' : '#3b3b3d'; wipe.appendChild(d); return d; });
+
+/* ---------------- render ---------------- */
+const SCENES = {s1: [0, T.s2], s2: [T.s2, T.s3], s3: [T.s3, T.fb], pFB: [T.fb, T.tg], pTG: [T.tg, T.ig], pIG: [T.ig, T.s5], s5: [T.s5, T.s6], s6: [T.s6, T.end + 1]};
+
+function renderAt(t) {
+  for (const [id, [a, e]] of Object.entries(SCENES)) show($(id), t >= a && t < e);
+
+  /* ---- S1: logo ---- */
+  if (t < T.s2) {
+    drawLogo(L1, t, .05, 1);
+    st($('logo1'), {s: (t > T.name ? kick(t, .015) : 1) * lerp(1, 1.04, P(t, T.name, T.s2))});
+    const tk = P(t, T.tag, T.tag + .45);
+    st($('s1tag'), {op: P(t, T.tag, T.tag + .08), y: lerp(60, 0, E.outExpo(tk))});
+    const acc = $('s1acc').children;
+    acc[0].style.transform = `scaleX(${E.outExpo(P(t, T.tag + .1, T.tag + .5))})`;
+    acc[1].style.transform = `scaleX(${E.outExpo(P(t, T.tag + .2, T.tag + .6))})`;
+  }
+
+  /* ---- S2 ---- */
+  if (t >= T.s2 && t < T.s3) {
+    const out1 = E.inOutCubic(P(t, T.cov - .25, T.cov + .1));
+    const k1 = E.outExpo(P(t, T.s2, T.s2 + .3));
+    st($('w1'), {op: P(t, T.s2, T.s2 + .05) * (1 - out1), s: lerp(1.8, 1, k1), x: shake(t, T.s2, 14), y: -out1 * 200});
+    const k2 = E.outExpo(P(t, T.w2, T.w2 + .35));
+    st($('w2'), {op: P(t, T.w2, T.w2 + .05) * (1 - out1), s: lerp(2, 1, k2) * (t > T.w2 + .35 ? kick(t, .02) : 1), blur: lerp(16, 0, k2), x: shake(t, T.w2, 22), y: -out1 * 200});
+    const k3 = E.outExpo(P(t, T.w3, T.w3 + .4));
+    st($('w3'), {op: P(t, T.w3, T.w3 + .08) * (1 - out1), y: lerp(80, 0, k3) - out1 * 200});
+    const ck = E.outExpo(P(t, T.w2, T.w2 + .9));
+    $('city').style.transform = `translateY(${(1 - ck) * 700}px)`;
+    wins.forEach((w, i) => w.setAttribute('opacity', .9 * P(t, T.w3 + (i % 17) * .05, T.w3 + .1 + (i % 17) * .05)));
+    const cvk = P(t, T.cov, T.cov + .4);
+    st($('cov'), {op: P(t, T.cov, T.cov + .08), y: lerp(-80, 0, E.outExpo(cvk))});
+    chips.forEach((c, i) => {
+      const a = T.chips[i], k = P(t, a, a + .35);
+      st(c, {op: P(t, a, a + .05), s: lerp(1.8, 1, E.outExpo(k)), x: shake(t, a, 14), r: lerp(i % 2 ? 6 : -6, 0, E.outExpo(k))});
+    });
+    const hk = P(t, T.honest, T.honest + .4);
+    st($('honest'), {op: P(t, T.honest, T.honest + .08), y: lerp(60, 0, E.outExpo(hk))});
+    const ha = $('honest').querySelector('.accent').children;
+    ha[0].style.transform = `scaleX(${E.outExpo(P(t, T.honest + .2, T.honest + .6))})`; ha[1].style.transform = `scaleX(${E.outExpo(P(t, T.honest + .3, T.honest + .7))})`;
+  }
+
+  /* ---- S3: feed scrolling in beat-synced flicks ---- */
+  if (t >= T.s3 && t < T.fb) {
+    const u = (t - T.s3) / b(2);                 // one flick every 2 beats
+    const n = Math.floor(u), f = u - n;
+    const pos = n + E.inOutExpo(clamp(f / .55));
+    const y = 520 - pos * CARD_H * .82;
+    $('feed').style.transform = `translateY(${y}px)`;
+    const vel = f < .55 ? Math.sin(Math.PI * f / .55) : 0;
+    $('feed').style.filter = vel > .15 ? `blur(${vel * 5}px)` : '';
+    st($('fhA'), {op: P(t, T.s3, T.s3 + .06), s: lerp(1.6, 1, E.outExpo(P(t, T.s3, T.s3 + .35))), x: shake(t, T.s3, 12)});
+    st($('fhB'), {op: P(t, T.s3 + B, T.s3 + B + .06), s: lerp(1.6, 1, E.outExpo(P(t, T.s3 + B, T.s3 + B + .35))), x: shake(t, T.s3 + B, 12)});
+  }
+
+  /* ---- S4: platforms ---- */
+  for (const [id, a] of [['pFB', T.fb], ['pTG', T.tg], ['pIG', T.ig]]) {
+    if (t < a || t >= a + b(6)) continue;
+    const p = PLAT[id], u = t - a;
+    st(p.ico, {s: E.outBack(P(u, .02, .45)), r: lerp(-30, 0, E.outCubic(P(u, .02, .45)))});
+    st(p.nm, {op: P(u, .12, .2), y: lerp(40, 0, E.outExpo(P(u, .12, .5)))});
+    st(p.hdEl, {op: P(u, .22, .3), s: lerp(.6, 1, E.outBack(P(u, .22, .55)))});
+    const nk = E.outCubic(P(u, .35, 1.55));
+    p.nEl.textContent = p.fmt(p.n * nk);
+    st(p.numEl, {op: P(u, .3, .38), s: (u > 1.55 ? kick(t, .02) : lerp(.7, 1, E.outExpo(P(u, .3, .7))))});
+    st(p.quote, {op: P(u, 1.1, 1.2), y: lerp(80, 0, E.outExpo(P(u, 1.1, 1.5)))});
+    p.bars.forEach((bar, i) => { bar.style.transform = `translateX(${(i % 2 ? -1 : 1) * (200 - u * 120) - 260}px)`; });
+  }
+
+  /* ---- S5: total ---- */
+  if (t >= T.s5 && t < T.s6) {
+    const u = t - T.s5;
+    drawLogo(LB, t, T.s5 - .05, 1.4);
+    $('bigLogo').style.transform = `rotate(${u * 6}deg)`;
+    const k = E.outCubic(P(u, .2, 1.5));
+    $('totN').innerHTML = Math.round(449 * k) + 'K<b>+</b>';
+    st($('totN'), {op: P(u, .15, .22), s: u > 1.5 ? kick(t, .025) : lerp(.6, 1, E.outExpo(P(u, .15, .55)))});
+    st($('totL'), {op: P(u, .5, .6), y: lerp(40, 0, E.outExpo(P(u, .5, .9)))});
+    st($('totS'), {op: P(u, .7, .8), y: lerp(40, 0, E.outExpo(P(u, .7, 1.1)))});
+    [...$('totI').children].forEach((c, i) => st(c, {op: P(u, 1 + i * .1, 1.08 + i * .1), s: E.outBack(P(u, 1 + i * .1, 1.4 + i * .1))}));
+  }
+
+  /* ---- S6: outro ---- */
+  if (t >= T.s6) {
+    const u = t - T.s6;
+    drawLogo(L6, t, T.s6, 1.3, T.s6 + .75);
+    st($('logo6'), {s: u > 1 ? kick(t, .012) : 1});
+    st($('s6a'), {op: P(u, 1.2, 1.3), y: lerp(50, 0, E.outExpo(P(u, 1.2, 1.6)))});
+    st($('s6b'), {op: P(u, 1.45, 1.55), y: lerp(50, 0, E.outExpo(P(u, 1.45, 1.85)))});
+    frows.forEach((r, i) => { const a = 1.9 + i * B * .5, k = P(u, a, a + .45); st(r, {op: P(u, a, a + .08), x: lerp(i % 2 ? -600 : 600, 0, E.outExpo(k))}); });
+    $('fadeOut').style.opacity = E.inOutCubic(P(t, T.end - .7, T.end));
+  }
+
+  /* ---- overlays ---- */
+  const bugOn = t >= T.s2 + .3 && t < T.s5;
+  show($('bug'), bugOn && !(t >= T.s3 && t < T.fb));
+  if (bugOn) st($('bug'), {s: E.outBack(P(t, T.s2 + .3, T.s2 + .6))});
+  let on = false;
+  for (const c of CUTS) {
+    if (t <= c - .3 || t >= c + .3) continue;
+    on = true;
+    wbars.forEach((bar, i) => {
+      const d = (i - 3) * .018 * (i % 2 ? 1 : -1), dir = i % 2 ? -1 : 1;
+      const k = E.inOutCubic(P(t, c - .28 + Math.abs(d), c + .28 - .02 + Math.abs(d)));
+      bar.style.transform = `translateX(${dir * lerp(1300, -1300, k) + (dir < 0 ? 1080 - 1300 : 0)}px)`;
+      bar.style.borderRadius = '140px';
+    });
+  }
+  show(wipe, on);
+}
+
+/* ---------------- boot ---------------- */
+const isRender = new URLSearchParams(location.search).has('render');
+if (isRender) document.body.classList.add('render');
+window.DURATION = DURATION; window.FPS = FPS; window.renderAt = renderAt;
+const imgs = [...document.images].map(im => im.complete ? Promise.resolve() : new Promise(r => { im.onload = im.onerror = r; }));
+Promise.all([...['800 100px Almarai', '900 100px Cairo', '800 40px Cairo', '700 40px Montserrat', '900 40px Montserrat', '600 20px Montserrat'].map(f => document.fonts.load(f)), ...imgs])
+  .then(() => document.fonts.ready).then(() => { renderAt(0); window.READY = true; if (!isRender) initPlayer(); });
+
+function initPlayer() {
+  const stage = $('stage'), vp = $('viewport'), audio = $('music');
+  const fit = () => { stage.style.transform = `scale(${Math.min(vp.clientWidth / W, vp.clientHeight / H)})`; };
+  addEventListener('resize', fit); fit();
+  let playing = false, t0 = 0, start = 0, cur = 0;
+  const btn = $('playBtn'), scrub = $('scrub'), time = $('time');
+  const hasAudio = () => audio.readyState >= 2 && !audio.error;
+  const draw = t => { cur = t; renderAt(t); scrub.value = t; time.textContent = t.toFixed(2) + 's'; };
+  function tick() {
+    if (!playing) return;
+    let t = hasAudio() && !audio.paused ? audio.currentTime : t0 + (performance.now() - start) / 1000;
+    if (t >= DURATION) { t = DURATION; pause(); }
+    draw(t); requestAnimationFrame(tick);
+  }
+  function play() {
+    if (cur >= DURATION) cur = 0;
+    playing = true; btn.textContent = '❚❚ Pause'; t0 = cur; start = performance.now();
+    try { audio.currentTime = cur; audio.play().catch(() => {}); } catch (e) {}
+    requestAnimationFrame(tick);
+  }
+  function pause() { playing = false; btn.textContent = '▶ Play'; audio.pause(); }
+  btn.onclick = () => playing ? pause() : play();
+  scrub.oninput = () => { pause(); draw(+scrub.value); };
+  addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); btn.click(); } });
+}
+</script>
+</body>
+</html>
