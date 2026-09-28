@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشروق الفلسطينية — فيديو جرافيك</title>
+<style>
+@font-face{font-family:'Cairo';src:url(fonts/Cairo.ttf) format('truetype');font-weight:200 1000}
+@font-face{font-family:'Montserrat';src:url(fonts/Montserrat.ttf) format('truetype');font-weight:100 900}
+:root{
+  --navy:#0b1730; --ink:#070d1c; --sun:#ff7a18; --gold:#ffc93c;
+  --red:#e4312b; --green:#0d7a44; --black:#111; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;height:100%;overflow:hidden}
+body{font-family:'Cairo',sans-serif;color:#fff}
+#viewport{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+body.render #viewport{inset:0;display:block}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--ink);flex:none;transform-origin:center}
+body.render #stage{transform:none!important}
+.abs{position:absolute}
+.fill{position:absolute;inset:0}
+.center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.scene{position:absolute;inset:0;overflow:hidden}
+.en{font-family:'Montserrat',sans-serif}
+
+/* ---------- sunrise mark ---------- */
+.rise{position:absolute;left:0;top:0;width:1920px;overflow:hidden}
+.sun{position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,#fff8dc 0%,#ffe08a 28%,#ffc93c 52%,#ff9a2a 78%,#ff7a18 100%);
+  box-shadow:0 0 120px 40px rgba(255,140,30,.55),0 0 300px 120px rgba(255,110,20,.25)}
+.rays{position:absolute;border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,201,60,.22) 0deg 5deg,transparent 5deg 15deg);
+  -webkit-mask:radial-gradient(circle,#000 20%,transparent 68%);mask:radial-gradient(circle,#000 20%,transparent 68%)}
+.horizon{position:absolute;height:4px;left:50%;background:linear-gradient(90deg,transparent,#ffc93c 20%,#fff 50%,#ffc93c 80%,transparent);transform-origin:center}
+.warm{position:absolute;inset:0}
+.logoAr{font-weight:900;line-height:1.15;text-shadow:0 10px 40px rgba(0,0,0,.35)}
+.logoEn{font-family:'Montserrat';font-weight:800;text-transform:uppercase;white-space:nowrap}
+
+/* ---------- scene 1 ---------- */
+#s1{background:radial-gradient(ellipse at 50% 55%,#12234a 0%,#070d1c 70%)}
+#s1 .logoWrap{position:absolute;left:0;right:0;top:590px;text-align:center}
+#s1 .logoAr{font-size:210px}
+#s1 .logoEn{font-size:52px;margin-top:14px;color:#ffc93c}
+#s1 .tag{font-size:34px;font-weight:700;margin-top:18px;opacity:.85;letter-spacing:.04em}
+#flash{position:absolute;inset:0;background:#fff;pointer-events:none}
+
+/* ---------- scene 2 ---------- */
+.slam{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.slam span{font-size:320px;font-weight:900;line-height:1}
+#flagTri{position:absolute;inset:0;background:var(--red)}
+#phrase{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#16305f 0%,#0b1730 55%,#050a16 100%)}
+#phraseInner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#phraseSmall{font-family:'Montserrat';font-weight:700;font-size:28px;letter-spacing:.5em;color:#ffc93c;margin-bottom:10px}
+#phraseRow{display:flex;direction:rtl;gap:40px}
+#phraseRow span{font-size:170px;font-weight:900;line-height:1.25;display:inline-block}
+#phraseRow span.hl{color:#ffc93c}
+#phraseLine{width:1250px;height:12px;border-radius:6px;background:linear-gradient(270deg,#ff7a18,#ffc93c,#e4312b);transform-origin:right center;margin:6px 0 34px}
+#phraseEn{font-family:'Montserrat';font-weight:800;font-size:70px;letter-spacing:.08em;height:90px;white-space:pre}
+#phraseEn .caret{display:inline-block;width:6px;height:64px;background:#ffc93c;margin-left:8px;vertical-align:-6px}
+.quote{position:absolute;font-family:'Montserrat';font-weight:900;font-size:420px;color:rgba(255,201,60,.08);line-height:1}
+
+/* ---------- scene 3 ---------- */
+#s3{background:linear-gradient(120deg,#ffc93c 0%,#ff9a2a 50%,#ff7a18 100%);color:var(--navy)}
+#s3 .stripes{position:absolute;inset:-200px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 40px,transparent 40px 110px)}
+#s3 .row{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:90px;direction:ltr}
+#count{font-family:'Montserrat';font-weight:900;font-size:400px;line-height:1;color:#fff;-webkit-text-stroke:10px var(--navy);paint-order:stroke fill;text-shadow:18px 18px 0 var(--navy)}
+#s3 .ttl{text-align:right}
+#s3 .ttl .a{font-size:190px;font-weight:900;line-height:1.1}
+#s3 .ttl .b{font-family:'Montserrat';font-weight:800;font-size:66px;letter-spacing:.2em}
+
+/* ---------- scene 4: section cards ---------- */
+.sec{position:absolute;inset:0;overflow:hidden}
+.sec .bgword{position:absolute;top:40px;left:0;font-family:'Montserrat';font-weight:900;font-size:340px;white-space:nowrap;color:transparent;-webkit-text-stroke:3px rgba(255,255,255,.13);text-transform:uppercase;line-height:1}
+.sec .icon{position:absolute;left:230px;top:290px;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.1);border:6px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center}
+.sec .icon svg{width:230px;height:230px;fill:none;stroke:#fff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.sec .txt{position:absolute;right:170px;top:320px;width:1050px;text-align:right}
+.sec .ar{font-size:185px;font-weight:900;line-height:1.15;white-space:nowrap}
+.sec .enn{font-family:'Montserrat';font-weight:800;font-size:66px;letter-spacing:.14em;text-transform:uppercase;opacity:.9;margin-top:6px;white-space:nowrap}
+.sec .idx{position:absolute;left:80px;top:60px;font-family:'Montserrat';font-weight:800;font-size:38px;letter-spacing:.1em}
+.sec .idx b{color:#ffc93c}
+.sec .bar{position:absolute;left:0;right:0;bottom:70px;height:10px;background:#ffc93c;transform-origin:right center}
+.sec .diag{position:absolute;top:-100px;bottom:-100px;width:260px;background:rgba(255,255,255,.07);transform:skewX(-15deg)}
+
+/* grid recap */
+#s4b{background:radial-gradient(ellipse at 50% 40%,#16305f 0%,#0b1730 60%,#050a16 100%)}
+#grid{position:absolute;left:70px;right:70px;top:70px;bottom:110px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:22px;direction:rtl}
+.tile{border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
+.tile svg{width:80px;height:80px;fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.tile .a{font-size:54px;font-weight:900;line-height:1.2}
+.tile .b{font-family:'Montserrat';font-weight:700;font-size:20px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+
+/* ---------- scene 5: bilingual ---------- */
+#s5{background:radial-gradient(ellipse at 30% 50%,#16305f 0%,#0b1730 55%,#050a16 100%)}
+#browser{position:absolute;left:110px;top:190px;width:1000px;height:700px;border-radius:22px;overflow:hidden;background:#f5f6fa;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 2px rgba(255,255,255,.15)}
+.chrome{height:60px;background:#e4e8f0;display:flex;align-items:center;gap:12px;padding:0 22px;direction:ltr}
+.chrome .dot{width:16px;height:16px;border-radius:50%}
+.url{margin-left:20px;flex:1;height:38px;border-radius:19px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 18px;font-family:'Montserrat';font-weight:600;font-size:22px;color:#233}
+.url svg{width:18px;height:18px;fill:#1a8a4a}
+.url b{color:#e4312b}
+#pageWrap{position:absolute;left:0;right:0;top:60px;bottom:0;transform-origin:center}
+.page{position:absolute;inset:0;color:#0b1730}
+.phead{height:92px;background:#0b1730;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:20px}
+.plogo{font-weight:900;font-size:40px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.plogo.en{font-family:'Montserrat';font-size:28px;letter-spacing:.06em}
+.plogo i{width:34px;height:17px;border-radius:17px 17px 0 0;background:linear-gradient(#ffc93c,#ff7a18);display:inline-block}
+.pnav{display:flex;gap:22px;font-weight:700;font-size:21px;opacity:.9;white-space:nowrap}
+.page.ltr .pnav{font-family:'Montserrat';font-size:17px;font-weight:600}
+.plang{min-width:52px;height:40px;border-radius:20px;background:#ffc93c;color:#0b1730;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;font-family:'Montserrat'}
+.phero{position:relative;margin:26px 30px 0;height:290px;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,#1d3c78 0%,#ff9a2a 85%,#ffc93c 100%)}
+.phero .hsun{position:absolute;left:50%;bottom:-70px;width:220px;height:220px;margin-left:-110px;border-radius:50%;background:radial-gradient(circle,#fff8dc,#ffc93c 50%,#ff7a18);box-shadow:0 0 80px 20px rgba(255,160,40,.6)}
+.phero .hl{position:absolute;left:30px;right:30px;bottom:28px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.phero .hl i{display:block;height:22px;border-radius:11px;background:rgba(255,255,255,.95)}
+.phero .hbadge{position:absolute;top:22px;inset-inline-start:30px;background:#e4312b;color:#fff;font-weight:900;font-size:22px;padding:4px 18px;border-radius:8px}
+.page.ltr .hbadge{font-family:'Montserrat';font-size:16px;letter-spacing:.12em;padding:8px 16px}
+.pcards{display:flex;gap:20px;margin:22px 30px 0}
+.pc{flex:1;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:flex-start;padding-bottom:14px}
+.pc b{display:block;width:100%;height:92px;margin-bottom:12px}
+.pc i{display:block;height:13px;border-radius:7px;background:#c9cfdb;margin:6px 16px 0;width:78%}
+.pc i.s{width:50%}
+.pc em{font-style:normal;font-weight:800;font-size:15px;color:#e4312b;margin:0 16px}
+.page.ltr .pc em{font-family:'Montserrat';font-size:12px;letter-spacing:.1em}
+
+#langPanel{position:absolute;left:1180px;width:640px;top:180px;text-align:center}
+#lpCap{font-family:'Montserrat';font-weight:700;font-size:24px;letter-spacing:.35em;color:#ffc93c}
+#lpCapAr{font-size:34px;font-weight:700;opacity:.85;margin-top:2px}
+#lpAr{font-size:170px;font-weight:900;line-height:1.3;margin-top:30px}
+#lpAmp{font-family:'Montserrat';font-weight:900;font-size:60px;color:#ffc93c;line-height:1}
+#lpEn{font-family:'Montserrat';font-weight:900;font-size:108px;line-height:1.25;letter-spacing:.02em}
+#toggle{position:relative;margin:40px auto 0;width:300px;height:100px;border-radius:50px;background:rgba(255,255,255,.1);border:3px solid rgba(255,255,255,.3)}
+#toggle .lab{position:absolute;top:0;height:94px;width:147px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:36px}
+#toggle .l1{left:0;font-family:'Montserrat';font-size:30px}
+#toggle .l2{right:0}
+#knob{position:absolute;top:6px;left:6px;width:142px;height:82px;border-radius:41px;background:linear-gradient(135deg,#ffc93c,#ff7a18);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+#ripple{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;border:5px solid #ffc93c}
+#both{position:absolute;left:0;right:0;top:600px;white-space:nowrap;font-size:46px;font-weight:900;line-height:1.4}
+#both .e{display:block;font-family:'Montserrat';font-weight:800;font-size:32px;letter-spacing:.15em;color:#ffc93c}
+#cursor{position:absolute;left:0;top:0;width:64px;height:64px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+
+/* ---------- scene 6: outro ---------- */
+#s6{background:radial-gradient(ellipse at 50% 40%,#16305f 0%,#0b1730 50%,#050a16 100%)}
+#s6 .logoWrap{position:absolute;left:0;right:0;top:372px;text-align:center}
+#s6 .logoAr{font-size:170px}
+#s6 .logoEn{font-size:44px;color:#ffc93c;margin-top:10px}
+#s6 .sl1{font-size:72px;font-weight:900;margin-top:22px;line-height:1.3}
+#s6 .sl2{font-family:'Montserrat';font-weight:700;font-size:34px;letter-spacing:.22em;opacity:.9;margin-top:14px}
+#s6 .pills{display:flex;justify-content:center;gap:22px;margin-top:40px;direction:ltr}
+.pill{height:74px;border-radius:37px;padding:0 36px;display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;border:3px solid rgba(255,255,255,.35)}
+.pill.url2{background:#ffc93c;color:#0b1730;border-color:#ffc93c;font-family:'Montserrat';font-size:38px;letter-spacing:.04em}
+.pill.enp{font-family:'Montserrat';font-size:30px}
+#fadeOut{position:absolute;inset:0;background:#000;pointer-events:none}
+
+/* ---------- global overlays ---------- */
+#wipe{position:absolute;top:-40px;height:1160px;width:2700px;left:0}
+#ticker{position:absolute;left:0;right:0;bottom:0;height:70px;background:#070b16;border-top:3px solid #e4312b;overflow:hidden;z-index:40}
+#tickLabel{position:absolute;right:0;top:0;width:190px;height:67px;background:#e4312b;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;z-index:2}
+#tickLabel .a{font-size:32px;font-weight:900}
+#tickLabel .b{font-family:'Montserrat';font-weight:800;font-size:13px;letter-spacing:.3em;margin-top:2px}
+#tickClip{position:absolute;left:0;right:190px;top:0;height:67px;overflow:hidden}
+#tickTrack{position:absolute;top:0;left:0;height:67px;display:flex;white-space:nowrap}
+.tickSeg{display:flex;align-items:center;height:67px;font-size:30px;font-weight:700;direction:rtl}
+.tickSeg span{padding:0 22px}
+.tickSeg em{font-style:normal;color:#ffc93c;font-size:18px}
+#bug{position:absolute;right:60px;top:44px;display:flex;align-items:center;gap:14px;z-index:41;direction:rtl}
+#bug .t{font-size:44px;font-weight:900;line-height:1}
+#bug svg{width:70px;height:40px}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.35) 100%);z-index:50}
+
+/* ---------- preview controls ---------- */
+#controls{position:fixed;left:0;right:0;bottom:0;height:56px;background:#111;display:flex;align-items:center;gap:14px;padding:0 16px;direction:ltr;font-family:'Montserrat';font-size:14px}
+#controls button{background:#ffc93c;color:#0b1730;border:0;border-radius:6px;font-weight:800;padding:8px 14px;cursor:pointer;font-family:inherit}
+#controls input{flex:1;accent-color:#ffc93c}
+body.render #controls{display:none}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+  <!-- ===== S1: sunrise intro ===== -->
+  <div class="scene" id="s1">
+    <div class="warm" id="s1warm"></div>
+    <div class="rise" id="s1rise" style="height:560px">
+      <div class="rays" id="s1rays"></div>
+      <div class="sun" id="s1sun"></div>
+    </div>
+    <div class="horizon" id="s1hor" style="top:558px;width:1500px;margin-left:-750px"></div>
+    <div class="logoWrap" id="s1logo">
+      <div class="logoAr">الشروق</div>
+      <div class="logoEn" id="s1en">Al Shorouk</div>
+      <div class="tag" id="s1tag">فلسطين <span class="en" style="color:#ffc93c">·</span> <span class="en" style="font-weight:700;letter-spacing:.2em">PALESTINE</span></div>
+    </div>
+    <div id="flash"></div>
+  </div>
+
+  <!-- ===== S2: slogan ===== -->
+  <div class="scene" id="s2">
+    <div class="slam" id="w1" style="background:#0b0b0b"><span>أخبار</span></div>
+    <div class="slam" id="w2" style="background:#fff;color:#0d7a44"><span>فلسطين</span></div>
+    <div class="slam" id="w3" style="background:#0d7a44"><div id="flagTri"></div><span style="position:relative">كما هي</span></div>
+    <div id="phrase">
+      <div class="quote" style="right:120px;top:40px">”</div>
+      <div class="quote" style="left:120px;bottom:-140px">“</div>
+      <div id="phraseInner">
+        <div id="phraseSmall">ALSHOROUK.PS</div>
+        <div id="phraseRow"><span>أخبار</span><span class="hl">فلسطين</span><span>كما</span><span>هي</span></div>
+        <div id="phraseLine"></div>
+        <div id="phraseEn"><span id="phraseEnTxt"></span><span class="caret" id="caret"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== S3: sections title ===== -->
+  <div class="scene" id="s3">
+    <div class="stripes" id="s3stripes"></div>
+    <div class="row">
+      <div id="count">00</div>
+      <div class="ttl"><div class="a" id="s3a">أقسام الموقع</div><div class="b" id="s3b">SITE SECTIONS</div></div>
+    </div>
+  </div>
+
+  <!-- ===== S4: section cards (built by JS) ===== -->
+  <div class="scene" id="s4"></div>
+  <div class="scene" id="s4b"><div id="grid"></div></div>
+
+  <!-- ===== S5: bilingual ===== -->
+  <div class="scene" id="s5">
+    <div id="browser">
+      <div class="chrome">
+        <span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span>
+        <div class="url"><svg viewBox="0 0 24 24"><path d="M6 10V8a6 6 0 1 1 12 0v2h1v12H5V10zm2 0h8V8a4 4 0 1 0-8 0z"/></svg><span>alshorouk.ps/<b id="urlLang">ar</b></span></div>
+      </div>
+      <div id="pageWrap">
+        <div class="page" dir="rtl" id="pgAR">
+          <div class="phead"><div class="plogo"><i></i>الشروق</div><div class="pnav"><span>الرئيسية</span><span>سياسة</span><span>محليات</span><span>القدس</span><span>اقتصاد</span><span>رياضة</span></div><div class="plang">EN</div></div>
+          <div class="phero"><div class="hsun"></div><div class="hbadge">عاجل</div><div class="hl"><i style="width:72%"></i><i style="width:46%"></i></div></div>
+          <div class="pcards">
+            <div class="pc"><b style="background:linear-gradient(135deg,#0d7a44,#16305f)"></b><em>القدس</em><i></i><i class="s"></i></div>
+            <div class="pc"><b style="background:linear-gradient(135deg,#e4312b,#ff9a2a)"></b><em>اقتصاد</em><i></i><i class="s"></i></div>
+            <div class="pc"><b style="background:linear-gradient(135deg,#16305f,#1d3c78)"></b><em>رياضة</em><i></i><i class="s"></i></div>
+          </div>
+        </div>
+        <div class="page ltr" dir="ltr" id="pgEN">
+          <div class="phead"><div class="plogo en"><i></i>AL SHOROUK</div><div class="pnav"><span>Home</span><span>Politics</span><span>Local</span><span>Jerusalem</span><span>Economy</span><span>Sports</span></div><div class="plang" style="font-family:Cairo">ع</div></div>
+          <div class="phero"><div class="hsun"></div><div class="hbadge">BREAKING</div><div class="hl"><i style="width:72%"></i><i style="width:46%"></i></div></div>
+          <div class="pcards">
+            <div class="pc"><b style="background:linear-gradient(135deg,#0d7a44,#16305f)"></b><em>JERUSALEM</em><i></i><i class="s"></i></div>
+            <div class="pc"><b style="background:linear-gradient(135deg,#e4312b,#ff9a2a)"></b><em>ECONOMY</em><i></i><i class="s"></i></div>
+            <div class="pc"><b style="background:linear-gradient(135deg,#16305f,#1d3c78)"></b><em>SPORTS</em><i></i><i class="s"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="langPanel">
+      <div id="lpCap">ONE SITE · TWO LANGUAGES</div>
+      <div id="lpCapAr">موقع واحد بلغتين</div>
+      <div id="lpAr">العربية</div>
+      <div id="lpAmp">&amp;</div>
+      <div id="lpEn">ENGLISH</div>
+      <div id="toggle"><div id="knob"></div><div class="lab l1">EN</div><div class="lab l2">ع</div><div id="ripple"></div></div>
+      <div id="both">باللغتين العربية والإنجليزية<span class="e">IN ARABIC &amp; ENGLISH</span></div>
+    </div>
+    <svg id="cursor" viewBox="0 0 64 64"><path d="M10 4 L10 50 L22 39 L31 58 L39 54 L30 36 L46 36 Z" fill="#fff" stroke="#0b1730" stroke-width="3" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- ===== S6: outro ===== -->
+  <div class="scene" id="s6">
+    <div class="warm" id="s6warm"></div>
+    <div class="rise" id="s6rise" style="height:360px">
+      <div class="rays" id="s6rays"></div>
+      <div class="sun" id="s6sun"></div>
+    </div>
+    <div class="horizon" id="s6hor" style="top:358px;width:1100px;margin-left:-550px"></div>
+    <div class="logoWrap">
+      <div class="logoAr" id="s6ar">الشروق</div>
+      <div class="logoEn" id="s6en">Al Shorouk</div>
+      <div class="sl1" id="s6sl1">أخبار فلسطين كما هي</div>
+      <div class="sl2" id="s6sl2">PALESTINE NEWS, AS IT IS</div>
+      <div class="pills" id="s6pills">
+        <div class="pill url2">alshorouk.ps</div>
+        <div class="pill">العربية</div>
+        <div class="pill enp">English</div>
+      </div>
+    </div>
+    <div id="fadeOut"></div>
+  </div>
+
+  <!-- ===== global overlays ===== -->
+  <div id="ticker">
+    <div id="tickClip"><div id="tickTrack"></div></div>
+    <div id="tickLabel"><span class="a">عاجل</span><span class="b">BREAKING</span></div>
+  </div>
+  <div id="bug">
+    <svg viewBox="0 0 70 40"><defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ff7a18"/></linearGradient></defs><path d="M12 34 a23 23 0 0 1 46 0z" fill="url(#bg1)"/><path d="M2 37h66" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>
+    <span class="t">الشروق</span>
+  </div>
+  <div id="wipe"></div>
+  <div id="vignette"></div>
+</div></div>
+
+<div id="controls">
+  <button id="playBtn">▶ Play</button>
+  <input type="range" id="scrub" min="0" max="32" step="0.001" value="0">
+  <span id="time">0.00s</span>
+</div>
+<audio id="music" src="music.m4a" preload="auto"></audio>
+
+<script>
+/* ============================================================
+   Timeline (seconds). 120 BPM -> one beat = 0.5s.
+   Keep in sync with music.js
+   ============================================================ */
+const DURATION = 32, FPS = 30;
+const T = {
+  logoHit: 2.0,
+  s2: 3.5, w2: 4.0, w3: 4.5, phrase: 5.0,
+  s3: 8.0,
+  s4: 9.5, secDur: 1.0,
+  grid: 21.5,
+  s5: 23.0, switches: [24.0, 25.0, 25.5, 26.0, 26.5, 26.75, 27.0, 27.25], both: 27.5,
+  s6: 28.5,
+  end: 32
+};
+const WIPES = [
+  {t: T.s2,   c: '#e4312b'},
+  {t: T.s3,   c: '#0b1730'},
+  {t: T.s4,   c: '#0d7a44'},
+  {t: T.grid, c: '#ff7a18'},
+  {t: T.s5,   c: '#e4312b'},
+  {t: T.s6,   c: '#ffc93c'},
+];
+
+const ICONS = {
+  politics:'<path d="M14 38 L50 16 L86 38 Z"/><path d="M22 46v32M40 46v32M60 46v32M78 46v32"/><path d="M12 86h76"/>',
+  pin:'<path d="M50 90 C50 90 22 62 22 40 a28 28 0 0 1 56 0 C78 62 50 90 50 90Z"/><circle cx="50" cy="40" r="10"/>',
+  dome:'<path d="M28 50 a22 22 0 0 1 44 0"/><path d="M50 16v12"/><path d="M18 50h64"/><path d="M24 50v34h52V50"/><path d="M38 84V68h24v16"/><path d="M12 86h76"/>',
+  bars:'<rect x="18" y="14" width="64" height="72" rx="6"/><path d="M34 14v72M50 14v72M66 14v72"/>',
+  globe:'<circle cx="50" cy="50" r="34"/><ellipse cx="50" cy="50" rx="14" ry="34"/><path d="M16 50h68M21 33h58M21 67h58"/>',
+  chart:'<path d="M14 86h72"/><path d="M24 86V64M42 86V52M60 86V58M78 86V40"/><path d="M18 44 L38 28 L54 36 L82 14"/><path d="M68 14h14v14"/>',
+  ball:'<circle cx="50" cy="50" r="34"/><path d="M50 37 l12 9-5 14h-14l-5-14z"/><path d="M50 16v21M62 46l19-6M57 60l12 16M43 60l-12 16M38 46l-19-6"/>',
+  book:'<path d="M50 28 C40 20 24 20 12 24v56c12-4 26-4 38 4 12-8 26-8 38-4V24c-12-4-28-4-38 4z"/><path d="M50 28v56"/>',
+  doc:'<path d="M26 12h34l18 18v58H26z"/><path d="M60 12v18h18"/><path d="M36 50h32M36 62h32M36 74h20"/>',
+  pen:'<path d="M22 78 L30 56 L66 20 L80 34 L44 70 Z"/><path d="M58 28l14 14"/><path d="M14 88h44"/>',
+  heart:'<path d="M50 84 C22 64 12 48 12 35 a19 19 0 0 1 38-6 a19 19 0 0 1 38 6 c0 13-10 29-38 49z"/><path d="M20 52h16l6-10 8 18 6-8h24"/>',
+  play:'<rect x="10" y="20" width="80" height="60" rx="12"/><path d="M42 36v28l24-14z"/>'
+};
+const SECTIONS = [
+  {ar:'سياسة',      en:'Politics',       icon:'politics', c:'#12306b'},
+  {ar:'محليات',     en:'Local',          icon:'pin',      c:'#c81f2a'},
+  {ar:'القدس',      en:'Jerusalem',      icon:'dome',     c:'#0d7a44'},
+  {ar:'الأسرى',     en:'Prisoners',      icon:'bars',     c:'#151515'},
+  {ar:'عربي ودولي', en:'Arab & World',   icon:'globe',    c:'#e0600f'},
+  {ar:'اقتصاد',     en:'Economy',        icon:'chart',    c:'#0b1f4a'},
+  {ar:'رياضة',      en:'Sports',         icon:'ball',     c:'#c81f2a'},
+  {ar:'ثقافة وفن',  en:'Culture & Arts', icon:'book',     c:'#0d7a44'},
+  {ar:'تقارير',     en:'Reports',        icon:'doc',      c:'#151515'},
+  {ar:'مقالات رأي', en:'Opinion',        icon:'pen',      c:'#e0600f'},
+  {ar:'صحة',        en:'Health',         icon:'heart',    c:'#12306b'},
+  {ar:'فيديو',      en:'Video',          icon:'play',     c:'#c81f2a'},
+];
+
+/* ---------------- helpers ---------------- */
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+const E = {
+  outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  outCubic: x => 1 - Math.pow(1 - x, 3),
+  inCubic: x => x * x * x,
+  inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  outBack: x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+function st(el, o = {}) {
+  const {op = 1, x = 0, y = 0, s = 1, sx, r = 0, blur = 0, extra = ''} = o;
+  el.style.opacity = op;
+  el.style.transform = `translate(${x}px,${y}px) scale(${sx ?? s},${s}) rotate(${r}deg) ${extra}`;
+  el.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
+}
+const shake = (t, a, amp = 10, len = .18) => {
+  if (t < a || t > a + len) return 0;
+  return Math.sin((t - a) * 140) * amp * (1 - (t - a) / len);
+};
+
+/* sunrise mark (used in S1 and S6) */
+function sunrise(prefix, t, k, horizonY, r, raysOn) {
+  const sun = $(prefix + 'sun'), rays = $(prefix + 'rays');
+  sun.style.width = sun.style.height = r * 2 + 'px';
+  sun.style.left = (960 - r) + 'px';
+  sun.style.top = lerp(horizonY + 30, horizonY - r, k) + 'px';
+  const R = r * 4.2;
+  rays.style.width = rays.style.height = R * 2 + 'px';
+  rays.style.left = (960 - R) + 'px';
+  rays.style.top = (horizonY - R) + 'px';
+  rays.style.opacity = raysOn;
+  rays.style.transform = `rotate(${t * 9}deg)`;
+}
+
+/* ---------------- build dynamic DOM ---------------- */
+const svg = (name) => `<svg viewBox="0 0 100 100">${ICONS[name]}</svg>`;
+const s4 = $('s4'), grid = $('grid');
+const cards = SECTIONS.map((sec, i) => {
+  const d = document.createElement('div');
+  d.className = 'sec';
+  d.style.background = `linear-gradient(135deg, ${sec.c} 0%, ${shade(sec.c, -0.35)} 100%)`;
+  d.style.zIndex = i + 1;
+  d.innerHTML = `
+    <div class="diag" style="left:${300 + (i % 3) * 420}px"></div>
+    <div class="bgword">${sec.en}</div>
+    <div class="icon">${svg(sec.icon)}</div>
+    <div class="txt"><div class="ar">${sec.ar}</div><div class="enn">${sec.en}</div></div>
+    <div class="idx"><b>${String(i + 1).padStart(2, '0')}</b> / ${SECTIONS.length}</div>
+    <div class="bar"></div>`;
+  s4.appendChild(d);
+  return {el: d, bgword: d.querySelector('.bgword'), icon: d.querySelector('.icon'), ar: d.querySelector('.ar'),
+          en: d.querySelector('.enn'), idx: d.querySelector('.idx'), bar: d.querySelector('.bar'), diag: d.querySelector('.diag')};
+});
+const tiles = SECTIONS.map(sec => {
+  const d = document.createElement('div');
+  d.className = 'tile';
+  d.style.background = `linear-gradient(135deg, ${sec.c}, ${shade(sec.c, -0.3)})`;
+  d.innerHTML = `${svg(sec.icon)}<div class="a">${sec.ar}</div><div class="b">${sec.en}</div>`;
+  grid.appendChild(d);
+  return d;
+});
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  const f = c => Math.round(clamp(c + c * amt, 0, 255));
+  return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, '0')).join('');
+}
+// ticker
+const tickTrack = $('tickTrack');
+const segHTML = '<div class="tickSeg">' + SECTIONS.map(s => `<span>${s.ar}</span><em>◆</em><span class="en" style="font-size:24px;font-weight:600">${s.en.toUpperCase()}</span><em>◆</em>`).join('') + '</div>';
+tickTrack.innerHTML = segHTML + segHTML + segHTML;
+let segW = 2000;
+
+/* ---------------- scenes ---------------- */
+const scenes = {s1: [0, T.s2], s2: [T.s2, T.s3], s3: [T.s3, T.s4], s4: [T.s4, T.grid], s4b: [T.grid, T.s5], s5: [T.s5, T.s6], s6: [T.s6, T.end + 1]};
+
+function renderAt(t) {
+  for (const [id, [a, b]] of Object.entries(scenes)) show($(id), t >= a && t < b);
+
+  /* ---- S1: sunrise + logo ---- */
+  if (t < T.s2) {
+    const hor = E.outExpo(P(t, 0.1, 1.0));
+    $('s1hor').style.transform = `scaleX(${hor})`;
+    $('s1hor').style.opacity = hor;
+    const k = E.outCubic(P(t, 0.35, 1.9));
+    sunrise('s1', t, k, 560, 210, P(t, 1.1, 2.0));
+    $('s1warm').style.background = `radial-gradient(ellipse at 50% 52%, rgba(255,122,24,${0.55 * k}) 0%, rgba(228,49,43,${0.18 * k}) 35%, transparent 70%)`;
+    const lk = P(t, T.logoHit, T.logoHit + 0.45);
+    st($('s1logo'), {op: P(t, T.logoHit, T.logoHit + 0.06), s: lerp(1.6, 1, E.outExpo(lk)), blur: lerp(24, 0, E.outExpo(lk)), x: shake(t, T.logoHit, 14), y: lerp(0, 0, lk)});
+    $('s1en').style.letterSpacing = $('s1en').style.paddingLeft = lerp(1.2, 0.5, E.outExpo(P(t, T.logoHit + .1, T.logoHit + .7))) + 'em';
+    st($('s1en'), {op: P(t, T.logoHit + .1, T.logoHit + .3)});
+    st($('s1tag'), {op: P(t, 2.5, 2.8), y: lerp(24, 0, E.outCubic(P(t, 2.5, 2.9)))});
+    $('flash').style.opacity = t >= T.logoHit ? 1 - E.outCubic(P(t, T.logoHit, T.logoHit + 0.4)) : 0;
+    st($('s1'), {s: lerp(1, 1.06, P(t, 2.4, T.s2))});
+  }
+
+  /* ---- S2: slogan ---- */
+  if (t >= T.s2 && t < T.s3) {
+    const words = [['w1', T.s2, T.w2], ['w2', T.w2, T.w3], ['w3', T.w3, T.phrase]];
+    for (const [id, a, b] of words) {
+      const el = $(id); show(el, t >= a && t < b);
+      if (t >= a && t < b) {
+        const k = E.outExpo(P(t, a, a + .28));
+        st(el.querySelector('span'), {s: lerp(1.45, 1, k), blur: lerp(14, 0, k), x: shake(t, a, 16), op: P(t, a, a + .05) || (t > a ? 1 : 0)});
+      }
+    }
+    $('flagTri').style.clipPath = `polygon(0 0, ${lerp(0, 34, E.outExpo(P(t, T.w3, T.w3 + .3)))}% 50%, 0 100%)`;
+    const ph = $('phrase'); show(ph, t >= T.phrase);
+    if (t >= T.phrase) {
+      [...$('phraseRow').children].forEach((sp, i) => {
+        const a = T.phrase + i * .08, k = E.outBack(P(t, a, a + .35));
+        st(sp, {op: P(t, a, a + .1), y: lerp(90, 0, k), s: lerp(.6, 1, k)});
+      });
+      $('phraseLine').style.transform = `scaleX(${E.outExpo(P(t, 5.35, 5.9))})`;
+      st($('phraseSmall'), {op: P(t, 5.3, 5.6), y: lerp(-20, 0, E.outCubic(P(t, 5.3, 5.6)))});
+      const en = 'PALESTINE NEWS, AS IT IS';
+      const n = Math.floor(en.length * P(t, 5.6, 6.5));
+      $('phraseEnTxt').textContent = en.slice(0, n);
+      $('caret').style.opacity = (t < 5.6 || (Math.floor(t * 4) % 2 === 0)) ? 1 : 0;
+      st($('phraseInner'), {s: lerp(1, 1.06, P(t, T.phrase, T.s3))});
+    }
+  }
+
+  /* ---- S3: sections title + counter ---- */
+  if (t >= T.s3 && t < T.s4) {
+    const n = Math.round(SECTIONS.length * E.outCubic(P(t, T.s3 + .1, T.s3 + .9)));
+    $('count').textContent = String(n).padStart(2, '0');
+    st($('count'), {s: lerp(.4, 1, E.outBack(P(t, T.s3, T.s3 + .4))), op: P(t, T.s3, T.s3 + .1), r: lerp(-12, 0, E.outExpo(P(t, T.s3, T.s3 + .4)))});
+    st($('s3a'), {op: P(t, T.s3 + .1, T.s3 + .25), x: lerp(160, 0, E.outExpo(P(t, T.s3 + .1, T.s3 + .5)))});
+    st($('s3b'), {op: P(t, T.s3 + .25, T.s3 + .4), x: lerp(-160, 0, E.outExpo(P(t, T.s3 + .25, T.s3 + .65)))});
+    $('s3stripes').style.transform = `translateX(${((t - T.s3) * 160) % 156}px)`;
+  }
+
+  /* ---- S4: section cards ---- */
+  if (t >= T.s4 && t < T.grid) {
+    cards.forEach((c, i) => {
+      const a = T.s4 + i * T.secDur, u = t - a;
+      const on = u >= 0 && u < T.secDur + .3;
+      show(c.el, on);
+      if (!on) return;
+      const slide = i === 0 ? 1 : E.outExpo(P(u, 0, .26));
+      c.el.style.transform = `translateX(${(1 - slide) * 1920}px)`;
+      st(c.icon, {s: E.outBack(P(u, .08, .38)), r: lerp(-40, 0, E.outCubic(P(u, .08, .38))), op: P(u, .08, .14)});
+      st(c.ar, {op: P(u, .05, .16), x: lerp(140, 0, E.outExpo(P(u, .05, .4))), blur: lerp(8, 0, P(u, .05, .25))});
+      st(c.en, {op: P(u, .14, .26), x: lerp(-120, 0, E.outExpo(P(u, .14, .5)))});
+      st(c.idx, {op: P(u, .12, .3), y: lerp(-20, 0, E.outCubic(P(u, .12, .3)))});
+      st(c.bgword, {x: lerp(260, -320, u / (T.secDur + .3))});
+      c.bar.style.transform = `scaleX(${P(u, 0, T.secDur)})`;
+      c.diag.style.transform = `translateX(${lerp(200, -200, u)}px) skewX(-15deg)`;
+    });
+  }
+
+  /* ---- S4b: grid recap ---- */
+  if (t >= T.grid && t < T.s5) {
+    const order = [0, 1, 2, 3, 7, 6, 5, 4, 8, 9, 10, 11]; // snake order across the rtl grid
+    tiles.forEach((el, i) => {
+      const a = T.grid + order.indexOf(i) * .045, k = P(t, a, a + .3);
+      st(el, {op: P(t, a, a + .08), s: lerp(.5, 1, E.outBack(k)), y: lerp(60, 0, E.outCubic(k))});
+    });
+    st(grid, {s: lerp(1, 1.07, E.inCubic(P(t, T.grid + .7, T.s5)))});
+  }
+
+  /* ---- S5: bilingual ---- */
+  if (t >= T.s5 && t < T.s6) {
+    const bk = P(t, T.s5, T.s5 + .45);
+    st($('browser'), {op: P(t, T.s5, T.s5 + .1), y: lerp(220, 0, E.outExpo(bk)), s: lerp(.85, 1, E.outExpo(bk)), extra: `perspective(1400px) rotateY(${lerp(18, 6, E.outCubic(bk))}deg)`});
+    // mode: 0 = Arabic, 1 = English
+    let passed = 0, last = -1;
+    T.switches.forEach((sw, i) => { if (t >= sw) { passed++; last = i; } });
+    const mode = passed % 2;
+    const swT = last >= 0 ? T.switches[last] : -9;
+    // page flip around each switch
+    let flip = 1;
+    for (const sw of T.switches) { const d = Math.abs(t - sw); if (d < .09) flip = Math.min(flip, d / .09); }
+    $('pageWrap').style.transform = `scaleX(${Math.max(flip, .02)})`;
+    show($('pgAR'), mode === 0); show($('pgEN'), mode === 1);
+    $('urlLang').textContent = mode ? 'en' : 'ar';
+    // panel text
+    const pk = P(t, T.s5 + .15, T.s5 + .55);
+    st($('lpCap'), {op: pk, y: lerp(-20, 0, E.outCubic(pk))});
+    st($('lpCapAr'), {op: pk, y: lerp(-20, 0, E.outCubic(pk))});
+    const bothK = P(t, T.both, T.both + .25);
+    const arOn = mode === 0 ? 1 : .22, enOn = mode === 1 ? 1 : .22;
+    const sinceSw = P(t, swT, swT + .15);
+    const arOp = lerp(arOn, 1, bothK), enOp = lerp(enOn, 1, bothK);
+    st($('lpAr'), {op: arOp * P(t, T.s5 + .2, T.s5 + .4), x: lerp(120, 0, E.outExpo(P(t, T.s5 + .2, T.s5 + .6))), s: mode === 0 && t < T.both ? lerp(1.12, 1, E.outCubic(sinceSw)) : 1});
+    st($('lpAmp'), {op: P(t, T.s5 + .3, T.s5 + .5), s: 1 + .25 * (1 - E.outCubic(P(t, T.both, T.both + .3))) * (t >= T.both ? 1 : 0)});
+    st($('lpEn'), {op: enOp * P(t, T.s5 + .35, T.s5 + .55), x: lerp(-120, 0, E.outExpo(P(t, T.s5 + .35, T.s5 + .75))), s: mode === 1 && t < T.both ? lerp(1.12, 1, E.outCubic(sinceSw)) : 1});
+    $('lpAr').style.color = (t >= T.both || mode === 0) ? '#fff' : '#fff';
+    // toggle
+    const prevMode = passed > 0 ? (passed - 1) % 2 : 0;
+    const kx = E.outCubic(P(t, swT, swT + .12));
+    const pos = m => m === 0 ? 146 : 0; // arabic knob on the right
+    $('knob').style.transform = `translateX(${lerp(pos(prevMode), pos(mode), last >= 0 ? kx : 1)}px)`;
+    st($('toggle'), {op: P(t, T.s5 + .45, T.s5 + .65) * (1 - P(t, T.both - .05, T.both + .1)), s: lerp(.6, 1, E.outBack(P(t, T.s5 + .45, T.s5 + .8)))});
+    const rk = P(t, swT, swT + .35);
+    st($('ripple'), {op: last >= 0 ? (1 - rk) : 0, s: lerp(.35, 1.4, E.outCubic(rk))});
+    const bk2 = P(t, T.both, T.both + .35);
+    st($('both'), {op: P(t, T.both, T.both + .1), s: lerp(.7, 1, E.outBack(bk2)), y: lerp(40, 0, E.outCubic(bk2))});
+    // cursor: flies in, clicks on each switch, flies out
+    const tgX = 1505, tgY = 818;
+    const ci = E.outCubic(P(t, T.s5 + .5, 23.95)), co = E.inCubic(P(t, T.both - .05, T.both + .35));
+    let press = 1;
+    for (const sw of T.switches) if (t >= sw - .05 && t < sw + .07) press = .8;
+    const cx = lerp(lerp(1880, tgX, ci), 1950, co), cy = lerp(lerp(1060, tgY, ci), 1150, co);
+    $('cursor').style.transform = `translate(${cx}px,${cy}px) scale(${press})`;
+    $('cursor').style.opacity = t < T.s5 + .5 ? 0 : 1;
+  }
+
+  /* ---- S6: outro ---- */
+  if (t >= T.s6) {
+    const k = E.outCubic(P(t, T.s6, T.s6 + 1.0));
+    sunrise('s6', t, k, 360, 150, P(t, T.s6 + .3, T.s6 + 1));
+    const hk = E.outExpo(P(t, T.s6, T.s6 + .6));
+    $('s6hor').style.transform = `scaleX(${hk})`;
+    $('s6warm').style.background = `radial-gradient(ellipse at 50% 34%, rgba(255,122,24,${0.45 * k}) 0%, rgba(228,49,43,${0.12 * k}) 30%, transparent 60%)`;
+    const items = [['s6ar', .35], ['s6en', .55], ['s6sl1', .8], ['s6sl2', 1.0], ['s6pills', 1.25]];
+    for (const [id, d] of items) {
+      const a = T.s6 + d, kk = P(t, a, a + .45);
+      st($(id), {op: P(t, a, a + .12), y: lerp(50, 0, E.outExpo(kk)), s: id === 's6ar' ? lerp(1.3, 1, E.outExpo(kk)) : 1, blur: id === 's6ar' ? lerp(16, 0, E.outExpo(kk)) : 0});
+    }
+    $('s6en').style.letterSpacing = $('s6en').style.paddingLeft = lerp(1.1, .5, E.outExpo(P(t, T.s6 + .55, T.s6 + 1.2))) + 'em';
+    [...$('s6pills').children].forEach((p, i) => {
+      const a = T.s6 + 1.25 + i * .12;
+      st(p, {op: P(t, a, a + .1), s: lerp(.5, 1, E.outBack(P(t, a, a + .35)))});
+    });
+    $('fadeOut').style.opacity = E.inOutCubic(P(t, 31.2, 32));
+  }
+
+  /* ---- overlays ---- */
+  const tickOn = t >= T.s4 && t < T.s5;
+  show($('ticker'), tickOn);
+  if (tickOn) {
+    const k = E.outExpo(P(t, T.s4, T.s4 + .4));
+    $('ticker').style.transform = `translateY(${(1 - k) * 80}px)`;
+    tickTrack.style.transform = `translateX(${-segW + ((t - T.s4) * 260) % segW}px)`;
+  }
+  const bugOn = t >= T.s4 && t < T.s6;
+  show($('bug'), bugOn);
+  if (bugOn) st($('bug'), {op: P(t, T.s4 + .1, T.s4 + .4), x: lerp(60, 0, E.outCubic(P(t, T.s4 + .1, T.s4 + .5)))});
+
+  // diagonal wipe transitions (cut happens at the midpoint)
+  const wipe = $('wipe'); let wOn = false;
+  for (const w of WIPES) {
+    const q = P(t, w.t - .25, w.t + .25);
+    if (t > w.t - .25 && t < w.t + .25) {
+      wOn = true;
+      const x = lerp(2150, -3050, E.inOutCubic(q));
+      wipe.style.transform = `translateX(${x}px) skewX(-14deg)`;
+      wipe.style.background = `linear-gradient(90deg, #ffc93c 0 90px, ${w.c} 90px 2580px, #fff 2580px)`;
+    }
+  }
+  show(wipe, wOn);
+}
+
+/* ---------------- boot ---------------- */
+const isRender = new URLSearchParams(location.search).has('render');
+if (isRender) document.body.classList.add('render');
+window.DURATION = DURATION; window.FPS = FPS; window.renderAt = renderAt;
+
+Promise.all(['900 100px Cairo', '700 40px Cairo', '800 40px Montserrat', '900 40px Montserrat', '600 20px Montserrat']
+  .map(f => document.fonts.load(f))).then(() => document.fonts.ready).then(() => {
+  segW = tickTrack.firstElementChild.getBoundingClientRect().width;
+  renderAt(0);
+  window.READY = true;
+  if (!isRender) initPlayer();
+});
+
+function initPlayer() {
+  const stage = $('stage'), vp = $('viewport'), audio = $('music');
+  const fit = () => { stage.style.transform = `scale(${Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080)})`; };
+  addEventListener('resize', fit); fit();
+  let playing = false, t0 = 0, start = 0, cur = 0;
+  const btn = $('playBtn'), scrub = $('scrub'), time = $('time');
+  const hasAudio = () => audio.readyState >= 2 && !audio.error;
+  const draw = t => { cur = t; renderAt(t); scrub.value = t; time.textContent = t.toFixed(2) + 's'; };
+  function tick() {
+    if (!playing) return;
+    let t = hasAudio() && !audio.paused ? audio.currentTime : t0 + (performance.now() - start) / 1000;
+    if (t >= DURATION) { t = DURATION; pause(); }
+    draw(t);
+    requestAnimationFrame(tick);
+  }
+  function play() {
+    if (cur >= DURATION) cur = 0;
+    playing = true; btn.textContent = '❚❚ Pause';
+    t0 = cur; start = performance.now();
+    try { audio.currentTime = cur; audio.play().catch(() => {}); } catch (e) {}
+    requestAnimationFrame(tick);
+  }
+  function pause() { playing = false; btn.textContent = '▶ Play'; audio.pause(); }
+  btn.onclick = () => playing ? pause() : play();
+  scrub.oninput = () => { pause(); draw(+scrub.value); };
+  addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); btn.click(); } });
+}
+</script>
+</body>
+</html>
