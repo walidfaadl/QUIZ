@@ -27,11 +27,11 @@
   --red: #e07a70; --mark: #8a6d12; --mark-ink: #fff7dd; --shadow: none; color-scheme: dark;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; font-family: "IBM Plex Sans Arabic", sans-serif; }
 html, body { height: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
-  font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+  font-family: "IBM Plex Sans Arabic", sans-serif;
   font-size: 15px; line-height: 1.6;
   display: flex; flex-direction: column;
 }
@@ -45,7 +45,7 @@ button.danger { color: var(--red); }
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 input, select, textarea { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
 textarea { width: 100%; resize: vertical; line-height: 1.7; }
-code, kbd { background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-family: Consolas, monospace; font-size: .9em; }
+code, kbd { background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .9em; }
 mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padding: 0 1px; }
 .muted { color: var(--muted); }
 [hidden] { display: none !important; }
