@@ -1,0 +1,51 @@
+{
+  "name": "palestinian-agreements",
+  "productName": "أرشيف اتفاقات المصالحة الفلسطينية",
+  "version": "1.0.0",
+  "description": "أرشيف اتفاقات ووثائق المصالحة الوطنية الفلسطينية مع بحث متقدم",
+  "main": "main.js",
+  "author": "walidfaadl",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64",
+    "dist:zip": "electron-builder --win zip --x64 -c.win.signAndEditExecutable=false"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "ps.reconciliation.agreements",
+    "productName": "PalAgreements",
+    "files": [
+      "main.js",
+      "app/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "language": "1025",
+      "artifactName": "PalAgreements-Setup-${version}.exe"
+    },
+    "publish": null,
+    "directories": {
+      "output": "dist"
+    },
+    "portable": {
+      "artifactName": "PalAgreements-Portable-${version}.exe"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/walidfaadl/quiz.git"
+  }
+}

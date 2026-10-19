@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أرشيف اتفاقات المصالحة</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div>
+      <h1>أرشيف اتفاقات المصالحة الفلسطينية</h1>
+      <p class="sub">اتفاقات ووثائق فتح وحماس والفصائل • <span id="count-label"></span></p>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <input id="q" type="search" placeholder="ابحث في كل الاتفاقات… مثال: انتخابات &quot;حكومة وحدة&quot; -الدوحة" autocomplete="off">
+    <button id="btn-search" class="primary">بحث</button>
+    <button id="btn-adv" class="ghost" aria-expanded="false">بحث متقدم ▾</button>
+  </div>
+  <div class="top-actions">
+    <button id="btn-theme" class="ghost" title="تبديل الوضع الليلي">☾</button>
+    <button id="btn-menu" class="ghost" title="خيارات">⋯</button>
+    <div id="menu" class="menu" hidden>
+      <button data-act="add">➕ إضافة اتفاق جديد</button>
+      <button data-act="export">⬇️ تصدير نسخة احتياطية (JSON)</button>
+      <button data-act="import">⬆️ استيراد نسخة احتياطية</button>
+      <button data-act="help">❔ دليل البحث</button>
+    </div>
+  </div>
+</header>
+
+<section id="adv" class="adv" hidden>
+  <div class="adv-grid">
+    <fieldset>
+      <legend>طريقة المطابقة</legend>
+      <label><input type="radio" name="mode" value="all" checked> كل الكلمات</label>
+      <label><input type="radio" name="mode" value="any"> أيّ كلمة</label>
+      <label><input type="radio" name="mode" value="phrase"> العبارة كما هي</label>
+    </fieldset>
+    <fieldset>
+      <legend>نطاق التطابق</legend>
+      <label><input type="radio" name="scope" value="doc" checked> في الوثيقة كلها</label>
+      <label><input type="radio" name="scope" value="para"> في الفقرة/البند نفسه</label>
+      <label><input type="checkbox" id="opt-word"> كلمة كاملة (مع السوابق: ال، و، ب، ل…)</label>
+      <label><input type="checkbox" id="opt-norm" checked> تجاهل التشكيل والهمزات والتاء المربوطة</label>
+    </fieldset>
+    <fieldset>
+      <legend>البحث في</legend>
+      <label><input type="checkbox" name="field" value="title" checked> العنوان والأسماء البديلة</label>
+      <label><input type="checkbox" name="field" value="summary" checked> الملخص</label>
+      <label><input type="checkbox" name="field" value="points" checked> أبرز البنود</label>
+      <label><input type="checkbox" name="field" value="fullText" checked> النص الكامل</label>
+      <label><input type="checkbox" name="field" value="context" checked> السياق والمآل</label>
+      <label><input type="checkbox" name="field" value="people" checked> الموقعون والأطراف والراعي</label>
+      <label><input type="checkbox" name="field" value="notes" checked> ملاحظاتي</label>
+    </fieldset>
+    <fieldset>
+      <legend>تصفية</legend>
+      <div class="row2">
+        <label>من سنة <input type="number" id="f-from" min="2000" max="2100"></label>
+        <label>إلى سنة <input type="number" id="f-to" min="2000" max="2100"></label>
+      </div>
+      <label>النوع <select id="f-cat"></select></label>
+      <label>الجهة الراعية <select id="f-sponsor"></select></label>
+      <label>الطرف <select id="f-party"></select></label>
+      <label>المحور <select id="f-topic"></select></label>
+      <label><input type="checkbox" id="f-hasfull"> فقط ما يحتوي نصاً كاملاً</label>
+    </fieldset>
+  </div>
+  <div class="adv-foot">
+    <span class="hint">صيغ مدعومة: <code>"عبارة"</code> للمطابقة الحرفية • <code>-كلمة</code> للاستبعاد • <code>أو</code> أو <code>|</code> بين كلمتين للبدائل • <code>كلمة*</code> ضمنية</span>
+    <span class="spacer"></span>
+    <button id="btn-reset" class="ghost">إعادة الضبط</button>
+    <button id="btn-adv-go" class="primary">تطبيق البحث</button>
+  </div>
+</section>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-head">
+      <strong>الاتفاقات</strong>
+      <select id="sort" title="الترتيب">
+        <option value="date-asc">الأقدم أولاً</option>
+        <option value="date-desc">الأحدث أولاً</option>
+        <option value="title">أبجدياً</option>
+      </select>
+    </div>
+    <ul id="list" class="list"></ul>
+  </aside>
+
+  <main class="main">
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-view="reader" class="active">الوثيقة</button>
+      <button role="tab" data-view="results">نتائج البحث <span id="res-badge" class="badge" hidden></span></button>
+      <button role="tab" data-view="compare">مقارنة حسب المحور</button>
+      <button role="tab" data-view="timeline">الخط الزمني</button>
+    </nav>
+    <section id="view-reader" class="view"></section>
+    <section id="view-results" class="view" hidden></section>
+    <section id="view-compare" class="view" hidden></section>
+    <section id="view-timeline" class="view" hidden></section>
+  </main>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlg-form">
+    <h2 id="dlg-title"></h2>
+    <div id="dlg-body"></div>
+    <div class="dlg-foot">
+      <button value="cancel" class="ghost">إلغاء</button>
+      <button value="ok" id="dlg-ok" class="primary">حفظ</button>
+    </div>
+  </form>
+</dialog>
+<input type="file" id="file-in" hidden>
+<div id="toast" class="toast" hidden></div>
+
+<script src="data.js"></script>
+<script src="search.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
